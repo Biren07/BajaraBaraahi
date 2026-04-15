@@ -3,22 +3,31 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
 
-const playfair = Playfair_Display({ 
-  subsets: ["latin"],
+const playfair = Playfair_Display({
+  subsets: ['latin'],
   variable: '--font-playfair',
   display: 'swap',
-});
+})
 
-const inter = Inter({ 
-  subsets: ["latin"],
+const inter = Inter({
+  subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
-});
+})
 
 export const metadata: Metadata = {
   title: 'BajarBook - Your Premium Online Bookshop',
-  description: 'Discover your next great read at BajarBook. Browse our extensive collection of bestsellers, new arrivals, and classic literature with worldwide shipping.',
-  keywords: ['books', 'online bookstore', 'bestsellers', 'new arrivals', 'fiction', 'non-fiction', 'BajarBook'],
+  description:
+    'Discover your next great read at BajarBook. Browse our extensive collection of bestsellers, new arrivals, and classic literature with worldwide shipping.',
+  keywords: [
+    'books',
+    'online bookstore',
+    'bestsellers',
+    'new arrivals',
+    'fiction',
+    'non-fiction',
+    'BajarBook',
+  ],
   generator: 'v0.app',
   icons: {
     icon: [
@@ -41,13 +50,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode
-}>) {
+}) {
   return (
-    <html lang="en" className={`${playfair.variable} ${inter.variable} scroll-smooth`}>
+    <html
+      lang="en"
+      className={`${playfair.variable} ${inter.variable} scroll-smooth`}
+    >
       <body className="font-sans antialiased min-h-screen">
         {children}
+
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

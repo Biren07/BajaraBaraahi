@@ -1,7 +1,16 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import { Facebook, Twitter, Instagram, Youtube, Mail, Phone, MapPin, CreditCard, Truck, ShieldCheck, Headphones } from "lucide-react"
+import Link from "next/link";
+import {
+  Facebook,
+  Twitter,
+  Instagram,
+  Youtube,
+  Mail,
+  Phone,
+  MapPin,
+} from "lucide-react";
+import Logo from "./ui/logo";
 
 const footerLinks = {
   shop: [
@@ -33,199 +42,134 @@ const footerLinks = {
     { name: "Our Story", href: "/about" },
     { name: "Careers", href: "/about" },
     { name: "Press", href: "/about" },
-    { name: "Privacy Policy", href: "/help" },
-    { name: "Terms of Service", href: "/help" },
+    { name: "Privacy Policy", href: "/privacy" },
+    { name: "Terms of Service", href: "/terms" },
   ],
-}
-
-const features = [
-  { icon: Truck, title: "Free Shipping", description: "On orders over $50" },
-  { icon: ShieldCheck, title: "Secure Payment", description: "100% secure checkout" },
-  { icon: Headphones, title: "24/7 Support", description: "Dedicated support team" },
-  { icon: CreditCard, title: "Easy Returns", description: "30-day return policy" },
-]
+};
 
 const socialLinks = [
-  { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-  { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
-  { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
-  { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
-]
+  { icon: Facebook, href: "#", label: "Facebook" },
+  { icon: Twitter, href: "#", label: "Twitter" },
+  { icon: Instagram, href: "#", label: "Instagram" },
+  { icon: Youtube, href: "#", label: "YouTube" },
+];
 
 export function Footer() {
   return (
-    <footer className="bg-primary text-primary-foreground">
-      {/* Features Bar */}
-      <div className="border-b border-primary-foreground/10">
-        <div className="container mx-auto px-4 py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {features.map((feature) => {
-              const Icon = feature.icon
-              return (
-                <div key={feature.title} className="flex items-center gap-4 group">
-                  <div className="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center group-hover:bg-gold transition-colors duration-300">
-                    <Icon className="w-6 h-6 text-gold group-hover:text-primary transition-colors duration-300" />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-primary-foreground">{feature.title}</p>
-                    <p className="text-sm text-primary-foreground/60">{feature.description}</p>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      </div>
+    <footer className="relative bg-gradient-to-b from-primary to-black text-primary-foreground overflow-hidden">
+      {/* Background glow */}
+      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top,white,transparent_60%)]" />
 
-      {/* Main Footer */}
-      <div className="container mx-auto px-4 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8 lg:gap-12">
-          {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <Link href="/" className="inline-block mb-4">
-              <span className="text-2xl md:text-3xl font-serif font-bold tracking-tight">
-                <span className="text-primary-foreground">Bajar</span>
-                <span className="text-gold">Book</span>
-              </span>
-            </Link>
-            <p className="text-primary-foreground/70 leading-relaxed mb-6">
-              Your premium destination for books. Discover bestsellers, new releases, 
-              and timeless classics from around the world.
+      {/* MAIN SECTION */}
+      <div className="container mx-auto px-6 py-14 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-6 gap-10">
+
+          {/* LEFT SIDE - BRAND */}
+          <div className="lg:col-span-2 flex flex-col items-start">
+            <Logo />
+
+            <p className="mt-4 text-white/60 leading-relaxed text-sm">
+              Your premium destination for books. Discover, read, and explore
+              timeless stories and modern bestsellers.
             </p>
 
-            {/* Contact Info */}
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-gold" />
-                <a href="mailto:hello@bajarbook.com" className="text-primary-foreground/70 hover:text-gold transition-colors">
-                  hello@bajarbook.com
-                </a>
+            {/* CONTACT */}
+            <div className="mt-6 space-y-3 text-white/70 text-sm">
+              <div className="flex items-center gap-2">
+                <Mail className="w-4 h-4 text-red" />
+                hello@bajarbook.com
               </div>
-              <div className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-gold" />
-                <a href="tel:+1234567890" className="text-primary-foreground/70 hover:text-gold transition-colors">
-                  +1 (234) 567-890
-                </a>
+              <div className="flex items-center gap-2">
+                <Phone className="w-4 h-4 text-red" />
+                +1 (234) 567-890
               </div>
-              <div className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-gold flex-shrink-0" />
-                <span className="text-primary-foreground/70">
-                  123 Book Street, Reading City, RC 12345
-                </span>
+              <div className="flex items-start gap-2">
+                <MapPin className="w-4 h-4 text-red mt-1" />
+                123 Book Street, Reading City
               </div>
             </div>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-4 mt-6">
-              {socialLinks.map((social) => {
-                const Icon = social.icon
+            {/* SOCIAL */}
+            <div className="flex gap-3 mt-6">
+              {socialLinks.map((s) => {
+                const Icon = s.icon;
                 return (
                   <a
-                    key={social.label}
-                    href={social.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-10 h-10 bg-primary-foreground/10 rounded-full flex items-center justify-center hover:bg-gold transition-colors duration-300 group"
-                    aria-label={social.label}
+                    key={s.label}
+                    href={s.href}
+                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-red hover:text-black transition"
                   >
-                    <Icon className="w-5 h-5 text-primary-foreground group-hover:text-primary transition-colors" />
+                    <Icon className="w-4 h-4" />
                   </a>
-                )
+                );
               })}
             </div>
           </div>
 
-          {/* Shop Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-gold">Shop</h3>
-            <ul className="space-y-3">
-              {footerLinks.shop.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-primary-foreground/70 hover:text-gold transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* RIGHT SIDE - LINKS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:col-span-4">
+            {[
+              footerLinks.shop,
+              footerLinks.categories,
+              footerLinks.support,
+              footerLinks.company,
+            ].map((group, i) => (
+              <div key={i}>
+                <h3 className="text-red font-semibold mb-3 text-sm uppercase tracking-wide">
+                  Menu
+                </h3>
 
-          {/* Categories Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-gold">Categories</h3>
-            <ul className="space-y-3">
-              {footerLinks.categories.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-primary-foreground/70 hover:text-gold transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Support Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-gold">Support</h3>
-            <ul className="space-y-3">
-              {footerLinks.support.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-primary-foreground/70 hover:text-gold transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Links */}
-          <div>
-            <h3 className="font-semibold text-lg mb-4 text-gold">Company</h3>
-            <ul className="space-y-3">
-              {footerLinks.company.map((link) => (
-                <li key={link.name}>
-                  <Link
-                    href={link.href}
-                    className="text-primary-foreground/70 hover:text-gold transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                <ul className="space-y-2">
+                  {group.map((link) => (
+                    <li key={link.name}>
+                      <Link
+                        href={link.href}
+                        className="text-white/60 hover:text-red text-sm transition"
+                      >
+                        {link.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-primary-foreground/10">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-primary-foreground/60 text-center md:text-left">
-              © {new Date().getFullYear()} BajarBook. All rights reserved.
+      {/* BOTTOM BAR */}
+      <div className="border-t border-white/10">
+        <div className="container mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
+
+          <p className="text-white/50 text-xs sm:text-sm">
+            © {new Date().getFullYear()} BajarBook. All rights reserved.
+          </p>
+
+          <div className="flex gap-5 text-xs sm:text-sm items-center">
+            <Link href="/privacy" className="text-white/50 hover:text-red">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-white/50 hover:text-red">
+              Terms
+            </Link>
+            <Link href="/cookies" className="text-white/50 hover:text-red">
+              Cookies
+            </Link>
+
+            <p className="text-white/50">
+              Developed by{" "}
+              <a
+                href="https://javtechinfosys.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-red transition"
+              >
+                Javtechinfosys
+              </a>
             </p>
-            <div className="flex items-center gap-6">
-              <Link href="/privacy" className="text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-                Privacy Policy
-              </Link>
-              <Link href="/terms" className="text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-                Terms of Service
-              </Link>
-              <Link href="/cookies" className="text-sm text-primary-foreground/60 hover:text-gold transition-colors">
-                Cookies
-              </Link>
-            </div>
           </div>
         </div>
       </div>
     </footer>
-  )
+  );
 }
