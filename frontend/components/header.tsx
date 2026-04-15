@@ -129,7 +129,7 @@ export function Header() {
 
             {/* Best Sellers */}
             <Link
-              href="/bestsellers"
+              href="/stores"
               className="text-foreground hover:text-red transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red after:transition-all hover:after:w-full"
             >
               Best Sellers

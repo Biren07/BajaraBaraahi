@@ -85,9 +85,9 @@ export default function SignupPage() {
       </div>
 
       {/* ================= RIGHT SIDE ================= */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
+      <div className="w-full bg-red-200 lg:w-1/2 flex items-center justify-center p-6">
 
-        <div className="w-full max-w-md bg-white/80 backdrop-blur-2xl border border-border shadow-2xl rounded-3xl p-8">
+        <div className="w-full max-w-md bg-gray-200 backdrop-blur-2xl border border-border shadow-2xl rounded-3xl p-8">
 
           {/* LOGO */}
           <div className="text-center mb-6">

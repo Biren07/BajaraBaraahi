@@ -9,7 +9,7 @@ import {
   Mail,
   Lock,
   ArrowRight,
-  Chrome,
+  Chrome
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -139,10 +139,10 @@ export default function LoginPage() {
       </div>
 
       {/* ================= RIGHT SIDE ================= */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
+      <div className="w-full bg-red-200 lg:w-1/2 flex items-center justify-center p-6">
 
         {/* GLASS CARD */}
-        <div className="w-full max-w-md bg-white/70 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-8">
+        <div className="w-full max-w-md bg-gray-200 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-8">
 
           {/* LOGO */}
           <Link href="/" className="flex flex-col items-center leading-none mb-6">
@@ -168,7 +168,7 @@ export default function LoginPage() {
           {/* GOOGLE */}
           <Button
             variant="outline"
-            className="w-full h-11 flex items-center gap-2 hover:bg-red/5 hover:border-red"
+            className="w-full h-11 flex items-center gap-2 hover:bg-red-200 hover:border-red"
           >
             <Chrome className="w-5 h-5" />
             Continue with Google

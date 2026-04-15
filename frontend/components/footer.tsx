@@ -56,35 +56,39 @@ const socialLinks = [
 
 export function Footer() {
   return (
-    <footer className="relative bg-gradient-to-b from-primary to-black text-primary-foreground overflow-hidden">
-      {/* Background glow */}
-      <div className="absolute inset-0 opacity-10 bg-[radial-gradient(circle_at_top,white,transparent_60%)]" />
+    <footer className="bg-gray-900 text-gray-300">
 
-      {/* MAIN SECTION */}
-      <div className="container mx-auto px-6 py-14 relative">
+      {/* TOP SECTION */}
+      <div className="container mx-auto px-6 py-14">
+
         <div className="grid grid-cols-1 lg:grid-cols-6 gap-10">
 
-          {/* LEFT SIDE - BRAND */}
+          {/* LEFT SIDE */}
           <div className="lg:col-span-2 flex flex-col items-start">
-            <Logo />
 
-            <p className="mt-4 text-white/60 leading-relaxed text-sm">
+            {/* LOGO (FIXED LEFT ALIGN) */}
+            <div className="flex flex-col items-start">
+              <Logo className="text-white" />
+            </div>
+
+            {/* DESCRIPTION */}
+            <p className="mt-4 text-sm text-gray-400 leading-relaxed">
               Your premium destination for books. Discover, read, and explore
               timeless stories and modern bestsellers.
             </p>
 
             {/* CONTACT */}
-            <div className="mt-6 space-y-3 text-white/70 text-sm">
+            <div className="mt-6 space-y-3 text-sm text-gray-400">
               <div className="flex items-center gap-2">
-                <Mail className="w-4 h-4 text-red" />
+                <Mail className="w-4 h-4 text-red-500" />
                 hello@bajarbook.com
               </div>
               <div className="flex items-center gap-2">
-                <Phone className="w-4 h-4 text-red" />
+                <Phone className="w-4 h-4 text-red-500" />
                 +1 (234) 567-890
               </div>
               <div className="flex items-start gap-2">
-                <MapPin className="w-4 h-4 text-red mt-1" />
+                <MapPin className="w-4 h-4 text-red-500 mt-1" />
                 123 Book Street, Reading City
               </div>
             </div>
@@ -97,7 +101,8 @@ export function Footer() {
                   <a
                     key={s.label}
                     href={s.href}
-                    className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-red hover:text-black transition"
+                    className="w-9 h-9 rounded-md bg-gray-800 flex items-center justify-center
+                               hover:bg-red-500 hover:text-white transition"
                   >
                     <Icon className="w-4 h-4" />
                   </a>
@@ -106,70 +111,71 @@ export function Footer() {
             </div>
           </div>
 
-          {/* RIGHT SIDE - LINKS */}
+          {/* RIGHT SIDE */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 lg:col-span-4">
-            {[
-              footerLinks.shop,
-              footerLinks.categories,
-              footerLinks.support,
-              footerLinks.company,
-            ].map((group, i) => (
-              <div key={i}>
-                <h3 className="text-red font-semibold mb-3 text-sm uppercase tracking-wide">
-                  Menu
-                </h3>
 
-                <ul className="space-y-2">
-                  {group.map((link) => (
-                    <li key={link.name}>
-                      <Link
-                        href={link.href}
-                        className="text-white/60 hover:text-red text-sm transition"
-                      >
-                        {link.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            {[footerLinks.shop, footerLinks.categories, footerLinks.support, footerLinks.company].map(
+              (group, i) => (
+                <div key={i}>
+                  <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">
+                    Menu
+                  </h3>
+
+                  <ul className="space-y-2">
+                    {group.map((link) => (
+                      <li key={link.name}>
+                        <Link
+                          href={link.href}
+                          className="text-gray-400 hover:text-red-400 text-sm transition"
+                        >
+                          {link.name}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )
+            )}
+
           </div>
         </div>
       </div>
 
       {/* BOTTOM BAR */}
-      <div className="border-t border-white/10">
+      <div className="border-t border-gray-800">
         <div className="container mx-auto px-6 py-5 flex flex-col sm:flex-row justify-between items-center gap-3">
 
-          <p className="text-white/50 text-xs sm:text-sm">
+          <p className="text-xs text-gray-500">
             © {new Date().getFullYear()} BajarBook. All rights reserved.
           </p>
 
-          <div className="flex gap-5 text-xs sm:text-sm items-center">
-            <Link href="/privacy" className="text-white/50 hover:text-red">
+          <div className="flex gap-5 text-xs text-gray-500 items-center">
+            <Link href="/privacy" className="hover:text-red-400">
               Privacy
             </Link>
-            <Link href="/terms" className="text-white/50 hover:text-red">
+            <Link href="/terms" className="hover:text-red-400">
               Terms
             </Link>
-            <Link href="/cookies" className="text-white/50 hover:text-red">
+            <Link href="/cookies" className="hover:text-red-400">
               Cookies
             </Link>
 
-            <p className="text-white/50">
+            <p>
               Developed by{" "}
               <a
                 href="https://javtechinfosys.com/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-red transition"
+                className="hover:text-red-400 transition"
               >
                 Javtechinfosys
               </a>
             </p>
           </div>
+
         </div>
       </div>
+
     </footer>
   );
 }
