@@ -1,17 +1,29 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { BookCard } from "@/components/book-card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { SlidersHorizontal, Grid3X3, LayoutList, X, ChevronRight } from "lucide-react"
-import Link from "next/link"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { BookCard } from "@/components/book-card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  SlidersHorizontal,
+  Grid3X3,
+  LayoutList,
+  X,
+  ChevronRight,
+} from "lucide-react";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const allBooks = [
   {
@@ -21,7 +33,8 @@ const allBooks = [
     price: 14.99,
     originalPrice: 19.99,
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Fiction",
   },
@@ -32,7 +45,8 @@ const allBooks = [
     price: 16.99,
     originalPrice: 24.99,
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Self-Help",
   },
@@ -43,7 +57,8 @@ const allBooks = [
     price: 12.99,
     originalPrice: 17.99,
     rating: 4.7,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Fiction",
   },
@@ -54,7 +69,8 @@ const allBooks = [
     price: 15.99,
     originalPrice: 22.99,
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Business",
   },
@@ -65,7 +81,8 @@ const allBooks = [
     price: 18.99,
     originalPrice: 26.99,
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Science Fiction",
   },
@@ -76,7 +93,8 @@ const allBooks = [
     price: 13.99,
     originalPrice: 18.99,
     rating: 4.6,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Fiction",
   },
@@ -87,7 +105,8 @@ const allBooks = [
     price: 17.99,
     originalPrice: 25.99,
     rating: 4.7,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Self-Help",
   },
@@ -98,7 +117,8 @@ const allBooks = [
     price: 11.99,
     originalPrice: 16.99,
     rating: 4.5,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Thriller",
   },
@@ -109,7 +129,8 @@ const allBooks = [
     price: 19.99,
     originalPrice: 28.99,
     rating: 4.8,
-    image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Non-Fiction",
   },
@@ -120,7 +141,8 @@ const allBooks = [
     price: 14.99,
     originalPrice: 19.99,
     rating: 4.6,
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Fiction",
   },
@@ -131,7 +153,8 @@ const allBooks = [
     price: 15.99,
     originalPrice: 21.99,
     rating: 4.7,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Memoir",
   },
@@ -142,55 +165,70 @@ const allBooks = [
     price: 9.99,
     originalPrice: 14.99,
     rating: 4.9,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
     isBestseller: true,
     category: "Fiction",
   },
-]
+];
 
-const categories = ["All", "Fiction", "Non-Fiction", "Self-Help", "Business", "Thriller", "Science Fiction", "Memoir"]
+const categories = [
+  "All",
+  "Fiction",
+  "Non-Fiction",
+  "Self-Help",
+  "Business",
+  "Thriller",
+  "Science Fiction",
+  "Memoir",
+];
 
 export default function BestsellersPage() {
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [sortBy, setSortBy] = useState("popularity")
-  const [priceRange, setPriceRange] = useState([0, 50])
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(["All"])
-  const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState("popularity");
+  const [priceRange, setPriceRange] = useState([0, 50]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([
+    "All",
+  ]);
+  const [showFilters, setShowFilters] = useState(false);
 
   const filteredBooks = allBooks.filter((book) => {
-    const inPriceRange = book.price >= priceRange[0] && book.price <= priceRange[1]
-    const inCategory = selectedCategories.includes("All") || selectedCategories.includes(book.category)
-    return inPriceRange && inCategory
-  })
+    const inPriceRange =
+      book.price >= priceRange[0] && book.price <= priceRange[1];
+    const inCategory =
+      selectedCategories.includes("All") ||
+      selectedCategories.includes(book.category);
+    return inPriceRange && inCategory;
+  });
 
   const sortedBooks = [...filteredBooks].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
-        return a.price - b.price
+        return a.price - b.price;
       case "price-high":
-        return b.price - a.price
+        return b.price - a.price;
       case "rating":
-        return b.rating - a.rating
+        return b.rating - a.rating;
       case "newest":
-        return 0
+        return 0;
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   const toggleCategory = (category: string) => {
     if (category === "All") {
-      setSelectedCategories(["All"])
+      setSelectedCategories(["All"]);
     } else {
-      const newCategories = selectedCategories.filter((c) => c !== "All")
+      const newCategories = selectedCategories.filter((c) => c !== "All");
       if (newCategories.includes(category)) {
-        const filtered = newCategories.filter((c) => c !== category)
-        setSelectedCategories(filtered.length === 0 ? ["All"] : filtered)
+        const filtered = newCategories.filter((c) => c !== category);
+        setSelectedCategories(filtered.length === 0 ? ["All"] : filtered);
       } else {
-        setSelectedCategories([...newCategories, category])
+        setSelectedCategories([...newCategories, category]);
       }
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -206,16 +244,22 @@ export default function BestsellersPage() {
         <div className="container mx-auto px-4 relative">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">Best Sellers</span>
           </nav>
-          
+
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-primary-foreground mb-4 animate-fade-in-up">
             Best <span className="text-gold">Sellers</span>
           </h1>
-          <p className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-            Discover our most loved books, handpicked by readers worldwide. From gripping fiction to life-changing non-fiction.
+          <p
+            className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up"
+            style={{ animationDelay: "100ms" }}
+          >
+            Discover our most loved books, handpicked by readers worldwide. From
+            gripping fiction to life-changing non-fiction.
           </p>
         </div>
       </section>
@@ -225,58 +269,98 @@ export default function BestsellersPage() {
         <div className="container mx-auto px-4">
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Filters Sidebar - Desktop */}
+
             <aside className="hidden lg:block w-72 shrink-0">
-              <div className="sticky top-32 space-y-8 bg-card p-6 rounded-xl border border-border">
-                <div>
-                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2">
-                    <SlidersHorizontal className="w-5 h-5 text-gold" />
+              <div className="sticky top-28 space-y-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                  <h3 className="font-semibold text-lg flex items-center gap-2">
+                    <SlidersHorizontal className="w-5 h-5 text-[#7a0f1e]" />
                     Filters
                   </h3>
+
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-xs text-gray-500 hover:text-[#7a0f1e]"
+                    onClick={() => {
+                      setSelectedCategories(["All"]);
+                      setPriceRange([0, 50]);
+                    }}
+                  >
+                    Reset
+                  </Button>
                 </div>
 
-                {/* Categories Filter */}
+                {/* Divider */}
+                <div className="border-t border-gray-200"></div>
+
+                {/* Categories */}
                 <div>
-                  <h4 className="font-medium mb-3">Categories</h4>
-                  <div className="space-y-2">
+                  <h4 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wide">
+                    Categories
+                  </h4>
+
+                  <div className="space-y-3">
                     {categories.map((category) => (
-                      <div key={category} className="flex items-center gap-2">
-                        <Checkbox
-                          id={category}
-                          checked={selectedCategories.includes(category)}
-                          onCheckedChange={() => toggleCategory(category)}
-                          className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-                        />
-                        <Label htmlFor={category} className="text-sm cursor-pointer hover:text-gold transition-colors">
-                          {category}
-                        </Label>
-                      </div>
+                      <label
+                        key={category}
+                        htmlFor={category}
+                        className="flex items-center justify-between cursor-pointer rounded-md px-2 py-2 hover:bg-gray-50 transition"
+                      >
+                        <div className="flex items-center gap-3">
+                          <Checkbox
+                            id={category}
+                            checked={selectedCategories.includes(category)}
+                            onCheckedChange={() => toggleCategory(category)}
+                            className="h-4 w-4 border-gray-300 
+                data-[state=checked]:bg-[#7a0f1e] 
+                data-[state=checked]:border-[#7a0f1e]"
+                          />
+                          <span className="text-sm hover:text-[#7a0f1e] transition">
+                            {category}
+                          </span>
+                        </div>
+                      </label>
                     ))}
                   </div>
                 </div>
 
-                {/* Price Range Filter */}
+                {/* Divider */}
+                <div className="border-t border-gray-200"></div>
+
+                {/* Price Range */}
                 <div>
-                  <h4 className="font-medium mb-3">Price Range</h4>
+                  <h4 className="text-sm font-semibold mb-4 text-gray-500 uppercase tracking-wide">
+                    Price Range
+                  </h4>
+
                   <Slider
                     value={priceRange}
                     onValueChange={setPriceRange}
                     max={50}
                     step={1}
-                    className="mb-4"
+                    className="mb-5"
                   />
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>${priceRange[0]}</span>
-                    <span>${priceRange[1]}</span>
+
+                  <div className="flex items-center justify-between text-sm bg-gray-50 px-3 py-2 rounded-md">
+                    <span className="font-medium text-[#7a0f1e]">
+                      ${priceRange[0]}
+                    </span>
+                    <span className="text-gray-400">to</span>
+                    <span className="font-medium text-[#7a0f1e]">
+                      ${priceRange[1]}
+                    </span>
                   </div>
                 </div>
 
-                {/* Clear Filters */}
+                {/* Clear Filters Button */}
                 <Button
                   variant="outline"
-                  className="w-full border-gold/30 hover:bg-gold/10 hover:text-gold"
+                  className="w-full border-[#7a0f1e]/40 text-[#7a0f1e] hover:bg-[#7a0f1e]/10 hover:border-[#7a0f1e]"
                   onClick={() => {
-                    setSelectedCategories(["All"])
-                    setPriceRange([0, 50])
+                    setSelectedCategories(["All"]);
+                    setPriceRange([0, 50]);
                   }}
                 >
                   Clear All Filters
@@ -298,9 +382,13 @@ export default function BestsellersPage() {
                     <SlidersHorizontal className="w-4 h-4 mr-2" />
                     Filters
                   </Button>
-                  
+
                   <p className="text-sm text-muted-foreground">
-                    Showing <span className="font-semibold text-foreground">{sortedBooks.length}</span> books
+                    Showing{" "}
+                    <span className="font-semibold text-foreground">
+                      {sortedBooks.length}
+                    </span>{" "}
+                    books
                   </p>
                 </div>
 
@@ -313,8 +401,12 @@ export default function BestsellersPage() {
                     <SelectContent>
                       <SelectItem value="popularity">Popularity</SelectItem>
                       <SelectItem value="rating">Highest Rated</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
+                      <SelectItem value="price-low">
+                        Price: Low to High
+                      </SelectItem>
+                      <SelectItem value="price-high">
+                        Price: High to Low
+                      </SelectItem>
                       <SelectItem value="newest">Newest First</SelectItem>
                     </SelectContent>
                   </Select>
@@ -325,7 +417,9 @@ export default function BestsellersPage() {
                       onClick={() => setViewMode("grid")}
                       className={cn(
                         "p-2 transition-colors",
-                        viewMode === "grid" ? "bg-gold text-primary-foreground" : "hover:bg-muted"
+                        viewMode === "grid"
+                          ? "bg-gold text-primary-foreground"
+                          : "hover:bg-muted",
                       )}
                     >
                       <Grid3X3 className="w-5 h-5" />
@@ -334,7 +428,9 @@ export default function BestsellersPage() {
                       onClick={() => setViewMode("list")}
                       className={cn(
                         "p-2 transition-colors",
-                        viewMode === "list" ? "bg-gold text-primary-foreground" : "hover:bg-muted"
+                        viewMode === "list"
+                          ? "bg-gold text-primary-foreground"
+                          : "hover:bg-muted",
                       )}
                     >
                       <LayoutList className="w-5 h-5" />
@@ -349,7 +445,7 @@ export default function BestsellersPage() {
                   "grid gap-6",
                   viewMode === "grid"
                     ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    : "grid-cols-1"
+                    : "grid-cols-1",
                 )}
               >
                 {sortedBooks.map((book, index) => (
@@ -359,7 +455,10 @@ export default function BestsellersPage() {
 
               {/* Load More */}
               <div className="mt-12 text-center">
-                <Button size="lg" className="bg-gold hover:bg-gold-dark text-primary-foreground px-12">
+                <Button
+                  size="lg"
+                  className="bg-gold hover:bg-gold-dark text-primary-foreground px-12"
+                >
                   Load More Books
                 </Button>
               </div>
@@ -371,14 +470,21 @@ export default function BestsellersPage() {
       {/* Mobile Filters Drawer */}
       {showFilters && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowFilters(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowFilters(false)}
+          />
           <div className="absolute right-0 top-0 bottom-0 w-80 bg-background p-6 overflow-y-auto animate-slide-in-right">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-semibold text-lg flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5 text-gold" />
                 Filters
               </h3>
-              <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowFilters(false)}
+              >
                 <X className="w-5 h-5" />
               </Button>
             </div>
@@ -395,7 +501,10 @@ export default function BestsellersPage() {
                       onCheckedChange={() => toggleCategory(category)}
                       className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
                     />
-                    <Label htmlFor={`mobile-${category}`} className="text-sm cursor-pointer">
+                    <Label
+                      htmlFor={`mobile-${category}`}
+                      className="text-sm cursor-pointer"
+                    >
                       {category}
                     </Label>
                   </div>
@@ -431,8 +540,8 @@ export default function BestsellersPage() {
                 variant="outline"
                 className="w-full border-gold/30"
                 onClick={() => {
-                  setSelectedCategories(["All"])
-                  setPriceRange([0, 50])
+                  setSelectedCategories(["All"]);
+                  setPriceRange([0, 50]);
                 }}
               >
                 Clear All
@@ -444,5 +553,5 @@ export default function BestsellersPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

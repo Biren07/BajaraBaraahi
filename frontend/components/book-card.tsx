@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 import { Heart, ShoppingCart, Eye, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -21,6 +22,8 @@ export function BookCard({
 }: BookCardProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(false)
+
+  const router = useRouter()
 
   return (
     <div
@@ -61,23 +64,26 @@ export function BookCard({
         {/* Overlay Actions */}
         <div
           className={cn(
-            "absolute inset-0 bg-black/50 flex items-center justify-center gap-4 transition-all duration-300",
+            "absolute inset-0 bg-black/50 flex items-center justify-center gap-5 transition-all duration-300",
             isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
           )}
         >
+          {/* Cart Button */}
           <Button
-            size="icon"
-            className="w-12 h-12 rounded-full bg-gold hover:bg-gold-dark"
-            onClick={() => onAddToCart?.(book)}
+            onClick={() => {
+              onAddToCart?.(book)
+              router.push("/cart")
+            }}
+            className="w-11 h-11 rounded-full bg-gold hover:bg-gold-dark flex items-center justify-center"
           >
             <ShoppingCart className="w-5 h-5" />
           </Button>
 
+          {/* Eye Button */}
           <Button
-            size="icon"
             variant="outline"
-            className="w-12 h-12 rounded-full border-white text-white hover:bg-white hover:text-primary"
             onClick={() => onQuickView?.(book)}
+            className="w-11 h-11 rounded-full border-white text-white hover:bg-white hover:text-primary flex items-center justify-center"
           >
             <Eye className="w-5 h-5" />
           </Button>
@@ -86,6 +92,7 @@ export function BookCard({
 
       {/* Content */}
       <div className="p-4">
+        {/* Stars */}
         <div className="flex items-center gap-1 mb-2">
           {[...Array(5)].map((_, i) => (
             <Star
@@ -100,14 +107,17 @@ export function BookCard({
           ))}
         </div>
 
+        {/* Title */}
         <h3 className="font-semibold line-clamp-2 group-hover:text-gold">
           {book.title}
         </h3>
 
+        {/* Author */}
         <p className="text-sm text-muted-foreground mb-2">
           {book.author}
         </p>
 
+        {/* Price */}
         <p className="font-bold text-gold">${book.price}</p>
       </div>
     </div>

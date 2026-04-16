@@ -67,12 +67,6 @@ export function Header() {
         <div className="container mx-auto px-4 flex items-center justify-between text-sm">
           <p className="animate-pulse">Free shipping on orders over $50</p>
           <div className="flex items-center gap-6">
-            <Link
-              href="/track-order"
-              className="hover:text-red transition-colors"
-            >
-              Track Order
-            </Link>
             <Link href="/help" className="hover:text-red transition-colors">
               Help & Support
             </Link>
@@ -129,7 +123,7 @@ export function Header() {
 
             {/* Best Sellers */}
             <Link
-              href="/stores"
+              href="/bestsellers"
               className="text-foreground hover:text-red transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red after:transition-all hover:after:w-full"
             >
               Best Sellers
