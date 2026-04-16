@@ -1,11 +1,14 @@
 import Link from "next/link";
 
-export default function Logo({ className = "text-black" }) {
-  return (
-    <Link
-      href="/"
-      className={`flex flex-col items-center leading-none select-none ${className}`}
-    >
+interface LogoProps {
+  className?: string;
+  disableLink?: boolean;
+}
+
+export default function Logo({ className = "text-black", disableLink = false }: LogoProps) {
+
+  const logoContent = (
+    <div className={`flex flex-col items-center leading-none select-none ${className}`}>
       {/* Main Logo Text */}
       <span className="font-serif font-bold text-xl md:text-2xl tracking-wider">
         BAJRABARAHI
@@ -22,6 +25,16 @@ export default function Logo({ className = "text-black" }) {
       <span className="text-[9px] md:text-[10px] tracking-[0.25em]">
         BOOK SUPPLIERS
       </span>
+    </div>
+  );
+
+  if (disableLink) {
+    return logoContent;
+  }
+
+  return (
+    <Link href="/">
+      {logoContent}
     </Link>
   );
 }
