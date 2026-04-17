@@ -10,6 +10,7 @@ import { FeaturedAuthors } from '@/components/featured-authors'
 import { Footer } from '@/components/footer'
 import ReflectionCard from '@/components/ReflectionCard'
 import PhysicalSanctuary from '@/components/physicalSanctuary'
+import WhatsAppButton from '@/components/whatsapp'
 
 
 export default function Home() {
@@ -25,6 +26,7 @@ export default function Home() {
       <FeaturedAuthors />
       <PhysicalSanctuary/>
       <ReflectionCard/>
+      <WhatsAppButton/>
       {/* <Testimonials /> */}
       {/* <Newsletter /> */}
 

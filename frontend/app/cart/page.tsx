@@ -1,24 +1,34 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Separator } from "@/components/ui/separator"
-import { ChevronRight, Minus, Plus, Trash2, ShoppingBag, ArrowRight, Tag, Gift, Truck } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import {
+  ChevronRight,
+  Minus,
+  Plus,
+  Trash2,
+  ShoppingBag,
+  ArrowRight,
+  Tag,
+  Gift,
+  Truck,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CartItem {
-  id: string
-  title: string
-  author: string
-  price: number
-  originalPrice?: number
-  image: string
-  quantity: number
+  id: string;
+  title: string;
+  author: string;
+  price: number;
+  originalPrice?: number;
+  image: string;
+  quantity: number;
 }
 
 const initialCartItems: CartItem[] = [
@@ -28,7 +38,8 @@ const initialCartItems: CartItem[] = [
     author: "Matt Haig",
     price: 14.99,
     originalPrice: 19.99,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
     quantity: 1,
   },
   {
@@ -37,7 +48,8 @@ const initialCartItems: CartItem[] = [
     author: "James Clear",
     price: 16.99,
     originalPrice: 24.99,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
     quantity: 2,
   },
   {
@@ -46,51 +58,56 @@ const initialCartItems: CartItem[] = [
     author: "Andy Weir",
     price: 18.99,
     originalPrice: 26.99,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
     quantity: 1,
   },
-]
+];
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems)
-  const [couponCode, setCouponCode] = useState("")
-  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null)
-  const [couponDiscount, setCouponDiscount] = useState(0)
+  const [cartItems, setCartItems] = useState<CartItem[]>(initialCartItems);
+  const [couponCode, setCouponCode] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);
 
   const updateQuantity = (id: string, delta: number) => {
     setCartItems((items) =>
       items.map((item) =>
         item.id === id
           ? { ...item, quantity: Math.max(1, item.quantity + delta) }
-          : item
-      )
-    )
-  }
+          : item,
+      ),
+    );
+  };
 
   const removeItem = (id: string) => {
-    setCartItems((items) => items.filter((item) => item.id !== id))
-  }
+    setCartItems((items) => items.filter((item) => item.id !== id));
+  };
 
   const applyCoupon = () => {
     if (couponCode.toUpperCase() === "SUMMER20") {
-      setAppliedCoupon("SUMMER20")
-      setCouponDiscount(20)
+      setAppliedCoupon("SUMMER20");
+      setCouponDiscount(20);
     } else if (couponCode.toUpperCase() === "FIRSTBUY") {
-      setAppliedCoupon("FIRSTBUY")
-      setCouponDiscount(15)
+      setAppliedCoupon("FIRSTBUY");
+      setCouponDiscount(15);
     } else {
-      alert("Invalid coupon code")
+      alert("Invalid coupon code");
     }
-  }
+  };
 
-  const subtotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0,
+  );
   const savings = cartItems.reduce(
-    (sum, item) => sum + ((item.originalPrice || item.price) - item.price) * item.quantity,
-    0
-  )
-  const couponSavings = (subtotal * couponDiscount) / 100
-  const shipping = subtotal > 50 ? 0 : 4.99
-  const total = subtotal - couponSavings + shipping
+    (sum, item) =>
+      sum + ((item.originalPrice || item.price) - item.price) * item.quantity,
+    0,
+  );
+  const couponSavings = (subtotal * couponDiscount) / 100;
+  const shipping = subtotal > 50 ? 0 : 4.99;
+  const total = subtotal - couponSavings + shipping;
 
   if (cartItems.length === 0) {
     return (
@@ -102,12 +119,18 @@ export default function CartPage() {
               <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center">
                 <ShoppingBag className="w-12 h-12 text-gold" />
               </div>
-              <h1 className="text-3xl font-serif font-bold mb-4">Your Cart is Empty</h1>
+              <h1 className="text-3xl font-serif font-bold mb-4">
+                Your Cart is Empty
+              </h1>
               <p className="text-muted-foreground mb-8">
-                Looks like you haven&apos;t added any books to your cart yet. Start exploring our collection!
+                Looks like you haven&apos;t added any books to your cart yet.
+                Start exploring our collection!
               </p>
               <Link href="/bestsellers">
-                <Button size="lg" className="bg-gold hover:bg-gold-dark text-primary-foreground">
+                <Button
+                  size="lg"
+                  className="bg-gold hover:bg-gold-dark text-primary-foreground"
+                >
                   Browse Best Sellers
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
@@ -117,7 +140,7 @@ export default function CartPage() {
         </div>
         <Footer />
       </div>
-    )
+    );
   }
 
   return (
@@ -129,11 +152,13 @@ export default function CartPage() {
         <div className="container mx-auto px-4 relative">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">Shopping Cart</span>
           </nav>
-          
+
           <h1 className="text-3xl md:text-4xl font-serif font-bold text-primary-foreground animate-fade-in-up">
             Shopping <span className="text-gold">Cart</span>
           </h1>
@@ -178,7 +203,9 @@ export default function CartPage() {
                             <h3 className="font-semibold truncate hover:text-gold transition-colors cursor-pointer">
                               {item.title}
                             </h3>
-                            <p className="text-sm text-muted-foreground">by {item.author}</p>
+                            <p className="text-sm text-muted-foreground">
+                              by {item.author}
+                            </p>
                             <button
                               onClick={() => removeItem(item.id)}
                               className="mt-2 text-sm text-red-500 hover:text-red-600 flex items-center gap-1 md:hidden"
@@ -191,9 +218,13 @@ export default function CartPage() {
 
                         {/* Price */}
                         <div className="md:col-span-2 flex md:justify-center items-center gap-2">
-                          <span className="md:hidden text-sm text-muted-foreground">Price:</span>
+                          <span className="md:hidden text-sm text-muted-foreground">
+                            Price:
+                          </span>
                           <div>
-                            <span className="font-semibold text-gold">${item.price.toFixed(2)}</span>
+                            <span className="font-semibold text-gold">
+                              ${item.price.toFixed(2)}
+                            </span>
                             {item.originalPrice && (
                               <span className="text-sm text-muted-foreground line-through ml-2">
                                 ${item.originalPrice.toFixed(2)}
@@ -204,7 +235,9 @@ export default function CartPage() {
 
                         {/* Quantity */}
                         <div className="md:col-span-2 flex md:justify-center items-center gap-2">
-                          <span className="md:hidden text-sm text-muted-foreground">Qty:</span>
+                          <span className="md:hidden text-sm text-muted-foreground">
+                            Qty:
+                          </span>
                           <div className="flex items-center border border-border rounded-lg overflow-hidden">
                             <button
                               onClick={() => updateQuantity(item.id, -1)}
@@ -212,7 +245,9 @@ export default function CartPage() {
                             >
                               <Minus className="w-4 h-4" />
                             </button>
-                            <span className="w-10 text-center font-medium">{item.quantity}</span>
+                            <span className="w-10 text-center font-medium">
+                              {item.quantity}
+                            </span>
                             <button
                               onClick={() => updateQuantity(item.id, 1)}
                               className="p-2 hover:bg-muted transition-colors"
@@ -224,7 +259,9 @@ export default function CartPage() {
 
                         {/* Total */}
                         <div className="md:col-span-2 flex items-center justify-between md:justify-end gap-4">
-                          <span className="md:hidden text-sm text-muted-foreground">Total:</span>
+                          <span className="md:hidden text-sm text-muted-foreground">
+                            Total:
+                          </span>
                           <span className="font-bold text-lg">
                             ${(item.price * item.quantity).toFixed(2)}
                           </span>
@@ -244,7 +281,10 @@ export default function CartPage() {
               {/* Continue Shopping */}
               <div className="mt-6 flex items-center justify-between">
                 <Link href="/bestsellers">
-                  <Button variant="outline" className="border-gold/30 hover:bg-gold/10">
+                  <Button
+                    variant="outline"
+                    className="border-gold/30 hover:bg-gold/10"
+                  >
                     Continue Shopping
                   </Button>
                 </Link>
@@ -272,13 +312,15 @@ export default function CartPage() {
                     <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
                       <div className="flex items-center gap-2">
                         <Gift className="w-5 h-5 text-green-600" />
-                        <span className="font-mono font-semibold">{appliedCoupon}</span>
+                        <span className="font-mono font-semibold">
+                          {appliedCoupon}
+                        </span>
                       </div>
                       <button
                         onClick={() => {
-                          setAppliedCoupon(null)
-                          setCouponDiscount(0)
-                          setCouponCode("")
+                          setAppliedCoupon(null);
+                          setCouponDiscount(0);
+                          setCouponCode("");
                         }}
                         className="text-sm text-red-500 hover:underline"
                       >
@@ -310,27 +352,34 @@ export default function CartPage() {
                 {/* Summary */}
                 <div className="bg-card rounded-xl border border-border p-6">
                   <h3 className="font-semibold text-lg mb-4">Order Summary</h3>
-                  
+
                   <div className="space-y-3 text-sm">
                     <div className="flex justify-between">
-                      <span className="text-muted-foreground">Subtotal ({cartItems.reduce((sum, item) => sum + item.quantity, 0)} items)</span>
+                      <span className="text-muted-foreground">
+                        Subtotal (
+                        {cartItems.reduce(
+                          (sum, item) => sum + item.quantity,
+                          0,
+                        )}{" "}
+                        items)
+                      </span>
                       <span>${subtotal.toFixed(2)}</span>
                     </div>
-                    
+
                     {savings > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>You Save</span>
                         <span>-${savings.toFixed(2)}</span>
                       </div>
                     )}
-                    
+
                     {couponSavings > 0 && (
                       <div className="flex justify-between text-green-600">
                         <span>Coupon Discount ({couponDiscount}%)</span>
                         <span>-${couponSavings.toFixed(2)}</span>
                       </div>
                     )}
-                    
+
                     <div className="flex justify-between">
                       <span className="text-muted-foreground flex items-center gap-1">
                         <Truck className="w-4 h-4" />
@@ -340,26 +389,35 @@ export default function CartPage() {
                         {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
                       </span>
                     </div>
-                    
+
                     {shipping > 0 && (
                       <p className="text-xs text-muted-foreground bg-gold/10 p-2 rounded-lg">
-                        Add ${(50 - subtotal).toFixed(2)} more to get FREE shipping!
+                        Add ${(50 - subtotal).toFixed(2)} more to get FREE
+                        shipping!
                       </p>
                     )}
                   </div>
-                  
+
                   <Separator className="my-4" />
-                  
+
                   <div className="flex justify-between items-center mb-6">
                     <span className="font-semibold text-lg">Total</span>
-                    <span className="text-2xl font-bold text-gold">${total.toFixed(2)}</span>
+                    <span className="text-2xl font-bold text-gold">
+                      ${total.toFixed(2)}
+                    </span>
                   </div>
-                  
-                  <Button size="lg" className="w-full bg-gold hover:bg-gold-dark text-primary-foreground">
-                    Proceed to Checkout
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </Button>
-                  
+
+                  <div className="pt-4">
+                    <Button
+                      size="lg"
+                      className="w-full bg-[#7a0f1e] hover:bg-[#5c0c17] text-white font-semibold py-6 rounded-xl shadow-md transition-all"
+                      onClick={() => (window.location.href = "/order")}
+                    >
+                      Proceed to Checkout
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </div>
+
                   <div className="mt-4 flex items-center justify-center gap-4 text-xs text-muted-foreground">
                     <span>Secure Checkout</span>
                     <span>SSL Encrypted</span>
@@ -369,8 +427,16 @@ export default function CartPage() {
                 {/* Features */}
                 <div className="grid grid-cols-2 gap-4">
                   {[
-                    { icon: Truck, label: "Free Shipping", sublabel: "On orders $50+" },
-                    { icon: Gift, label: "Gift Wrapping", sublabel: "Available" },
+                    {
+                      icon: Truck,
+                      label: "Free Shipping",
+                      sublabel: "On orders $50+",
+                    },
+                    {
+                      icon: Gift,
+                      label: "Gift Wrapping",
+                      sublabel: "Available",
+                    },
                   ].map((feature, index) => (
                     <div
                       key={index}
@@ -379,7 +445,9 @@ export default function CartPage() {
                       <feature.icon className="w-5 h-5 text-gold" />
                       <div>
                         <p className="text-sm font-medium">{feature.label}</p>
-                        <p className="text-xs text-muted-foreground">{feature.sublabel}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {feature.sublabel}
+                        </p>
                       </div>
                     </div>
                   ))}
@@ -392,5 +460,5 @@ export default function CartPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

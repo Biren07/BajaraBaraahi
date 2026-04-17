@@ -3,7 +3,7 @@
 import { useState } from "react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
-import { Heart, ShoppingCart, Eye, Star } from "lucide-react"
+import { Heart, ShoppingCart, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
@@ -11,114 +11,97 @@ interface BookCardProps {
   book: any
   index?: number
   onAddToCart?: (book: any) => void
-  onQuickView?: (book: any) => void
 }
 
 export function BookCard({
   book,
   index = 0,
   onAddToCart,
-  onQuickView,
 }: BookCardProps) {
-  const [isHovered, setIsHovered] = useState(false)
   const [isWishlisted, setIsWishlisted] = useState(false)
-
   const router = useRouter()
 
   return (
     <div
-      className="group relative bg-card rounded-xl overflow-hidden border border-border/60
-      transition-all duration-500 hover:-translate-y-2 hover:shadow-xl
-      hover:border-gold/60"
+      onClick={() => router.push(`/book/${book.id}`)}
+      className="relative bg-card rounded-xl overflow-hidden border border-border/60
+      transition-all duration-300 hover:shadow-lg cursor-pointer"
       style={{ animationDelay: `${index * 100}ms` }}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
     >
       {/* Wishlist */}
       <button
-        onClick={() => setIsWishlisted(!isWishlisted)}
-        className="absolute top-3 right-3 z-20 w-9 h-9 bg-background/80 backdrop-blur-sm
-        rounded-full flex items-center justify-center transition-all duration-300
-        hover:bg-gold hover:text-primary-foreground"
+        onClick={(e) => {
+          e.stopPropagation()
+          setIsWishlisted(!isWishlisted)
+        }}
+        className="absolute top-3 right-3 z-20 w-9 h-9 bg-white shadow-sm
+        rounded-full flex items-center justify-center border transition"
       >
         <Heart
           className={cn(
             "w-4 h-4",
-            isWishlisted ? "fill-gold text-gold" : ""
+            isWishlisted
+              ? "fill-red-500 text-red-500"
+              : "text-gray-500"
           )}
         />
       </button>
 
       {/* Image */}
-      <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+      <div className="relative aspect-[3/4] bg-muted">
         <Image
           src={book.image}
           alt={book.title}
           fill
-          className={cn(
-            "object-cover transition-transform duration-500",
-            isHovered ? "scale-110" : "scale-100"
-          )}
+          className="object-cover"
         />
-
-        {/* Overlay Actions */}
-        <div
-          className={cn(
-            "absolute inset-0 bg-black/50 flex items-center justify-center gap-5 transition-all duration-300",
-            isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
-          )}
-        >
-          {/* Cart Button */}
-          <Button
-            onClick={() => {
-              onAddToCart?.(book)
-              router.push("/cart")
-            }}
-            className="w-11 h-11 rounded-full bg-gold hover:bg-gold-dark flex items-center justify-center"
-          >
-            <ShoppingCart className="w-5 h-5" />
-          </Button>
-
-          {/* Eye Button */}
-          <Button
-            variant="outline"
-            onClick={() => onQuickView?.(book)}
-            className="w-11 h-11 rounded-full border-white text-white hover:bg-white hover:text-primary flex items-center justify-center"
-          >
-            <Eye className="w-5 h-5" />
-          </Button>
-        </div>
       </div>
 
       {/* Content */}
-      <div className="p-4">
-        {/* Stars */}
-        <div className="flex items-center gap-1 mb-2">
+      <div className="p-4 space-y-2">
+
+        {/* Rating */}
+        <div className="flex items-center gap-1">
           {[...Array(5)].map((_, i) => (
             <Star
               key={i}
               className={cn(
                 "w-4 h-4",
                 i < Math.floor(book.rating)
-                  ? "fill-gold text-gold"
-                  : "text-muted-foreground"
+                  ? "fill-yellow-500 text-yellow-500"
+                  : "text-gray-300"
               )}
             />
           ))}
         </div>
 
         {/* Title */}
-        <h3 className="font-semibold line-clamp-2 group-hover:text-gold">
+        <h3 className="font-semibold line-clamp-2 hover:text-[#7a0f1e] transition">
           {book.title}
         </h3>
 
         {/* Author */}
-        <p className="text-sm text-muted-foreground mb-2">
+        <p className="text-sm text-muted-foreground">
           {book.author}
         </p>
 
         {/* Price */}
-        <p className="font-bold text-gold">${book.price}</p>
+        <p className="font-bold text-[#7a0f1e] text-lg">
+          ${book.price}
+        </p>
+
+        {/* Add to Cart Button */}
+        <Button
+          onClick={(e) => {
+            e.stopPropagation()
+            onAddToCart?.(book)
+          }}
+          className="w-full mt-2 bg-[#7a0f1e] hover:bg-[#5c0c17] text-white rounded-lg"
+        >
+          <ShoppingCart className="w-4 h-4 mr-2" />
+          Add to Cart
+        </Button>
+
       </div>
     </div>
   )
