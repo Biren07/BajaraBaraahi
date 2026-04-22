@@ -144,7 +144,7 @@ export default function AdminOrderPage() {
                         </TableCell>
 
                         <TableCell className="text-right font-semibold">
-                          ${order.total.toFixed(2)}
+                          Rs. {order.total.toFixed(2)}
                         </TableCell>
 
                         <TableCell className="text-right">

@@ -1,4 +1,7 @@
-import { Eye, ShieldCheck } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Eye, ShieldCheck, Loader2, Trash2 } from "lucide-react";
 import AdminShell from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,43 +19,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const users = [
-  {
-    id: "USR-10001",
-    name: "Sita Gurung",
-    email: "sita@example.com",
-    role: "Customer",
-    status: "Active",
-  },
-  {
-    id: "USR-10002",
-    name: "Manish Khadka",
-    email: "manish@example.com",
-    role: "Customer",
-    status: "Active",
-  },
-  {
-    id: "USR-10003",
-    name: "Roshni Thapa",
-    email: "roshni@example.com",
-    role: "Admin",
-    status: "Active",
-  },
-  {
-    id: "USR-10004",
-    name: "Bikram Chaudhary",
-    email: "bikram@example.com",
-    role: "Customer",
-    status: "Suspended",
-  },
-];
+import { userService } from "@/services/userService";
+import toast from "react-hot-toast";
 
 function statusBadge(status: string) {
-  switch (status) {
-    case "Active":
+  switch (status?.toLowerCase()) {
+    case "active":
       return "bg-green-50 text-green-600 border-green-200";
-    case "Suspended":
+    case "suspended":
+    case "banned":
       return "bg-red-50 text-red-600 border-red-200";
     default:
       return "bg-gray-100 text-gray-600";
@@ -60,15 +35,65 @@ function statusBadge(status: string) {
 }
 
 function roleBadge(role: string) {
-  switch (role) {
-    case "Admin":
+  switch (role?.toLowerCase()) {
+    case "admin":
       return "bg-black text-white";
+    case "seller":
+      return "bg-purple-100 text-purple-700";
     default:
       return "bg-gray-100 text-gray-700";
   }
 }
 
 export default function AdminUserPage() {
+  const [users, setUsers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await userService.getAllUsers();
+      console.log("Users response:", response);
+      setUsers(response.users || response || []);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      toast.error("Failed to load users");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteUser = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+      setDeleting(id);
+      await userService.deleteUser(id);
+      setUsers((prev) => prev.filter((u) => (u._id || u.id) !== id));
+      toast.success("User deleted successfully");
+    } catch (error: any) {
+      console.error("Failed to delete user:", error);
+      toast.error(error.response?.data?.message || "Failed to delete user");
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <AdminShell>
+        <div className="flex items-center justify-center h-96">
+          <Loader2 className="w-8 h-8 animate-spin text-[#800000]" />
+        </div>
+      </AdminShell>
+    );
+  }
+
   return (
     <AdminShell>
       <div className="space-y-6">
@@ -121,16 +146,18 @@ export default function AdminUserPage() {
                 <TableBody>
                   {users.map((u) => (
                     <TableRow
-                      key={u.id}
+                      key={u._id || u.id}
                       className="hover:bg-gray-50 transition"
                     >
 
                       <TableCell className="font-mono text-xs text-gray-500">
-                        {u.id}
+                        {u._id?.slice(-8) || u.id}
                       </TableCell>
 
                       <TableCell className="font-medium text-gray-900">
-                        {u.name}
+                        {u.firstname && u.lastname 
+                          ? `${u.firstname} ${u.lastname}` 
+                          : u.name || u.fullName || "-"}
                       </TableCell>
 
                       <TableCell className="text-gray-500">
@@ -139,25 +166,35 @@ export default function AdminUserPage() {
 
                       <TableCell>
                         <Badge className={roleBadge(u.role)}>
-                          {u.role}
+                          {u.role || "Customer"}
                         </Badge>
                       </TableCell>
 
                       <TableCell>
                         <Badge className={statusBadge(u.status)}>
-                          {u.status}
+                          {u.status || "Active"}
                         </Badge>
                       </TableCell>
 
                       <TableCell className="text-right">
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          className="hover:border-[#800000] hover:text-[#800000]"
-                        >
-                          <Eye className="w-4 h-4 mr-1" />
-                          View
-                        </Button>
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="hover:border-[#800000] hover:text-[#800000]"
+                          >
+                            <Eye className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => deleteUser(u._id || u.id)}
+                            disabled={deleting === (u._id || u.id)}
+                            className="text-red-500 hover:text-red-600 hover:border-red-500"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </TableCell>
 
                     </TableRow>

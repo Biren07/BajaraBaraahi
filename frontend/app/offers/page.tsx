@@ -369,11 +369,11 @@ export default function OffersPage() {
                   
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-gold">${bundle.price}</span>
-                      <span className="text-sm text-muted-foreground line-through">${bundle.originalPrice}</span>
+                      <span className="text-2xl font-bold text-gold">Rs. {bundle.price}</span>
+                      <span className="text-sm text-muted-foreground line-through">Rs. {bundle.originalPrice}</span>
                     </div>
                     <Badge variant="outline" className="border-green-500 text-green-600">
-                      Save ${(bundle.originalPrice - bundle.price).toFixed(0)}
+                      Save Rs. {(bundle.originalPrice - bundle.price).toFixed(0)}
                     </Badge>
                   </div>
 

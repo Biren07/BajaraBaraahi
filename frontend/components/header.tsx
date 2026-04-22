@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useWishlist } from "../context/wishlist-context";
 import {
   Search,
   ShoppingCart,
@@ -43,6 +44,8 @@ export function Header() {
   // ✅ ADD THIS (IMPORTANT)
   const [openCategories, setOpenCategories] = useState(false);
   const [openMore, setOpenMore] = useState(false);
+
+  const { count } = useWishlist();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -108,7 +111,7 @@ export function Header() {
                     className="hover:bg-red/10 cursor-pointer"
                   >
                     <Link
-                      href={`/category/${category
+                      href={`/categories/${category
                         .toLowerCase()
                         .replace(/ & /g, "-")
                         .replace(/ /g, "-")}`}
@@ -193,9 +196,14 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="hidden md:flex hover:bg-red/10 hover:text-red"
+                className="hidden md:flex hover:bg-red/10 hover:text-red relative"
               >
                 <Heart className="w-5 h-5" />
+                {count > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {count}
+                  </span>
+                )}
               </Button>
             </Link>
             <Link href="/cart">
@@ -308,7 +316,7 @@ export function Header() {
                 {categories.map((category) => (
                   <Link
                     key={category}
-                    href={`/category/${category
+                    href={`/categories/${category
                       .toLowerCase()
                       .replace(/ & /g, "-")
                       .replace(/ /g, "-")}`}

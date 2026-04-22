@@ -15,6 +15,9 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { signInWithPopup } from "firebase/auth"
+import authService from "@/services/authService"
+import { auth, googleProvider } from "@/lib/firebase"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -34,7 +37,7 @@ export default function LoginPage() {
     setVisible(true)
   }, [])
 
-  const [errors, setErrors] = useState<{ email?: string; password?: string }>({})
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({})
 
   const validateForm = () => {
     const newErrors: any = {}
@@ -49,10 +52,17 @@ export default function LoginPage() {
     if (!validateForm()) return
 
     setIsLoading(true)
-    await new Promise((r) => setTimeout(r, 1200))
-    setIsLoading(false)
+    setErrors({})
 
-    router.push("/")
+    try {
+      const res = await authService.login(formData.email, formData.password)
+      localStorage.setItem('token', res.token)
+      router.push("/")
+    } catch (err: any) {
+      setErrors({ general: err.response?.data?.message || 'Login failed' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -167,12 +177,34 @@ export default function LoginPage() {
 
           {/* GOOGLE */}
           <Button
+            type="button"
+            onClick={async () => {
+              setErrors({})
+              try {
+                const result = await signInWithPopup(auth, googleProvider)
+                const user = result.user
+                const data = {
+                  email: user.email,
+                  name: user.displayName,
+                  idToken: await user.getIdToken()
+                }
+                const res = await authService.googleAuth(data)
+                localStorage.setItem('token', res.token)
+                router.push("/")
+              } catch (err: any) {
+                setErrors({ general: err.message || 'Google sign in failed' })
+              }
+            }}
             variant="outline"
             className="w-full h-11 flex items-center gap-2 hover:bg-red-200 hover:border-red"
           >
             <Chrome className="w-5 h-5" />
             Continue with Google
           </Button>
+
+          {errors.general && (
+            <p className="text-xs text-red-500 mt-1">{errors.general}</p>
+          )}
 
           {/* DIVIDER */}
           <div className="my-6 flex items-center gap-4">

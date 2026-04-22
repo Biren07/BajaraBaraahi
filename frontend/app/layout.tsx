@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { Toaster } from 'react-hot-toast'
+import { WishlistProvider } from '@/context/wishlist-context'
+import { CartProvider } from '@/context/cart-context'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -59,7 +62,13 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} scroll-smooth`}
     >
       <body className="font-sans antialiased min-h-screen">
-        {children}
+        <WishlistProvider>
+          <CartProvider>
+            {children}
+          </CartProvider>
+        </WishlistProvider>
+
+        <Toaster position="bottom-right" />
 
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { BookCard } from "@/components/book-card";
@@ -21,196 +21,102 @@ import {
   LayoutList,
   X,
   ChevronRight,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { bookService } from "@/services/bookService";
+import toast from "react-hot-toast";
 
-const allBooks = [
-  {
-    id: "1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 14.99,
-    originalPrice: 19.99,
-    rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Fiction",
-  },
-  {
-    id: "2",
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 16.99,
-    originalPrice: 24.99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Self-Help",
-  },
-  {
-    id: "3",
-    title: "Where the Crawdads Sing",
-    author: "Delia Owens",
-    price: 12.99,
-    originalPrice: 17.99,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Fiction",
-  },
-  {
-    id: "4",
-    title: "The Psychology of Money",
-    author: "Morgan Housel",
-    price: 15.99,
-    originalPrice: 22.99,
-    rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Business",
-  },
-  {
-    id: "5",
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    price: 18.99,
-    originalPrice: 26.99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Science Fiction",
-  },
-  {
-    id: "6",
-    title: "The Four Winds",
-    author: "Kristin Hannah",
-    price: 13.99,
-    originalPrice: 18.99,
-    rating: 4.6,
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Fiction",
-  },
-  {
-    id: "7",
-    title: "Think Again",
-    author: "Adam Grant",
-    price: 17.99,
-    originalPrice: 25.99,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Self-Help",
-  },
-  {
-    id: "8",
-    title: "The Silent Patient",
-    author: "Alex Michaelides",
-    price: 11.99,
-    originalPrice: 16.99,
-    rating: 4.5,
-    image:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Thriller",
-  },
-  {
-    id: "9",
-    title: "Sapiens",
-    author: "Yuval Noah Harari",
-    price: 19.99,
-    originalPrice: 28.99,
-    rating: 4.8,
-    image:
-      "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Non-Fiction",
-  },
-  {
-    id: "10",
-    title: "The Vanishing Half",
-    author: "Brit Bennett",
-    price: 14.99,
-    originalPrice: 19.99,
-    rating: 4.6,
-    image:
-      "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Fiction",
-  },
-  {
-    id: "11",
-    title: "Educated",
-    author: "Tara Westover",
-    price: 15.99,
-    originalPrice: 21.99,
-    rating: 4.7,
-    image:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Memoir",
-  },
-  {
-    id: "12",
-    title: "The Alchemist",
-    author: "Paulo Coelho",
-    price: 9.99,
-    originalPrice: 14.99,
-    rating: 4.9,
-    image:
-      "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-    isBestseller: true,
-    category: "Fiction",
-  },
-];
-
+// Categories for filtering (matches backend GENRES)
 const categories = [
   "All",
-  "Fiction",
-  "Non-Fiction",
-  "Self-Help",
-  "Business",
-  "Thriller",
-  "Science Fiction",
-  "Memoir",
+  "fiction",
+  "romance",
+  "action",
+  "thriller",
+  "horror",
+  "fantasy",
+  "biography",
+  "self-help",
+  "other",
 ];
 
 export default function BestsellersPage() {
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState("popularity");
-  const [priceRange, setPriceRange] = useState([0, 50]);
+  const [priceRange, setPriceRange] = useState([0, 20000]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([
     "All",
   ]);
   const [showFilters, setShowFilters] = useState(false);
 
-  const filteredBooks = allBooks.filter((book) => {
+  // Fetch bestsellers from API
+  useEffect(() => {
+    fetchBestsellers();
+  }, []);
+
+  const fetchBestsellers = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await bookService.getBooks({
+        category: "best-selling",
+      });
+
+      setBooks(response?.books || []);
+    } catch (err: any) {
+      console.error("❌ Failed to fetch bestsellers:", err);
+      console.error("🔍 Error details:", {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        data: err.response?.data,
+      });
+
+      setError(
+        `Failed to load bestsellers: ${err.message || err.response?.data?.message || "Network error - check if backend is running"}`,
+      );
+      setBooks([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const filteredBooks = books.filter((book: any) => {
+    // Calculate discounted price
+    const discountedPrice =
+      book.original_price && book.discount
+        ? book.original_price * (1 - book.discount / 100)
+        : book.price;
+
     const inPriceRange =
-      book.price >= priceRange[0] && book.price <= priceRange[1];
+      discountedPrice >= priceRange[0] && discountedPrice <= priceRange[1];
     const inCategory =
       selectedCategories.includes("All") ||
-      selectedCategories.includes(book.category);
+      selectedCategories.includes(book.genre || book.category);
     return inPriceRange && inCategory;
   });
 
-  const sortedBooks = [...filteredBooks].sort((a, b) => {
+  const sortedBooks = [...filteredBooks].sort((a: any, b: any) => {
+    const getPrice = (book: any) => {
+      return book.original_price && book.discount
+        ? book.original_price * (1 - book.discount / 100)
+        : book.price;
+    };
+
     switch (sortBy) {
       case "price-low":
-        return a.price - b.price;
+        return getPrice(a) - getPrice(b);
       case "price-high":
-        return b.price - a.price;
+        return getPrice(b) - getPrice(a);
       case "rating":
-        return b.rating - a.rating;
+        return (b.rating || 4.5) - (a.rating || 4.5);
       case "newest":
-        return 0;
+        return 0; // API doesn't provide date info
       default:
         return 0;
     }
@@ -285,7 +191,7 @@ export default function BestsellersPage() {
                     className="text-xs text-gray-500 hover:text-[#7a0f1e]"
                     onClick={() => {
                       setSelectedCategories(["All"]);
-                      setPriceRange([0, 50]);
+                      setPriceRange([0, 20000]);
                     }}
                   >
                     Reset
@@ -338,18 +244,18 @@ export default function BestsellersPage() {
                   <Slider
                     value={priceRange}
                     onValueChange={setPriceRange}
-                    max={50}
-                    step={1}
+                    max={20000}
+                    step={100}
                     className="mb-5"
                   />
 
                   <div className="flex items-center justify-between text-sm bg-gray-50 px-3 py-2 rounded-md">
                     <span className="font-medium text-[#7a0f1e]">
-                      ${priceRange[0]}
+                      Rs. {priceRange[0]}
                     </span>
                     <span className="text-gray-400">to</span>
                     <span className="font-medium text-[#7a0f1e]">
-                      ${priceRange[1]}
+                      Rs. {priceRange[1]}
                     </span>
                   </div>
                 </div>
@@ -360,7 +266,7 @@ export default function BestsellersPage() {
                   className="w-full border-[#7a0f1e]/40 text-[#7a0f1e] hover:bg-[#7a0f1e]/10 hover:border-[#7a0f1e]"
                   onClick={() => {
                     setSelectedCategories(["All"]);
-                    setPriceRange([0, 50]);
+                    setPriceRange([0, 100]);
                   }}
                 >
                   Clear All Filters
@@ -448,9 +354,64 @@ export default function BestsellersPage() {
                     : "grid-cols-1",
                 )}
               >
-                {sortedBooks.map((book, index) => (
-                  <BookCard key={book.id} book={book} index={index} />
-                ))}
+                {loading ? (
+                  <div className="col-span-full flex justify-center items-center py-12">
+                    <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                  </div>
+                ) : error ? (
+                  <div className="col-span-full flex justify-center items-center py-12">
+                    <div className="text-center">
+                      <p className="text-red-600 mb-4">{error}</p>
+                      <Button
+                        onClick={fetchBestsellers}
+                        className="bg-gold hover:bg-gold-dark text-primary-foreground"
+                      >
+                        Try Again
+                      </Button>
+                    </div>
+                  </div>
+                ) : sortedBooks.length === 0 ? (
+                  <div className="col-span-full flex justify-center items-center py-12">
+                    <p className="text-muted-foreground">
+                      No books found matching your filters.
+                    </p>
+                  </div>
+                ) : (
+                  sortedBooks.map((book: any, index) => {
+                    // Map API data to BookCard format
+                    const discountedPrice =
+                      book.original_price && book.discount
+                        ? book.original_price * (1 - book.discount / 100)
+                        : book.price;
+
+                    const mappedBook = {
+                      id: book._id,
+                      title: book.title,
+                      author: book.author,
+                      price: discountedPrice,
+                      discountPrice:
+                        book.original_price && book.discount
+                          ? discountedPrice
+                          : null,
+                      originalPrice: book.original_price,
+                      image:
+                        book.cover_Img?.url &&
+                        typeof book.cover_Img.url === "string" &&
+                        book.cover_Img.url.trim()
+                          ? book.cover_Img.url
+                          : "/placeholder.jpg",
+                      rating: 4.5, // Default rating since API doesn't provide it
+                    };
+
+                    return (
+                      <BookCard
+                        key={book._id}
+                        book={mappedBook}
+                        index={index}
+                      />
+                    );
+                  })
+                )}
               </div>
 
               {/* Load More */}
@@ -518,13 +479,13 @@ export default function BestsellersPage() {
               <Slider
                 value={priceRange}
                 onValueChange={setPriceRange}
-                max={50}
-                step={1}
+                max={20000}
+                step={100}
                 className="mb-4"
               />
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>Rs. {priceRange[0]}</span>
+                <span>Rs. {priceRange[1]}</span>
               </div>
             </div>
 
@@ -541,7 +502,7 @@ export default function BestsellersPage() {
                 className="w-full border-gold/30"
                 onClick={() => {
                   setSelectedCategories(["All"]);
-                  setPriceRange([0, 50]);
+                  setPriceRange([0, 20000]);
                 }}
               >
                 Clear All

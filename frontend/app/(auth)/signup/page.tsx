@@ -8,6 +8,7 @@ import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import authService from "@/services/authService"
 
 export default function SignupPage() {
   const router = useRouter()
@@ -20,16 +21,60 @@ export default function SignupPage() {
     firstName: "",
     lastName: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     agreeTerms: false,
   })
 
-  const handleNext = () => setStep(2)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({})
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const validateStep1 = () => {
+    const newErrors: { [key: string]: string } = {}
+    if (!formData.firstName.trim()) newErrors.firstName = "First name is required"
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required"
+    if (!formData.email.trim()) newErrors.email = "Email is required"
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required"
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const validateStep2 = () => {
+    const newErrors: { [key: string]: string } = {}
+    if (!formData.password) newErrors.password = "Password is required"
+    if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters"
+    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
+    if (!formData.agreeTerms) newErrors.agreeTerms = "You must agree to terms"
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleNext = () => {
+    if (validateStep1()) setStep(2)
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    router.push("/login")
+    if (!validateStep2()) return
+
+    setIsLoading(true)
+    setErrors({})
+
+    try {
+      await authService.register(
+        formData.firstName,
+        formData.lastName,
+        formData.email,
+        formData.phone,
+        formData.password
+      )
+      router.push("/login")
+    } catch (err: any) {
+      setErrors({ general: err.response?.data?.message || 'Registration failed' })
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -121,26 +166,59 @@ export default function SignupPage() {
               }}
               className="space-y-4"
             >
-              <Input
-                placeholder="First Name"
-                onChange={(e) =>
-                  setFormData({ ...formData, firstName: e.target.value })
-                }
-              />
+              <div>
+                <Input
+                  placeholder="First Name"
+                  value={formData.firstName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, firstName: e.target.value })
+                  }
+                />
+                {errors.firstName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
+                )}
+              </div>
 
-              <Input
-                placeholder="Last Name"
-                onChange={(e) =>
-                  setFormData({ ...formData, lastName: e.target.value })
-                }
-              />
+              <div>
+                <Input
+                  placeholder="Last Name"
+                  value={formData.lastName}
+                  onChange={(e) =>
+                    setFormData({ ...formData, lastName: e.target.value })
+                  }
+                />
+                {errors.lastName && (
+                  <p className="text-xs text-red-500 mt-1">{errors.lastName}</p>
+                )}
+              </div>
 
-              <Input
-                placeholder="Email"
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
-              />
+              <div>
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                />
+                {errors.email && (
+                  <p className="text-xs text-red-500 mt-1">{errors.email}</p>
+                )}
+              </div>
+
+              <div>
+                <Input
+                  placeholder="Phone"
+                  type="tel"
+                  value={formData.phone}
+                  onChange={(e) =>
+                    setFormData({ ...formData, phone: e.target.value })
+                  }
+                />
+                {errors.phone && (
+                  <p className="text-xs text-red-500 mt-1">{errors.phone}</p>
+                )}
+              </div>
 
               <Button className="w-full bg-red hover:bg-red-dark text-white h-11 rounded-xl">
                 Continue <ArrowRight className="w-4 h-4 ml-2" />
@@ -152,11 +230,16 @@ export default function SignupPage() {
           {step === 2 && (
             <form onSubmit={handleSubmit} className="space-y-4">
 
+              {errors.general && (
+                <p className="text-xs text-red-500">{errors.general}</p>
+              )}
+
               {/* PASSWORD */}
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
+                  value={formData.password}
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
@@ -172,6 +255,9 @@ export default function SignupPage() {
                     <Eye className="w-5 h-5" />
                   )}
                 </button>
+                {errors.password && (
+                  <p className="text-xs text-red-500 mt-1">{errors.password}</p>
+                )}
               </div>
 
               {/* CONFIRM PASSWORD */}
@@ -179,6 +265,7 @@ export default function SignupPage() {
                 <Input
                   type={showConfirmPassword ? "text" : "password"}
                   placeholder="Confirm Password"
+                  value={formData.confirmPassword}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
@@ -199,6 +286,9 @@ export default function SignupPage() {
                     <Eye className="w-5 h-5" />
                   )}
                 </button>
+                {errors.confirmPassword && (
+                  <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>
+                )}
               </div>
 
               {/* TERMS */}
@@ -212,6 +302,9 @@ export default function SignupPage() {
                 <span className="text-sm text-muted-foreground">
                   I agree to Terms & Privacy Policy
                 </span>
+                {errors.agreeTerms && (
+                  <p className="text-xs text-red-500 mt-1">{errors.agreeTerms}</p>
+                )}
               </div>
 
               {/* FIXED BUTTON LAYOUT */}
@@ -221,12 +314,17 @@ export default function SignupPage() {
                   variant="outline"
                   onClick={() => setStep(1)}
                   className="h-11 rounded-xl"
+                  disabled={isLoading}
                 >
                   Back
                 </Button>
 
-                <Button className="h-11 bg-red hover:bg-red-dark text-white rounded-xl">
-                  Create
+                <Button
+                  type="submit"
+                  className="h-11 bg-red hover:bg-red-dark text-white rounded-xl"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Creating..." : "Create"}
                 </Button>
               </div>
             </form>
@@ -244,3 +342,4 @@ export default function SignupPage() {
     </div>
   )
 }
+

@@ -182,8 +182,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                     className="mb-4"
                   />
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
-                    <span>${priceRange[0]}</span>
-                    <span>${priceRange[1]}</span>
+                    <span>Rs. {priceRange[0]}</span>
+                    <span>Rs. {priceRange[1]}</span>
                   </div>
                 </div>
 
@@ -365,8 +365,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 className="mb-4"
               />
               <div className="flex items-center justify-between text-sm text-muted-foreground">
-                <span>${priceRange[0]}</span>
-                <span>${priceRange[1]}</span>
+                <span>Rs. {priceRange[0]}</span>
+                <span>Rs. {priceRange[1]}</span>
               </div>
             </div>
 

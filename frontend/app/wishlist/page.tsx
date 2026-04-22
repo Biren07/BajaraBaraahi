@@ -1,104 +1,148 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { ChevronRight, Heart, ShoppingCart, Trash2, Share2, ArrowRight } from "lucide-react"
+import { ChevronRight, Heart, ShoppingCart, Trash2, Share2, ArrowRight, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { bookService } from "@/services/bookService"
+import { cartService } from "@/services/cartService"
+import { useWishlist } from "@/context/wishlist-context"
+import { useCart } from "@/context/cart-context"
+import toast from "react-hot-toast"
 
 interface WishlistItem {
-  id: string
+  _id: string
   title: string
   author: string
   price: number
-  originalPrice?: number
-  rating: number
-  image: string
-  inStock: boolean
+  original_price?: number
+  discount?: number
+  cover_Img?: string
+  stock: number
 }
 
-const initialWishlist: WishlistItem[] = [
-  {
-    id: "1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 14.99,
-    originalPrice: 19.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-    inStock: true,
-  },
-  {
-    id: "2",
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 16.99,
-    originalPrice: 24.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-    inStock: true,
-  },
-  {
-    id: "3",
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    price: 18.99,
-    originalPrice: 26.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-    inStock: false,
-  },
-  {
-    id: "4",
-    title: "The Psychology of Money",
-    author: "Morgan Housel",
-    price: 15.99,
-    originalPrice: 22.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-    inStock: true,
-  },
-]
-
 export default function WishlistPage() {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist)
+const [wishlist, setWishlist] = useState<WishlistItem[]>([])
+const [loading, setLoading] = useState(true)
+const [error, setError] = useState<string | null>(null)
+const { removeFromWishlist: removeFromWishlistContext, refetchWishlist } = useWishlist()
+  const { refetchCart } = useCart()
 
-  const removeFromWishlist = (id: string) => {
-    setWishlist((items) => items.filter((item) => item.id !== id))
+  const [addingToCart, setAddingToCart] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchWishlist()
+  }, [])
+
+  const fetchWishlist = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await bookService.getWishlist()
+      setWishlist(response.favorites || [])
+    } catch (err) {
+      console.error("Failed to fetch wishlist:", err)
+      setError("Failed to load wishlist. Please try again.")
+      setWishlist([])
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const addToCart = (id: string) => {
-    alert(`Added item ${id} to cart!`)
+  const removeFromWishlist = async (id: string) => {
+    try {
+      await removeFromWishlistContext(id)
+      setWishlist((items) => items.filter((item) => item._id !== id))
+      toast.success("Removed from wishlist")
+    } catch (error) {
+      console.error("Failed to remove from wishlist:", error)
+      toast.error("Failed to remove from wishlist")
+    }
   }
 
-  const addAllToCart = () => {
-    const inStockItems = wishlist.filter((item) => item.inStock)
-    alert(`Added ${inStockItems.length} items to cart!`)
+  const addToCart = async (id: string) => {
+    try {
+      setAddingToCart(id)
+      await cartService.addToCart(id)
+      toast.success("Added to cart")
+    } catch (error: any) {
+      console.error("Failed to add to cart:", error)
+      toast.error(error.response?.data?.message || "Failed to add to cart")
+    } finally {
+      setAddingToCart(null)
+    }
   }
 
-  if (wishlist.length === 0) {
+  const addAllToCart = async () => {
+    const inStockItems = wishlist.filter((item) => item.stock > 0)
+    try {
+      for (const item of inStockItems) {
+        await cartService.addToCart(item._id)
+      }
+      await refetchCart()
+      toast.success(`${inStockItems.length} items added to cart`)
+    } catch (error: any) {
+      console.error("Failed to add all to cart:", error)
+      toast.error(error.response?.data?.message || "Failed to add items to cart")
+    }
+  }
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-background">
         <Header />
         <div className="pt-32 pb-16">
           <div className="container mx-auto px-4">
             <div className="max-w-lg mx-auto text-center py-16">
-              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center">
-                <Heart className="w-12 h-12 text-gold" />
-              </div>
-              <h1 className="text-3xl font-serif font-bold mb-4">Your Wishlist is Empty</h1>
-              <p className="text-muted-foreground mb-8">
-                Start adding books you love to your wishlist. They&apos;ll be saved here for later!
-              </p>
-              <Link href="/bestsellers">
-                <Button size="lg" className="bg-gold hover:bg-gold-dark text-primary-foreground">
-                  Browse Books
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
+              <Loader2 className="w-12 h-12 animate-spin mx-auto mb-6 text-gold" />
+              <h1 className="text-2xl font-serif font-bold mb-4">Loading Wishlist...</h1>
+            </div>
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }
+
+  if (error || wishlist.length === 0) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <div className="pt-32 pb-16">
+          <div className="container mx-auto px-4">
+            <div className="max-w-lg mx-auto text-center py-16">
+              {error ? (
+                <>
+                  <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-red-100 flex items-center justify-center">
+                    <Heart className="w-12 h-12 text-red-500" />
+                  </div>
+                  <h1 className="text-2xl font-serif font-bold mb-4">Error Loading Wishlist</h1>
+                  <p className="text-muted-foreground mb-8">{error}</p>
+                  <Button onClick={fetchWishlist} className="bg-gold hover:bg-gold-dark text-primary-foreground">
+                    Try Again
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gold/10 flex items-center justify-center">
+                    <Heart className="w-12 h-12 text-gold fill-gold" />
+                  </div>
+                  <h1 className="text-3xl font-serif font-bold mb-4">Your Wishlist is Empty</h1>
+                  <p className="text-muted-foreground mb-8">
+                    Start adding books you love to your wishlist. They&apos;ll be saved here for later!
+                  </p>
+                  <Link href="/bestsellers">
+                    <Button size="lg" className="bg-gold hover:bg-gold-dark text-primary-foreground">
+                      Browse Books
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -154,80 +198,91 @@ export default function WishlistPage() {
 
           {/* Wishlist Items */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {wishlist.map((item, index) => (
-              <div
-                key={item.id}
-                className="group bg-card rounded-xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Image */}
-                <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  
-                  {/* Stock Badge */}
-                  {!item.inStock && (
-                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                      <span className="bg-destructive text-white px-4 py-2 rounded-full text-sm font-semibold">
-                        Out of Stock
-                      </span>
-                    </div>
-                  )}
+            {wishlist.map((item, index) => {
+              const isInStock = item.stock > 0
+              const discountedPrice = item.original_price && item.discount
+                ? item.original_price * (1 - item.discount / 100)
+                : item.price
 
-                  {/* Remove Button */}
-                  <button
-                    onClick={() => removeFromWishlist(item.id)}
-                    className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-destructive hover:text-white"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
+              return (
+                <div
+                  key={item._id}
+                  className="group bg-card rounded-xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Image */}
+                  <div className="relative aspect-[3/4] overflow-hidden bg-muted">
+                    <Image
+                      src={item.cover_Img && typeof item.cover_Img === 'string' && item.cover_Img.trim() ? item.cover_Img : "/placeholder.jpg"}
+                      alt={item.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
 
-                  {/* Discount Badge */}
-                  {item.originalPrice && (
-                    <span className="absolute top-3 left-3 bg-gold text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                      -{Math.round(((item.originalPrice - item.price) / item.originalPrice) * 100)}%
-                    </span>
-                  )}
-                </div>
+                    {/* Stock Badge */}
+                    {!isInStock && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                        <span className="bg-destructive text-white px-4 py-2 rounded-full text-sm font-semibold">
+                          Out of Stock
+                        </span>
+                      </div>
+                    )}
 
-                {/* Content */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-gold transition-colors mb-1">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-3">by {item.author}</p>
+                    {/* Remove Button */}
+                    <button
+                      onClick={() => removeFromWishlist(item._id)}
+                      className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-destructive hover:text-white"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
 
-                  {/* Price */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-lg font-bold text-gold">${item.price.toFixed(2)}</span>
-                    {item.originalPrice && (
-                      <span className="text-sm text-muted-foreground line-through">
-                        ${item.originalPrice.toFixed(2)}
+                    {/* Discount Badge */}
+                    {item.discount && item.discount > 0 && (
+                      <span className="absolute top-3 left-3 bg-gold text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                        -{item.discount}%
                       </span>
                     )}
                   </div>
 
-                  {/* Add to Cart Button */}
-                  <Button
-                    onClick={() => addToCart(item.id)}
-                    disabled={!item.inStock}
-                    className={cn(
-                      "w-full transition-all",
-                      item.inStock
-                        ? "bg-primary hover:bg-gold hover:text-primary-foreground"
-                        : "bg-muted text-muted-foreground cursor-not-allowed"
-                    )}
-                  >
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    {item.inStock ? "Add to Cart" : "Out of Stock"}
-                  </Button>
+                  {/* Content */}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-gold transition-colors mb-1">
+                      {item.title}
+                    </h3>
+                    <p className="text-sm text-muted-foreground mb-3">by {item.author}</p>
+
+                    {/* Price */}
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-lg font-bold text-gold">Rs. {discountedPrice.toFixed(2)}</span>
+                      {item.original_price && item.discount && (
+                        <span className="text-sm text-muted-foreground line-through">
+                          Rs. {item.original_price.toFixed(2)}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Add to Cart Button */}
+                    <Button
+                      onClick={() => addToCart(item._id)}
+                      disabled={!isInStock || addingToCart === item._id}
+                      className={cn(
+                        "w-full transition-all",
+                        isInStock
+                          ? "bg-primary hover:bg-gold hover:text-primary-foreground"
+                          : "bg-muted text-muted-foreground cursor-not-allowed"
+                      )}
+                    >
+                      {addingToCart === item._id ? (
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <ShoppingCart className="w-4 h-4 mr-2" />
+                      )}
+                      {addingToCart === item._id ? "Adding..." : isInStock ? "Add to Cart" : "Out of Stock"}
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Recommendations */}
