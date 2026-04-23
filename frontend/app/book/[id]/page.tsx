@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
-import { Star, Heart, ShoppingCart, Loader2, Minus, Plus } from "lucide-react";
+import { Star, Heart, ShoppingCart, Loader2 } from "lucide-react";
 import { bookService } from "@/services/bookService";
 import { cartService } from "@/services/cartService";
 import { useWishlist } from "@/context/wishlist-context";
@@ -22,7 +22,6 @@ export default function BookPage() {
   const [error, setError] = useState<string | null>(null);
   const [liked, setLiked] = useState(false);
   const [addingToCart, setAddingToCart] = useState(false);
-  const [quantity, setQuantity] = useState(1);
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const { refetchCart } = useCart();
 
@@ -67,9 +66,9 @@ export default function BookPage() {
 
     setAddingToCart(true);
     try {
-      await cartService.addToCart(book._id, quantity);
+      await cartService.addToCart(book._id, 1);
       await refetchCart();
-      toast.success(`Added ${quantity} item(s) to cart!`);
+      toast.success("Added to cart!");
     } catch (error: any) {
       console.error("Failed to add to cart:", error);
       toast.error(error.response?.data?.message || "Failed to add to cart");
@@ -207,34 +206,6 @@ export default function BookPage() {
                 {book.stock > 0 ? `In Stock (${book.stock} available)` : 'Out of Stock'}
               </span>
             </div>
-
-            {/* QUANTITY SELECTOR */}
-            {book.stock > 0 && (
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-muted-foreground">Quantity:</span>
-                <div className="flex items-center border rounded-lg">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    disabled={quantity <= 1}
-                    className="h-10 w-10 rounded-r-none"
-                  >
-                    <Minus className="w-4 h-4" />
-                  </Button>
-                  <span className="w-12 text-center font-medium">{quantity}</span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setQuantity(Math.min(book.stock, quantity + 1))}
-                    disabled={quantity >= book.stock}
-                    className="h-10 w-10 rounded-l-none"
-                  >
-                    <Plus className="w-4 h-4" />
-                  </Button>
-                </div>
-              </div>
-            )}
 
             {/* ACTION BUTTONS */}
             <div className="flex gap-4 pt-2">

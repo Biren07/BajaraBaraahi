@@ -14,14 +14,14 @@ export const cartService = {
   },
 
   // Update cart item quantity
-  updateCartQuantity: async (bookId, quantity) => {
-    const response = await api.patch(`/cart/update/${bookId}`, { quantity });
+  updateCartQuantity: async (cartItemId, quantity) => {
+    const response = await api.patch(`/cart/update/${cartItemId}`, { quantity });
     return response.data;
   },
 
   // Remove item from cart
-  removeFromCart: async (bookId) => {
-    const response = await api.delete(`/cart/remove/${bookId}`);
+  removeFromCart: async (cartItemId) => {
+    const response = await api.delete(`/cart/remove/${cartItemId}`);
     return response.data;
   },
 

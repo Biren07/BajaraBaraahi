@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWishlist } from "../context/wishlist-context";
+import { useCart } from "../context/cart-context";
 import {
   Search,
   ShoppingCart,
@@ -45,7 +46,8 @@ export function Header() {
   const [openCategories, setOpenCategories] = useState(false);
   const [openMore, setOpenMore] = useState(false);
 
-  const { count } = useWishlist();
+  const { count: wishlistCount } = useWishlist();
+  const { count: cartCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -199,11 +201,11 @@ export function Header() {
                 className="hidden md:flex hover:bg-red/10 hover:text-red relative"
               >
                 <Heart className="w-5 h-5" />
-                {count > 0 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                    {count}
-                  </span>
-                )}
+                 {wishlistCount > 0 && (
+                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                     {wishlistCount}
+                   </span>
+                 )}
               </Button>
             </Link>
             <Link href="/cart">
@@ -213,9 +215,11 @@ export function Header() {
                 className="hover:bg-red/10 hover:text-red relative"
               >
                 <ShoppingCart className="w-5 h-5" />
-                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                  3
-                </span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {cartCount}
+                  </span>
+                )}
               </Button>
             </Link>
             {/* import Link from "next/link" */}

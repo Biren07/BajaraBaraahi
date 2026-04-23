@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Header } from "@/components/header";
@@ -21,7 +21,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { cartService } from "@/services/cartService";
+import { useCart } from "@/context/cart-context";
 import toast from "react-hot-toast";
 
 interface CartItem {
@@ -75,92 +75,12 @@ interface CartItem {
 // ];
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<CartItem[]>([]);
-  const [totalPrice, setTotalPrice] = useState(0);
-  const [loading, setLoading] = useState(true);
-  const [updatingItems, setUpdatingItems] = useState<Set<string>>(new Set());
+  const { cartItems, totalPrice, loading, updateQuantity, removeItem, clearCart } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
 
-  // Fetch cart on component mount
-  useEffect(() => {
-    fetchCart();
-  }, []);
 
-  const fetchCart = async () => {
-    try {
-      setLoading(true);
-      const response = await cartService.getCart();
-      setCartItems(response.data || []);
-      setTotalPrice(response.totalPrice || 0);
-    } catch (error: any) {
-      console.error("Failed to fetch cart:", error);
-      toast.error(error.response?.data?.message || "Failed to load cart");
-      setCartItems([]);
-      setTotalPrice(0);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-const updateQuantity = async (cartItemId: string, newQuantity: number) => {
-  if (newQuantity < 1) return;
-
-  setUpdatingItems(prev => new Set(prev).add(cartItemId));
-
-  try {
-    const response = await cartService.updateCartQuantity(cartItemId, newQuantity);
-
-    setCartItems(response.data || []);
-    setTotalPrice(response.totalPrice || 0);
-
-    toast.success("Quantity updated");
-  } catch (error: any) {
-    console.error("Failed to update quantity:", error);
-    toast.error(error.response?.data?.message || "Failed to update quantity");
-    fetchCart();
-  } finally {
-    setUpdatingItems(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(cartItemId);
-      return newSet;
-    });
-  }
-};
-
- const removeItem = async (cartItemId: string) => {
-  try {
-    await cartService.removeFromCart(cartItemId);
-
-    setCartItems(prev =>
-      prev.filter(item => item.cartItemId !== cartItemId)
-    );
-
-    toast.success("Item removed from cart");
-
-    fetchCart();
-  } catch (error: any) {
-    console.error("Failed to remove item:", error);
-    toast.error(error.response?.data?.message || "Failed to remove item");
-    fetchCart();
-  }
-};
-
-  const clearCart = async () => {
-    if (!confirm("Are you sure you want to clear your entire cart?")) return;
-
-    try {
-      await cartService.clearCart();
-      setCartItems([]);
-      setTotalPrice(0);
-      toast.success("Cart cleared");
-    } catch (error: any) {
-      console.error("Failed to clear cart:", error);
-      toast.error(error.response?.data?.message || "Failed to clear cart");
-      fetchCart();
-    }
-  };
 
   const applyCoupon = () => {
     if (couponCode.toUpperCase() === "SUMMER20") {
@@ -276,7 +196,6 @@ const updateQuantity = async (cartItemId: string, newQuantity: number) => {
                 {/* Items */}
                 <div className="divide-y divide-border">
                   {cartItems.map((item, index) => {
-                    const isUpdating = updatingItems.has(item._id);
                     const imageUrl = item.cover_Img?.url || "/placeholder.jpg";
 
                     return (
@@ -303,11 +222,10 @@ const updateQuantity = async (cartItemId: string, newQuantity: number) => {
                               <p className="text-sm text-muted-foreground">
                                 by {item.author}
                               </p>
-                              <button
-                                onClick={() => removeItem(item._id)}
-                                disabled={isUpdating}
-                                className="mt-2 text-sm text-red-500 hover:text-red-600 flex items-center gap-1 md:hidden disabled:opacity-50"
-                              >
+                                <button
+                                  onClick={() => removeItem(item._id)}
+                                  className="mt-2 text-sm text-red-500 hover:text-red-600 flex items-center gap-1 md:hidden"
+                                >
                                 <Trash2 className="w-3 h-3" />
                                 Remove
                               </button>
@@ -337,29 +255,22 @@ const updateQuantity = async (cartItemId: string, newQuantity: number) => {
                               Qty:
                             </span>
                             <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                              <button
-                                onClick={() => updateQuantity(item.cartItemId, item.quantity - 1)}
-                                disabled={isUpdating || item.quantity <= 1}
-                                className="p-2 hover:bg-muted transition-colors disabled:opacity-50"
-                              >
-                                <Minus className="w-4 h-4" />
-                              </button>
-                              {isUpdating ? (
-                                <div className="w-10 flex items-center justify-center">
-                                  <Loader2 className="w-4 h-4 animate-spin" />
-                                </div>
-                              ) : (
+                               <button
+                                 onClick={() => updateQuantity(item._id, item.quantity - 1)}
+                                 disabled={item.quantity <= 1}
+                                 className="p-2 hover:bg-muted transition-colors disabled:opacity-50"
+                               >
+                                 <Minus className="w-4 h-4" />
+                               </button>
                                 <span className="w-10 text-center font-medium">
                                   {item.quantity}
                                 </span>
-                              )}
-                              <button
-                                onClick={() => updateQuantity(item.cartItemId, item.quantity + 1)}
-                                disabled={isUpdating}
-                                className="p-2 hover:bg-muted transition-colors disabled:opacity-50"
-                              >
-                                <Plus className="w-4 h-4" />
-                              </button>
+                               <button
+                                 onClick={() => updateQuantity(item._id, item.quantity + 1)}
+                                 className="p-2 hover:bg-muted transition-colors"
+                               >
+                                 <Plus className="w-4 h-4" />
+                               </button>
                             </div>
                           </div>
 
@@ -371,11 +282,10 @@ const updateQuantity = async (cartItemId: string, newQuantity: number) => {
                             <span className="font-bold text-lg">
                               Rs. {item.subtotal.toFixed(2)}
                             </span>
-                            <button
-                              onClick={() => removeItem(item.cartItemId)}
-                              disabled={isUpdating}
-                              className="hidden md:block p-2 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
-                            >
+                             <button
+                               onClick={() => removeItem(item._id)}
+                               className="hidden md:block p-2 text-muted-foreground hover:text-red-500 transition-colors"
+                             >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
