@@ -1,4 +1,7 @@
-import { Eye, Plus, Receipt, RotateCcw } from "lucide-react";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Eye, Plus, Receipt, RotateCcw, Loader2 } from "lucide-react";
 import AdminShell from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,50 +20,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-const orders = [
-  {
-    id: "ORD-2026-001",
-    customer: "Suresh Kumar",
-    date: "Apr 10, 2026",
-    status: "Delivered",
-    total: 124.5,
-    paymentMethod: "Credit Card",
-  },
-  {
-    id: "ORD-2026-002",
-    customer: "Meena Thapa",
-    date: "Apr 12, 2026",
-    status: "Processing",
-    total: 58.99,
-    paymentMethod: "PayPal",
-  },
-  {
-    id: "ORD-2026-003",
-    customer: "Ravi Adhikari",
-    date: "Apr 14, 2026",
-    status: "Pending",
-    total: 42.75,
-    paymentMethod: "Cash on Delivery",
-  },
-  {
-    id: "ORD-2026-004",
-    customer: "Anita Rai",
-    date: "Apr 15, 2026",
-    status: "Cancelled",
-    total: 19.99,
-    paymentMethod: "Credit Card",
-  },
-];
+import { orderService } from "@/services/orderService";
+import toast from "react-hot-toast";
 
 function statusBadgeClass(status: string) {
   switch (status) {
+    case "delivered":
     case "Delivered":
       return "bg-[#800000]/10 text-[#800000] border-[#800000]/20";
+    case "confirmed":
+    case "Confirmed":
+      return "bg-green-100 text-green-700 border-green-200";
+    case "dispatched":
+    case "Dispatched":
+      return "bg-purple-100 text-purple-700 border-purple-200";
+    case "processing":
     case "Processing":
       return "bg-yellow-100 text-yellow-700 border-yellow-200";
+    case "pending":
     case "Pending":
       return "bg-blue-100 text-blue-700 border-blue-200";
+    case "cancelled":
     case "Cancelled":
       return "bg-red-100 text-red-600 border-red-200";
     default:
@@ -69,6 +49,26 @@ function statusBadgeClass(status: string) {
 }
 
 export default function AdminOrderPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await orderService.getAllOrders();
+      setOrders(response.orders || response || []);
+    } catch (error) {
+      console.error("Failed to fetch orders:", error);
+      toast.error("Failed to load orders");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AdminShell>
       <div className="space-y-6">
@@ -119,47 +119,62 @@ export default function AdminOrderPage() {
                   </TableHeader>
 
                   <TableBody>
-                    {orders.map((order) => (
-                      <TableRow
-                        key={order.id}
-                        className="hover:bg-gray-50 transition"
-                      >
-
-                        <TableCell className="font-mono text-xs text-gray-500">
-                          {order.id}
+                    {loading ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8">
+                          <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2 text-gray-400" />
+                          <p className="text-gray-500">Loading orders...</p>
                         </TableCell>
-
-                        <TableCell className="font-medium text-gray-900">
-                          {order.customer}
-                        </TableCell>
-
-                        <TableCell className="text-gray-500">
-                          {order.date}
-                        </TableCell>
-
-                        <TableCell>
-                          <Badge className={statusBadgeClass(order.status)}>
-                            {order.status}
-                          </Badge>
-                        </TableCell>
-
-                        <TableCell className="text-right font-semibold">
-                          Rs. {order.total.toFixed(2)}
-                        </TableCell>
-
-                        <TableCell className="text-right">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="border-gray-300 hover:border-[#800000] hover:text-[#800000]"
-                          >
-                            <Eye className="w-4 h-4 mr-1" />
-                            View
-                          </Button>
-                        </TableCell>
-
                       </TableRow>
-                    ))}
+                    ) : orders.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                          No orders found
+                        </TableCell>
+                      </TableRow>
+                    ) : (
+                      orders.map((order) => (
+                        <TableRow
+                          key={order._id || order.id}
+                          className="hover:bg-gray-50 transition"
+                        >
+
+                          <TableCell className="font-mono text-xs text-gray-500">
+                            {order._id || order.id}
+                          </TableCell>
+
+                          <TableCell className="font-medium text-gray-900">
+                            {order.user?.name || order.customer || "N/A"}
+                          </TableCell>
+
+                          <TableCell className="text-gray-500">
+                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date}
+                          </TableCell>
+
+                          <TableCell>
+                            <Badge className={statusBadgeClass(order.status)}>
+                              {order.status}
+                            </Badge>
+                          </TableCell>
+
+                          <TableCell className="text-right font-semibold">
+                            Rs. {(order.total || 0).toFixed(2)}
+                          </TableCell>
+
+                          <TableCell className="text-right">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="border-gray-300 hover:border-[#800000] hover:text-[#800000]"
+                            >
+                              <Eye className="w-4 h-4 mr-1" />
+                              View
+                            </Button>
+                          </TableCell>
+
+                        </TableRow>
+                      ))
+                    )}
                   </TableBody>
 
                 </Table>

@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
-import { ChevronRight, Heart, ShoppingCart, Trash2, Share2, ArrowRight, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { ChevronRight, Heart, ShoppingCart, Share2, ArrowRight, Loader2 } from "lucide-react"
 import { bookService } from "@/services/bookService"
 import { cartService } from "@/services/cartService"
 import { useWishlist } from "@/context/wishlist-context"
 import { useCart } from "@/context/cart-context"
+import { BookCard } from "@/components/book-card"
 import toast from "react-hot-toast"
 
 interface WishlistItem {
@@ -43,7 +42,7 @@ const { removeFromWishlist: removeFromWishlistContext, refetchWishlist } = useWi
       setLoading(true)
       setError(null)
       const response = await bookService.getWishlist()
-      setWishlist(response.favorites || [])
+      setWishlist(Array.isArray(response) ? response : (response?.data?.favorites || response?.data || response?.favorites || []))
     } catch (err) {
       console.error("Failed to fetch wishlist:", err)
       setError("Failed to load wishlist. Please try again.")
@@ -198,91 +197,30 @@ const { removeFromWishlist: removeFromWishlistContext, refetchWishlist } = useWi
 
           {/* Wishlist Items */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {wishlist.map((item, index) => {
-              const isInStock = item.stock > 0
-              const discountedPrice = item.original_price && item.discount
-                ? item.original_price * (1 - item.discount / 100)
-                : item.price
-
-              return (
-                <div
-                  key={item._id}
-                  className="group bg-card rounded-xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
-                  style={{ animationDelay: `${index * 100}ms` }}
-                >
-                  {/* Image */}
-                  <div className="relative aspect-[3/4] overflow-hidden bg-muted">
-                    <Image
-                      src={item.cover_Img && typeof item.cover_Img === 'string' && item.cover_Img.trim() ? item.cover_Img : "/placeholder.jpg"}
-                      alt={item.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-
-                    {/* Stock Badge */}
-                    {!isInStock && (
-                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                        <span className="bg-destructive text-white px-4 py-2 rounded-full text-sm font-semibold">
-                          Out of Stock
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Remove Button */}
-                    <button
-                      onClick={() => removeFromWishlist(item._id)}
-                      className="absolute top-3 right-3 w-9 h-9 bg-background/80 backdrop-blur-sm rounded-full flex items-center justify-center transition-all duration-300 hover:bg-destructive hover:text-white"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-
-                    {/* Discount Badge */}
-                    {item.discount && item.discount > 0 && (
-                      <span className="absolute top-3 left-3 bg-gold text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                        -{item.discount}%
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-foreground line-clamp-2 group-hover:text-gold transition-colors mb-1">
-                      {item.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">by {item.author}</p>
-
-                    {/* Price */}
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="text-lg font-bold text-gold">Rs. {discountedPrice.toFixed(2)}</span>
-                      {item.original_price && item.discount && (
-                        <span className="text-sm text-muted-foreground line-through">
-                          Rs. {item.original_price.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-
-                    {/* Add to Cart Button */}
-                    <Button
-                      onClick={() => addToCart(item._id)}
-                      disabled={!isInStock || addingToCart === item._id}
-                      className={cn(
-                        "w-full transition-all",
-                        isInStock
-                          ? "bg-primary hover:bg-gold hover:text-primary-foreground"
-                          : "bg-muted text-muted-foreground cursor-not-allowed"
-                      )}
-                    >
-                      {addingToCart === item._id ? (
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      ) : (
-                        <ShoppingCart className="w-4 h-4 mr-2" />
-                      )}
-                      {addingToCart === item._id ? "Adding..." : isInStock ? "Add to Cart" : "Out of Stock"}
-                    </Button>
-                  </div>
-                </div>
-              )
-            })}
+            {wishlist.map((item, index) => (
+              <BookCard
+                key={item._id}
+                book={{
+                  id: item._id,
+                  _id: item._id,
+                  title: item.title,
+                  author: item.author,
+                  price: item.original_price || item.price,
+                  discountPrice: item.price,
+                  image: item.cover_Img,
+                  stock: item.stock,
+                  rating: 0
+                }}
+                index={index}
+                initialIsWishlisted={true}
+                onWishlistToggle={(id, added) => {
+                  if (!added) {
+                    setWishlist(items => items.filter(item => item._id !== id))
+                  }
+                }}
+                onAddToCart={(book) => addToCart(book._id)}
+              />
+            ))}
           </div>
 
           {/* Recommendations */}

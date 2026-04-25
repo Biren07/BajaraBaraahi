@@ -16,11 +16,12 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { signInWithPopup } from "firebase/auth"
-import authService from "@/services/authService"
+import { useAuth } from "@/context/auth-context"
 import { auth, googleProvider } from "@/lib/firebase"
 
 export default function LoginPage() {
   const router = useRouter()
+  const { login, googleAuth } = useAuth()
 
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -55,10 +56,13 @@ export default function LoginPage() {
     setErrors({})
 
     try {
-      const res = await authService.login(formData.email, formData.password)
-      localStorage.setItem('token', res.token)
+      console.log('Attempting login with:', { email: formData.email, password: formData.password.replace(/./g, '*') });
+      await login(formData.email, formData.password)
+      console.log('Login successful, redirecting to home');
       router.push("/")
     } catch (err: any) {
+      console.log('Login error:', err);
+      console.log('Error response:', err.response?.data);
       setErrors({ general: err.response?.data?.message || 'Login failed' })
     } finally {
       setIsLoading(false)
@@ -188,8 +192,7 @@ export default function LoginPage() {
                   name: user.displayName,
                   idToken: await user.getIdToken()
                 }
-                const res = await authService.googleAuth(data)
-                localStorage.setItem('token', res.token)
+                await googleAuth(data)
                 router.push("/")
               } catch (err: any) {
                 setErrors({ general: err.message || 'Google sign in failed' })

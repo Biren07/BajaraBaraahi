@@ -1,9 +1,9 @@
-import api from '../lib/api';
+import api from "../lib/api";
 
 export const userService = {
   // Get current user profile
   getProfile: async () => {
-    const response = await api.get('/user/profile');
+    const response = await api.get("/user/profile");
     return response.data;
   },
 
@@ -11,18 +11,20 @@ export const userService = {
   updateProfile: async (userData) => {
     const formData = new FormData();
 
-    // Add text fields
-    Object.keys(userData).forEach(key => {
-      if (userData[key] !== undefined && userData[key] !== null) {
-        formData.append(key, userData[key]);
+    // Add text fields safely
+    Object.entries(userData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formData.append(key, value);
       }
     });
 
-    const response = await api.patch('/user/update-profile', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    // IMPORTANT: do NOT manually set Content-Type
+    // axios will handle boundary automatically
+    const response = await api.patch(
+      "/user/update-profile",
+      formData
+    );
+
     return response.data;
   },
 
@@ -34,7 +36,7 @@ export const userService = {
 
   // Get all users (admin)
   getAllUsers: async (params = {}) => {
-    const response = await api.get('/user/get-all-users', { params });
+    const response = await api.get("/user/get-all-users", { params });
     return response.data;
   },
 

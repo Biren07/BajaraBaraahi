@@ -8,152 +8,10 @@ import { Footer } from "@/components/footer"
 import { BookCard } from "@/components/book-card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ChevronRight, Clock, Percent, Gift, Tag, Zap, ArrowRight } from "lucide-react"
+import { ChevronRight, Clock, Percent, Gift, Tag, Zap, ArrowRight, Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
-
-const flashDeals = [
-  {
-    id: "f1",
-    title: "The Complete Works of Shakespeare",
-    author: "William Shakespeare",
-    price: 29.99,
-    originalPrice: 89.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-  },
-  {
-    id: "f2",
-    title: "Encyclopedia of Science",
-    author: "Various Authors",
-    price: 24.99,
-    originalPrice: 79.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-  },
-  {
-    id: "f3",
-    title: "World History Collection",
-    author: "Dr. John Smith",
-    price: 19.99,
-    originalPrice: 59.99,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-  },
-  {
-    id: "f4",
-    title: "Masterclass in Photography",
-    author: "Annie Leibovitz",
-    price: 34.99,
-    originalPrice: 99.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-  },
-]
-
-const weeklyDeals = [
-  {
-    id: "w1",
-    title: "Atomic Habits",
-    author: "James Clear",
-    price: 9.99,
-    originalPrice: 24.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w2",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 7.99,
-    originalPrice: 19.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w3",
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    price: 11.99,
-    originalPrice: 26.99,
-    rating: 4.9,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w4",
-    title: "The Psychology of Money",
-    author: "Morgan Housel",
-    price: 8.99,
-    originalPrice: 22.99,
-    rating: 4.8,
-    image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w5",
-    title: "Educated",
-    author: "Tara Westover",
-    price: 10.99,
-    originalPrice: 21.99,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w6",
-    title: "Where the Crawdads Sing",
-    author: "Delia Owens",
-    price: 6.99,
-    originalPrice: 17.99,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w7",
-    title: "The Silent Patient",
-    author: "Alex Michaelides",
-    price: 5.99,
-    originalPrice: 16.99,
-    rating: 4.5,
-    image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-  },
-  {
-    id: "w8",
-    title: "Think Again",
-    author: "Adam Grant",
-    price: 12.99,
-    originalPrice: 25.99,
-    rating: 4.7,
-    image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-  },
-]
-
-const bundleDeals = [
-  {
-    id: "b1",
-    title: "Fiction Lovers Bundle",
-    description: "5 bestselling fiction novels",
-    price: 49.99,
-    originalPrice: 99.99,
-    image: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=600&h=400&fit=crop",
-    books: 5,
-  },
-  {
-    id: "b2",
-    title: "Self-Improvement Pack",
-    description: "Transform your life with these 4 books",
-    price: 39.99,
-    originalPrice: 89.99,
-    image: "https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&h=400&fit=crop",
-    books: 4,
-  },
-  {
-    id: "b3",
-    title: "Business Masterclass",
-    description: "6 essential books for entrepreneurs",
-    price: 59.99,
-    originalPrice: 129.99,
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop",
-    books: 6,
-  },
-]
+import { offerService } from "@/services/offerService"
+import toast from "react-hot-toast"
 
 function CountdownTimer({ targetDate }: { targetDate: Date }) {
   const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
@@ -197,6 +55,31 @@ function CountdownTimer({ targetDate }: { targetDate: Date }) {
 export default function OffersPage() {
   const flashSaleEnd = new Date()
   flashSaleEnd.setHours(flashSaleEnd.getHours() + 12)
+
+  const [offers, setOffers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchOffers()
+  }, [])
+
+  const fetchOffers = async () => {
+    try {
+      setLoading(true)
+      const response = await offerService.getAllOffers()
+      setOffers(response.offers || response || [])
+    } catch (error) {
+      console.error("Failed to fetch offers:", error)
+      toast.error("Failed to load offers")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Filter offers by type
+  const flashDeals = offers.filter(offer => offer.type === 'flash')
+  const weeklyDeals = offers.filter(offer => offer.type === 'weekly')
+  const bundleDeals = offers.filter(offer => offer.type === 'bundle')
 
   return (
     <div className="min-h-screen bg-background">
@@ -251,9 +134,37 @@ export default function OffersPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {flashDeals.map((book, index) => (
-              <BookCard key={book.id} book={book} index={index} />
-            ))}
+            {loading ? (
+              Array.from({ length: 4 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted aspect-[3/4] rounded-lg mb-4"></div>
+                  <div className="h-4 bg-muted rounded mb-2"></div>
+                  <div className="h-3 bg-muted rounded mb-1"></div>
+                  <div className="h-5 bg-muted rounded"></div>
+                </div>
+              ))
+            ) : flashDeals.length === 0 ? (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No flash deals available</p>
+              </div>
+            ) : (
+              flashDeals.map((offer, index) => (
+                <BookCard
+                  key={offer._id || offer.id}
+                  book={{
+                    id: offer._id || offer.id,
+                    _id: offer._id || offer.id,
+                    title: offer.title,
+                    author: offer.author,
+                    price: offer.originalPrice || offer.price,
+                    discountPrice: offer.price,
+                    image: offer.cover_Img || offer.image,
+                    rating: offer.rating || 0,
+                  }}
+                  index={index}
+                />
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -319,9 +230,37 @@ export default function OffersPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {weeklyDeals.map((book, index) => (
-              <BookCard key={book.id} book={book} index={index} />
-            ))}
+            {loading ? (
+              Array.from({ length: 8 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted aspect-[3/4] rounded-lg mb-4"></div>
+                  <div className="h-4 bg-muted rounded mb-2"></div>
+                  <div className="h-3 bg-muted rounded mb-1"></div>
+                  <div className="h-5 bg-muted rounded"></div>
+                </div>
+              ))
+            ) : weeklyDeals.length === 0 ? (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No weekly deals available</p>
+              </div>
+            ) : (
+              weeklyDeals.map((offer, index) => (
+                <BookCard
+                  key={offer._id || offer.id}
+                  book={{
+                    id: offer._id || offer.id,
+                    _id: offer._id || offer.id,
+                    title: offer.title,
+                    author: offer.author,
+                    price: offer.originalPrice || offer.price,
+                    discountPrice: offer.price,
+                    image: offer.cover_Img || offer.image,
+                    rating: offer.rating || 0,
+                  }}
+                  index={index}
+                />
+              ))
+            )}
           </div>
         </div>
       </section>
@@ -338,7 +277,21 @@ export default function OffersPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {bundleDeals.map((bundle, index) => (
+            {loading ? (
+              Array.from({ length: 3 }).map((_, index) => (
+                <div key={index} className="animate-pulse">
+                  <div className="bg-muted h-48 rounded-lg mb-4"></div>
+                  <div className="h-6 bg-muted rounded mb-2"></div>
+                  <div className="h-4 bg-muted rounded mb-4"></div>
+                  <div className="h-10 bg-muted rounded"></div>
+                </div>
+              ))
+            ) : bundleDeals.length === 0 ? (
+              <div className="col-span-full text-center py-8">
+                <p className="text-muted-foreground">No bundle deals available</p>
+              </div>
+            ) : (
+              bundleDeals.map((bundle, index) => (
               <div
                 key={bundle.id}
                 className="group relative bg-card rounded-2xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
@@ -382,7 +335,8 @@ export default function OffersPage() {
                   </Button>
                 </div>
               </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
       </section>

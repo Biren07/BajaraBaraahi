@@ -11,6 +11,7 @@ import { bookService } from "@/services/bookService";
 import { cartService } from "@/services/cartService";
 import { useWishlist } from "@/context/wishlist-context";
 import { useCart } from "@/context/cart-context";
+import { useAuth } from "@/context/auth-context";
 import toast from "react-hot-toast";
 
 export default function BookPage() {
@@ -24,6 +25,7 @@ export default function BookPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const { addToWishlist, removeFromWishlist, wishlist } = useWishlist();
   const { refetchCart } = useCart();
+  const { user } = useAuth();
 
   // Fetch book data
   useEffect(() => {
@@ -62,7 +64,12 @@ export default function BookPage() {
   };
 
   const handleAddToCart = async () => {
-    if (!book) return;
+    if (!book || addingToCart) return;
+
+    if (!user) {
+      toast.error("Login or Sign up first");
+      return;
+    }
 
     setAddingToCart(true);
     try {
@@ -79,6 +86,11 @@ export default function BookPage() {
 
   const handleToggleWishlist = async () => {
     if (!book) return;
+
+    if (!user) {
+      toast.error("Login or Sign up first");
+      return;
+    }
 
     try {
       if (liked) {

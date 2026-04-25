@@ -1,185 +1,88 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { BookCard } from "@/components/book-card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { ChevronRight, Sparkles, Calendar, TrendingUp } from "lucide-react"
+import { ChevronRight, Sparkles, Calendar, TrendingUp, Loader2 } from "lucide-react"
+import { bookService } from "@/services/bookService"
 
-const newBooks = {
-  thisWeek: [
-    {
-      id: "n1",
-      title: "The Last Symphony",
-      author: "Elena Martinez",
-      price: 18.99,
-      originalPrice: 24.99,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "n2",
-      title: "Digital Minds",
-      author: "Dr. James Chen",
-      price: 22.99,
-      originalPrice: 29.99,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "n3",
-      title: "Whispers in the Dark",
-      author: "Sarah Blake",
-      price: 15.99,
-      originalPrice: 21.99,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "n4",
-      title: "The Art of Resilience",
-      author: "Michael Stone",
-      price: 19.99,
-      originalPrice: 26.99,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-  ],
-  thisMonth: [
-    {
-      id: "m1",
-      title: "Echoes of Tomorrow",
-      author: "Amanda Rivers",
-      price: 16.99,
-      originalPrice: 22.99,
-      rating: 4.5,
-      image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m2",
-      title: "The Hidden Garden",
-      author: "Victoria Wells",
-      price: 14.99,
-      originalPrice: 19.99,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m3",
-      title: "Code of Honor",
-      author: "Robert Quinn",
-      price: 20.99,
-      originalPrice: 27.99,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m4",
-      title: "Beyond the Stars",
-      author: "Dr. Neil Foster",
-      price: 24.99,
-      originalPrice: 32.99,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m5",
-      title: "The Silent Truth",
-      author: "Kate Morrison",
-      price: 17.99,
-      originalPrice: 23.99,
-      rating: 4.6,
-      image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m6",
-      title: "Mindful Leadership",
-      author: "David Chang",
-      price: 21.99,
-      originalPrice: 28.99,
-      rating: 4.7,
-      image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m7",
-      title: "The Lost Island",
-      author: "Thomas Reed",
-      price: 13.99,
-      originalPrice: 18.99,
-      rating: 4.4,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "m8",
-      title: "Financial Freedom",
-      author: "Lisa Park",
-      price: 19.99,
-      originalPrice: 25.99,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-  ],
-  preOrder: [
-    {
-      id: "p1",
-      title: "The Quantum Effect",
-      author: "Dr. Richard Hayes",
-      price: 26.99,
-      originalPrice: 34.99,
-      rating: 5.0,
-      image: "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "p2",
-      title: "Secrets of the Deep",
-      author: "Marina Costa",
-      price: 23.99,
-      originalPrice: 31.99,
-      rating: 4.9,
-      image: "https://images.unsplash.com/photo-1592496431122-2349e0fbc666?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "p3",
-      title: "The Crown of Shadows",
-      author: "Christopher Knight",
-      price: 21.99,
-      originalPrice: 28.99,
-      rating: 4.8,
-      image: "https://images.unsplash.com/photo-1495446815901-a7297e633e8d?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-    {
-      id: "p4",
-      title: "AI Revolution",
-      author: "Dr. Sarah Lin",
-      price: 29.99,
-      originalPrice: 39.99,
-      rating: 5.0,
-      image: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop",
-      isNew: true,
-    },
-  ],
-}
+
 
 export default function NewArrivalsPage() {
   const [activeTab, setActiveTab] = useState("thisWeek")
+  const [books, setBooks] = useState<{
+    thisWeek: any[]
+    thisMonth: any[]
+    preOrder: any[]
+  }>({
+    thisWeek: [],
+    thisMonth: [],
+    preOrder: [],
+  })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetchNewArrivals()
+  }, [])
+
+  const fetchNewArrivals = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const response = await bookService.getBooks({
+        category: "new-arrivals",
+        limit: 20, // Get enough books to distribute across tabs
+      })
+
+      const allBooks = response?.books || []
+
+      // Map API response to component format
+      const mappedBooks = allBooks.map((book: any) => {
+        const originalPrice = book.original_price || book.price
+        const hasDiscount = originalPrice && book.discount && book.discount > 0
+        const discountPrice = hasDiscount
+          ? Math.round(originalPrice * (1 - book.discount / 100))
+          : null
+
+        return {
+          id: book._id,
+          title: book.title,
+          author: book.author,
+          price: discountPrice || originalPrice,
+          originalPrice: originalPrice,
+          rating: 4.5, // Default rating since API doesn't provide
+          image:
+            typeof book.cover_Img?.url === "string" &&
+            book.cover_Img.url.startsWith("http")
+              ? book.cover_Img.url
+              : "/placeholder.jpg",
+          isNew: true,
+        }
+      })
+
+      // Distribute books across tabs
+      const totalBooks = mappedBooks.length
+      const thisWeekCount = Math.min(4, totalBooks)
+      const thisMonthCount = Math.min(8, Math.max(0, totalBooks - thisWeekCount))
+      const preOrderCount = Math.max(0, totalBooks - thisWeekCount - thisMonthCount)
+
+      setBooks({
+        thisWeek: mappedBooks.slice(0, thisWeekCount),
+        thisMonth: mappedBooks.slice(thisWeekCount, thisWeekCount + thisMonthCount),
+        preOrder: mappedBooks.slice(thisWeekCount + thisMonthCount, thisWeekCount + thisMonthCount + preOrderCount),
+      })
+    } catch (err) {
+      console.error("Failed to fetch new arrivals:", err)
+      setError("Failed to load new arrivals")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -246,11 +149,25 @@ export default function NewArrivalsPage() {
                 <h2 className="text-2xl font-serif font-bold mb-2">Fresh This Week</h2>
                 <p className="text-muted-foreground">Hot off the press - just arrived in our collection</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {newBooks.thisWeek.map((book, index) => (
-                  <BookCard key={book.id} book={book} index={index} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">{error}</p>
+                </div>
+              ) : books.thisWeek.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No new arrivals this week</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {books.thisWeek.map((book, index) => (
+                    <BookCard key={book.id} book={book} index={index} />
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="thisMonth" className="mt-0">
@@ -258,11 +175,25 @@ export default function NewArrivalsPage() {
                 <h2 className="text-2xl font-serif font-bold mb-2">Monthly Highlights</h2>
                 <p className="text-muted-foreground">All the exciting new releases from this month</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {newBooks.thisMonth.map((book, index) => (
-                  <BookCard key={book.id} book={book} index={index} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">{error}</p>
+                </div>
+              ) : books.thisMonth.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No new arrivals this month</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {books.thisMonth.map((book, index) => (
+                    <BookCard key={book.id} book={book} index={index} />
+                  ))}
+                </div>
+              )}
             </TabsContent>
 
             <TabsContent value="preOrder" className="mt-0">
@@ -270,11 +201,25 @@ export default function NewArrivalsPage() {
                 <h2 className="text-2xl font-serif font-bold mb-2">Coming Soon</h2>
                 <p className="text-muted-foreground">Reserve your copy before release - exclusive pre-order prices</p>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {newBooks.preOrder.map((book, index) => (
-                  <BookCard key={book.id} book={book} index={index} />
-                ))}
-              </div>
+              {loading ? (
+                <div className="flex justify-center items-center py-12">
+                  <Loader2 className="w-8 h-8 animate-spin text-gold" />
+                </div>
+              ) : error ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">{error}</p>
+                </div>
+              ) : books.preOrder.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">No pre-orders available</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {books.preOrder.map((book, index) => (
+                    <BookCard key={book.id} book={book} index={index} />
+                  ))}
+                </div>
+              )}
             </TabsContent>
           </Tabs>
 

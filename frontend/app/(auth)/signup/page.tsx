@@ -8,10 +8,11 @@ import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
-import authService from "@/services/authService"
+import { useAuth } from "@/context/auth-context"
 
 export default function SignupPage() {
   const router = useRouter()
+  const { register } = useAuth()
   const [step, setStep] = useState(1)
 
   const [showPassword, setShowPassword] = useState(false)
@@ -62,15 +63,25 @@ export default function SignupPage() {
     setErrors({})
 
     try {
-      await authService.register(
+      console.log('Attempting registration with:', {
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password.replace(/./g, '*')
+      });
+      await register(
         formData.firstName,
         formData.lastName,
         formData.email,
         formData.phone,
         formData.password
       )
-      router.push("/login")
+      console.log('Registration successful, redirecting to home');
+      router.push("/")
     } catch (err: any) {
+      console.log('Registration error:', err);
+      console.log('Registration error response:', err.response?.data);
       setErrors({ general: err.response?.data?.message || 'Registration failed' })
     } finally {
       setIsLoading(false)

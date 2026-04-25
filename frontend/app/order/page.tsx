@@ -17,6 +17,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { useState } from "react";
+import { orderService } from "@/services/orderService";
+import toast from "react-hot-toast";
 
 export default function OrderPage() {
   const [loading, setLoading] = useState(false);
@@ -25,6 +27,13 @@ export default function OrderPage() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
   const [receipt, setReceipt] = useState<File | null>(null);
+
+  const [formData, setFormData] = useState({
+    district: "",
+    city: "",
+    street: "",
+    alternativePhone: "",
+  });
 
   const handlePaymentSelect = (method: string) => {
     setPayment(method);
@@ -50,41 +59,41 @@ export default function OrderPage() {
   // ✅ SEND ORDER TO BACKEND
   const handleSubmitOrder = async () => {
     if (!receipt) {
-      alert("Upload payment receipt");
+      toast.error("Please upload payment receipt");
+      return;
+    }
+    if (!formData.district || !formData.city || !formData.street || !formData.alternativePhone) {
+      toast.error("Please fill all address fields");
       return;
     }
 
     setLoading(true);
 
-    const formData = new FormData();
-    formData.append("file", receipt);
-    formData.append("payment", payment);
+    const orderData = {
+      ...formData,
+      paymentMethod: payment,
+    };
 
     try {
-      const res = await fetch("/api/order", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await orderService.placeOrder(orderData, receipt);
 
-      const data = await res.json();
+      setOrderId(response.orderId || response._id);
+      setShowQR(false);
+      setShowSuccess(true);
+      toast.success("Order placed successfully!");
 
-      if (res.ok) {
-        setOrderId(data.orderId);
-        setShowQR(false);
-        setShowSuccess(true);
-
-        // ✅ WhatsApp message
-        const message = `New Order\nOrder ID: ${data.orderId}\nPayment: ${payment}`;
-        window.open(
-          `https://wa.me/977XXXXXXXXX?text=${encodeURIComponent(message)}`,
-          "_blank"
-        );
-      }
-    } catch (err) {
-      console.error(err);
+      // ✅ WhatsApp message
+      const message = `New Order\nOrder ID: ${response.orderId || response._id}\nPayment: ${payment}`;
+      window.open(
+        `https://wa.me/977XXXXXXXXX?text=${encodeURIComponent(message)}`,
+        "_blank"
+      );
+    } catch (error: any) {
+      console.error("Failed to place order:", error);
+      toast.error(error.response?.data?.message || "Failed to place order");
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   return (
@@ -115,10 +124,26 @@ export default function OrderPage() {
               Personal Info
             </h2>
 
-            <Input placeholder="Full Name" />
-            <Input placeholder="Email" />
-            <Input placeholder="Phone" />
-            <Input placeholder="Address" />
+            <Input
+              placeholder="District"
+              value={formData.district}
+              onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+            />
+            <Input
+              placeholder="City"
+              value={formData.city}
+              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+            />
+            <Input
+              placeholder="Street Address"
+              value={formData.street}
+              onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+            />
+            <Input
+              placeholder="Phone Number"
+              value={formData.alternativePhone}
+              onChange={(e) => setFormData({ ...formData, alternativePhone: e.target.value })}
+            />
 
             <Separator />
 

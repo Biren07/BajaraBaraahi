@@ -4,6 +4,7 @@ import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'react-hot-toast'
 import { WishlistProvider } from '@/context/wishlist-context'
 import { CartProvider } from '@/context/cart-context'
+import { AuthProvider } from '@/context/auth-context'
 import './globals.css'
 
 const playfair = Playfair_Display({
@@ -62,11 +63,13 @@ export default function RootLayout({
       className={`${playfair.variable} ${inter.variable} scroll-smooth`}
     >
       <body className="font-sans antialiased min-h-screen">
-        <WishlistProvider>
-          <CartProvider>
-            {children}
-          </CartProvider>
-        </WishlistProvider>
+        <AuthProvider>
+          <WishlistProvider>
+            <CartProvider>
+              {children}
+            </CartProvider>
+          </WishlistProvider>
+        </AuthProvider>
 
         <Toaster position="bottom-right" />
 

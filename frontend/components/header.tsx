@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useWishlist } from "../context/wishlist-context";
 import { useCart } from "../context/cart-context";
+import { useAuth } from "../context/auth-context";
 import {
   Search,
   ShoppingCart,
@@ -14,6 +15,7 @@ import {
   ChevronDown,
   BookOpen,
   Users,
+  LogOut,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,12 +44,12 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
 
-  // ✅ ADD THIS (IMPORTANT)
   const [openCategories, setOpenCategories] = useState(false);
   const [openMore, setOpenMore] = useState(false);
 
   const { count: wishlistCount } = useWishlist();
   const { count: cartCount } = useCart();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -131,7 +133,7 @@ export function Header() {
               href="/bestsellers"
               className="text-foreground hover:text-red transition-colors font-medium relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-red after:transition-all hover:after:w-full"
             >
-              Best Sellers
+              Store Books
             </Link>
 
             {/* New Arrivals */}
@@ -194,44 +196,84 @@ export function Header() {
             >
               <Search className="w-5 h-5" />
             </Button>
-            <Link href="/wishlist">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hidden md:flex hover:bg-red/10 hover:text-red relative"
-              >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hidden md:flex hover:bg-red/10 hover:text-red relative"
+              asChild
+            >
+              <Link href="/wishlist">
                 <Heart className="w-5 h-5" />
                  {wishlistCount > 0 && (
                    <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
                      {wishlistCount}
                    </span>
                  )}
-              </Button>
-            </Link>
-            <Link href="/cart">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="hover:bg-red/10 hover:text-red relative"
-              >
+              </Link>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="hover:bg-red/10 hover:text-red relative"
+              asChild
+            >
+              <Link href="/cart">
                 <ShoppingCart className="w-5 h-5" />
                 {cartCount > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
                     {cartCount}
                   </span>
                 )}
-              </Button>
-            </Link>
-            {/* import Link from "next/link" */}
-            <Link href="/login">
+              </Link>
+            </Button>
+            {/* User Profile Dropdown */}
+            {user ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden md:flex hover:bg-red/10 hover:text-red"
+                  >
+                    {user?.profileImage?.url ? (
+                      <img
+                        src={user.profileImage.url}
+                        alt="Profile"
+                        className="w-5 h-5 rounded-full object-cover"
+                      />
+                    ) : (
+                      <User className="w-5 h-5" />
+                    )}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-48 bg-card border-red/20">
+                  <DropdownMenuItem className="hover:bg-red/10 cursor-pointer">
+                    <Link href="/profile" className="w-full flex items-center gap-2">
+                      <User className="w-4 h-4" />
+                      Visit Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="hover:bg-red/10 cursor-pointer"
+                    onClick={() => logout()}
+                  >
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Logout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
               <Button
                 variant="ghost"
                 size="icon"
                 className="hidden md:flex hover:bg-red/10 hover:text-red"
+                asChild
               >
-                <User className="w-5 h-5" />
+                <Link href="/login">
+                  <User className="w-5 h-5" />
+                </Link>
               </Button>
-            </Link>
+            )}
             {/* Mobile Menu Toggle */}
             <Button
               variant="ghost"
@@ -276,22 +318,51 @@ export function Header() {
         <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
           {/* AUTH BUTTONS */}
           <div className="flex items-center gap-4 pt-2">
-            <Link href="/login" className="flex-1">
-              <Button
-                variant="outline"
-                className="w-full border-red/30 hover:bg-red/10 hover:text-red"
-              >
-                <User className="w-4 h-4 mr-2" />
-                Sign In
-              </Button>
-            </Link>
-
-            <Link href="/wishlist" className="flex-1">
-              <Button className="w-full bg-red text-primary-foreground hover:bg-red-dark">
-                <Heart className="w-4 h-4 mr-2" />
-                Wishlist
-              </Button>
-            </Link>
+            {user ? (
+              <>
+                <Button className="w-full bg-red text-primary-foreground hover:bg-red-dark" asChild>
+                  <Link href="/profile">
+                    {user.profileImage?.url ? (
+                      <img
+                        src={user.profileImage.url}
+                        alt="Profile"
+                        className="w-4 h-4 rounded-full object-cover mr-2"
+                      />
+                    ) : (
+                      <User className="w-4 h-4 mr-2" />
+                    )}
+                    Profile
+                  </Link>
+                </Button>
+                <Button
+                  variant="outline"
+                  className="flex-1 border-red/30 hover:bg-red/10 hover:text-red"
+                  onClick={() => logout()}
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Logout
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="outline"
+                  className="w-full border-red/30 hover:bg-red/10 hover:text-red"
+                  asChild
+                >
+                  <Link href="/login">
+                    <User className="w-4 h-4 mr-2" />
+                    Sign In
+                  </Link>
+                </Button>
+                <Button className="w-full bg-red text-primary-foreground hover:bg-red-dark" asChild>
+                  <Link href="/wishlist">
+                    <Heart className="w-4 h-4 mr-2" />
+                    Wishlist
+                  </Link>
+                </Button>
+              </>
+            )}
           </div>
           {/* Home */}
           <Link
