@@ -378,39 +378,39 @@ export default function BestsellersPage() {
                   </div>
                 ) : (
                   sortedBooks.map((book: any, index) => {
-                    // Map API data to BookCard format
-                    const discountedPrice =
-                      book.original_price && book.discount
-                        ? book.original_price * (1 - book.discount / 100)
-                        : book.price;
+  // Map API data to BookCard format
+  const discountedPrice =
+    book.original_price && book.discount
+      ? book.original_price * (1 - book.discount / 100)
+      : book.price;
 
-                    const mappedBook = {
-                      id: book._id,
-                      title: book.title,
-                      author: book.author,
-                      price: discountedPrice,
-                      discountPrice:
-                        book.original_price && book.discount
-                          ? discountedPrice
-                          : null,
-                      originalPrice: book.original_price,
-                      image:
-                        book.cover_Img?.url &&
-                        typeof book.cover_Img.url === "string" &&
-                        book.cover_Img.url.trim()
-                          ? book.cover_Img.url
-                          : "/placeholder.jpg",
-                      rating: 4.5, // Default rating since API doesn't provide it
-                    };
+  const mappedBook = {
+    id: book._id,
+    title: book.title,
+    author: book.author,
+    price: discountedPrice,
+    discountPrice:
+      book.original_price && book.discount
+        ? discountedPrice
+        : null,
+    originalPrice: book.original_price,
+    image:
+      book.cover_Img?.url &&
+      typeof book.cover_Img.url === "string" &&
+      book.cover_Img.url.trim()
+        ? book.cover_Img.url
+        : "/placeholder.jpg",
+    rating: 4.5,
+  };
 
-                    return (
-                      <BookCard
-                        key={book._id}
-                        book={mappedBook}
-                        index={index}
-                      />
-                    );
-                  })
+  return (
+    <BookCard
+      key={book._id}
+      book={mappedBook}
+      index={index}
+    />
+  );
+})
                 )}
               </div>
 

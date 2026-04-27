@@ -7,12 +7,12 @@
 // import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 // import { Badge } from "@/components/ui/badge"
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// import { 
-//   BookOpen, 
-//   Clock, 
-//   CheckCircle2, 
-//   Package, 
-//   CreditCard, 
+// import {
+//   BookOpen,
+//   Clock,
+//   CheckCircle2,
+//   Package,
+//   CreditCard,
 //   TrendingUp,
 //   Calendar,
 //   Star,
@@ -84,7 +84,7 @@
 //   return (
 //     <div className="min-h-screen bg-background">
 //       <Header />
-      
+
 //       <main className="pt-32 pb-16">
 //         <div className="container mx-auto px-4">
 //           {/* Page Header */}
@@ -195,8 +195,8 @@
 //                     <div className="space-y-3">
 //                       {order.items.map((item, idx) => (
 //                         <div key={idx} className="flex items-center gap-4 p-3 bg-muted/20 rounded-lg">
-//                           <img 
-//                             src={item.image} 
+//                           <img
+//                             src={item.image}
 //                             alt={item.title}
 //                             className="w-12 h-16 object-cover rounded"
 //                           />
@@ -243,10 +243,10 @@
 //                               <h3 className="font-semibold text-lg">{book.title}</h3>
 //                               <p className="text-muted-foreground">{book.author}</p>
 //                             </div>
-//                             <Badge 
+//                             <Badge
 //                               className={
-//                                 book.status === "completed" 
-//                                   ? "bg-green-500/10 text-green-600 border-green-500/20" 
+//                                 book.status === "completed"
+//                                   ? "bg-green-500/10 text-green-600 border-green-500/20"
 //                                   : book.status === "reading"
 //                                   ? "bg-gold/10 text-gold border-gold/20"
 //                                   : "bg-muted text-muted-foreground"
@@ -255,7 +255,7 @@
 //                               {book.status === "completed" ? "Completed" : book.status === "reading" ? "Reading" : "To Read"}
 //                             </Badge>
 //                           </div>
-                          
+
 //                           {/* Progress Bar */}
 //                           <div className="mt-4">
 //                             <div className="flex items-center justify-between text-sm mb-1">
@@ -263,7 +263,7 @@
 //                               <span className="font-medium">{book.progress}%</span>
 //                             </div>
 //                             <div className="h-2 bg-muted rounded-full overflow-hidden">
-//                               <div 
+//                               <div
 //                                 className="h-full bg-gold rounded-full transition-all duration-500"
 //                                 style={{ width: `${book.progress}%` }}
 //                               />
@@ -275,8 +275,8 @@
 //                             {book.rating && (
 //                               <div className="flex items-center gap-1">
 //                                 {[...Array(5)].map((_, i) => (
-//                                   <Star 
-//                                     key={i} 
+//                                   <Star
+//                                     key={i}
 //                                     className={`w-4 h-4 ${i < book.rating ? "fill-gold text-gold" : "text-muted-foreground"}`}
 //                                   />
 //                                 ))}
@@ -323,8 +323,8 @@
 //                             <td className="p-4 text-muted-foreground">{txn.date}</td>
 //                             <td className="p-4">
 //                               <Badge variant="outline" className={
-//                                 txn.type === "Purchase" 
-//                                   ? "border-gold/30 text-foreground" 
+//                                 txn.type === "Purchase"
+//                                   ? "border-gold/30 text-foreground"
 //                                   : txn.type === "Refund"
 //                                   ? "border-green-500/30 text-green-600"
 //                                   : "border-blue-500/30 text-blue-600"
@@ -418,11 +418,11 @@
 //                     <div className="grid grid-cols-6 md:grid-cols-12 gap-2">
 //                       {["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"].map((month, idx) => (
 //                         <div key={month} className="text-center">
-//                           <div 
+//                           <div
 //                             className={`h-20 rounded-lg mb-1 flex items-end justify-center ${
 //                               idx < 3 ? "bg-gold" : "bg-muted"
 //                             }`}
-//                             style={{ 
+//                             style={{
 //                               opacity: idx < 3 ? 0.3 + (idx * 0.2) : 0.2,
 //                             }}
 //                           >
@@ -447,13 +447,16 @@
 //   )
 // }
 
-import DeploymentPage from '@/components/deployment'
-import React from 'react'
+import DeploymentPage from "@/components/deployment";
+import React from "react";
 
-const  LedgerPage = () => {
+const LedgerPage = () => {
   return (
-    <div> <DeploymentPage/></div>
-  )
-}
+    <div>
+      {" "}
+      <DeploymentPage />
+    </div>
+  );
+};
 
-export default  LedgerPage
+export default LedgerPage;

@@ -1,77 +1,84 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  Lock,
-  ArrowRight,
-  Chrome
-} from "lucide-react"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Eye, EyeOff, Mail, Lock, ArrowRight, Chrome } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { signInWithPopup } from "firebase/auth"
-import { useAuth } from "@/context/auth-context"
-import { auth, googleProvider } from "@/lib/firebase"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { signInWithPopup } from "firebase/auth";
+import { useAuth } from "@/context/auth-context";
+import { auth, googleProvider } from "@/lib/firebase";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { login, googleAuth } = useAuth()
+  const router = useRouter();
+  const { login, googleAuth } = useAuth();
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
     password: "",
     rememberMe: false,
-  })
+  });
 
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    setVisible(true)
-  }, [])
+    setVisible(true);
+  }, []);
 
-  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({})
+  const [errors, setErrors] = useState<{
+    email?: string;
+    password?: string;
+    general?: string;
+  }>({});
 
   const validateForm = () => {
-    const newErrors: any = {}
-    if (!formData.email) newErrors.email = "Email is required"
-    if (!formData.password) newErrors.password = "Password is required"
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    const newErrors: any = {};
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateForm()) return
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    setIsLoading(true)
-    setErrors({})
+  setIsLoading(true);
+  setErrors({});
 
-    try {
-      console.log('Attempting login with:', { email: formData.email, password: formData.password.replace(/./g, '*') });
-      await login(formData.email, formData.password)
-      console.log('Login successful, redirecting to home');
-      router.push("/")
-    } catch (err: any) {
-      console.log('Login error:', err);
-      console.log('Error response:', err.response?.data);
-      setErrors({ general: err.response?.data?.message || 'Login failed' })
-    } finally {
-      setIsLoading(false)
+  try {
+    const res = await login(formData.email, formData.password);
+    console.log("LOGIN RESPONSE:", res);
+
+   
+
+    // role check
+    const userRole = res?.user?.role || res?.role;
+
+    if (userRole === "admin") {
+      router.push("/admin");
+    } else {
+      router.push("/");
     }
+
+  } catch (err: any) {
+    console.log("Login error:", err);
+    setErrors({
+      general: err.response?.data?.message || "Login failed",
+    });
+  } finally {
+    setIsLoading(false);
   }
+};
 
   return (
     <div className="min-h-screen flex bg-background overflow-hidden">
-
       {/* ================= LEFT SIDE ================= */}
       <div
         className="hidden lg:flex lg:w-1/2 relative bg-cover bg-center"
@@ -83,7 +90,6 @@ export default function LoginPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative z-10 flex flex-col justify-between p-14 text-white">
-
           {/* LOGO */}
           <Link href="/" className="flex flex-col leading-none">
             <span className="font-serif font-bold text-3xl tracking-wide">
@@ -105,7 +111,9 @@ export default function LoginPage() {
           <div className="max-w-md space-y-4">
             <h1
               className={`text-4xl font-bold font-serif transition-all duration-700 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                visible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-6"
               }`}
             >
               Welcome Back <span className="text-red-400">Book Lover</span>
@@ -113,7 +121,9 @@ export default function LoginPage() {
 
             <p
               className={`text-white/80 text-lg transition-all duration-700 delay-150 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                visible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-6"
               }`}
             >
               Sign in to continue your reading journey, manage your books, and
@@ -122,7 +132,9 @@ export default function LoginPage() {
 
             <div
               className={`flex gap-6 transition-all duration-700 delay-300 ${
-                visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-6"
+                visible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 translate-y-6"
               }`}
             >
               <div>
@@ -154,12 +166,13 @@ export default function LoginPage() {
 
       {/* ================= RIGHT SIDE ================= */}
       <div className="w-full bg-red-200 lg:w-1/2 flex items-center justify-center p-6">
-
         {/* GLASS CARD */}
         <div className="w-full max-w-md bg-gray-200 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-8">
-
           {/* LOGO */}
-          <Link href="/" className="flex flex-col items-center leading-none mb-6">
+          <Link
+            href="/"
+            className="flex flex-col items-center leading-none mb-6"
+          >
             <span className="font-serif font-bold text-xl md:text-2xl tracking-wider text-black">
               BAJRABARAHI
             </span>
@@ -183,19 +196,19 @@ export default function LoginPage() {
           <Button
             type="button"
             onClick={async () => {
-              setErrors({})
+              setErrors({});
               try {
-                const result = await signInWithPopup(auth, googleProvider)
-                const user = result.user
+                const result = await signInWithPopup(auth, googleProvider);
+                const user = result.user;
                 const data = {
                   email: user.email,
                   name: user.displayName,
-                  idToken: await user.getIdToken()
-                }
-                await googleAuth(data)
-                router.push("/")
+                  idToken: await user.getIdToken(),
+                };
+                await googleAuth(data);
+                router.push("/");
               } catch (err: any) {
-                setErrors({ general: err.message || 'Google sign in failed' })
+                setErrors({ general: err.message || "Google sign in failed" });
               }
             }}
             variant="outline"
@@ -218,7 +231,6 @@ export default function LoginPage() {
 
           {/* FORM */}
           <form onSubmit={handleSubmit} className="space-y-4">
-
             {/* EMAIL */}
             <div>
               <label className="text-sm font-medium">Email</label>
@@ -271,9 +283,7 @@ export default function LoginPage() {
                   setFormData({ ...formData, rememberMe: Boolean(val) })
                 }
               />
-              <span className="text-sm text-muted-foreground">
-                Remember me
-              </span>
+              <span className="text-sm text-muted-foreground">Remember me</span>
             </div>
 
             {/* BUTTON */}
@@ -294,9 +304,8 @@ export default function LoginPage() {
               Sign up
             </Link>
           </p>
-
         </div>
       </div>
     </div>
-  )
+  );
 }

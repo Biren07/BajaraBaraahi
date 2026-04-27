@@ -99,13 +99,13 @@ export function Header() {
             {/* Categories */}
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 text-foreground hover:text-red transition-colors font-medium">
-                Categories <ChevronDown className="w-4 h-4" />
+                Genres <ChevronDown className="w-4 h-4" />
               </DropdownMenuTrigger>
 
               <DropdownMenuContent className="w-56 bg-card border-red/20">
                 <DropdownMenuItem className="hover:bg-red/10 cursor-pointer font-semibold">
                   <Link href="/categories" className="w-full text-red">
-                    All Categories
+                    All Geners
                   </Link>
                 </DropdownMenuItem>
 

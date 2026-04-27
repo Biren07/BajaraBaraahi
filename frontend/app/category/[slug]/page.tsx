@@ -1,47 +1,132 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { use } from "react"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { BookCard } from "@/components/book-card"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Slider } from "@/components/ui/slider"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Label } from "@/components/ui/label"
-import { SlidersHorizontal, Grid3X3, LayoutList, X, ChevronRight, BookOpen } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { useState } from "react";
+import Link from "next/link";
+import { use } from "react";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { BookCard } from "@/components/book-card";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Slider } from "@/components/ui/slider";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import {
+  SlidersHorizontal,
+  Grid3X3,
+  LayoutList,
+  X,
+  ChevronRight,
+  BookOpen,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const categoryData: Record<string, { name: string; description: string }> = {
-  fiction: { name: "Fiction", description: "Immerse yourself in captivating stories and imaginative worlds" },
-  "non-fiction": { name: "Non-Fiction", description: "Expand your knowledge with real-world insights and wisdom" },
-  business: { name: "Business & Finance", description: "Master the art of business, investing, and entrepreneurship" },
-  "self-help": { name: "Self-Help", description: "Transform your life with personal development and wellness" },
-  academic: { name: "Academic & Education", description: "Excel in your studies with comprehensive educational resources" },
-  children: { name: "Children & Young Adults", description: "Nurture young minds with age-appropriate adventures" },
-  science: { name: "Science & Technology", description: "Explore the wonders of science and cutting-edge technology" },
-  arts: { name: "Arts & Photography", description: "Celebrate creativity through visual arts and design" },
-  travel: { name: "Travel & Adventure", description: "Explore the world through travel guides and adventure stories" },
-  history: { name: "History & Politics", description: "Understand our past to shape the future" },
-  music: { name: "Music & Entertainment", description: "Dive into the world of music and entertainment" },
-  cooking: { name: "Cooking & Food", description: "Discover culinary delights and cooking techniques" },
-  sports: { name: "Sports & Fitness", description: "Stay active with sports and fitness guides" },
-  movies: { name: "Film & Media", description: "Explore cinema history and media studies" },
-  thriller: { name: "Thriller & Mystery", description: "Edge-of-your-seat suspense and gripping mysteries" },
-  "science fiction": { name: "Science Fiction", description: "Journey to distant worlds and future possibilities" },
-  memoir: { name: "Memoir & Biography", description: "Real stories from extraordinary lives" },
-}
+  fiction: {
+    name: "Fiction",
+    description:
+      "Immerse yourself in captivating stories and imaginative worlds",
+  },
+  "non-fiction": {
+    name: "Non-Fiction",
+    description: "Expand your knowledge with real-world insights and wisdom",
+  },
+  business: {
+    name: "Business & Finance",
+    description: "Master the art of business, investing, and entrepreneurship",
+  },
+  "self-help": {
+    name: "Self-Help",
+    description: "Transform your life with personal development and wellness",
+  },
+  academic: {
+    name: "Academic & Education",
+    description:
+      "Excel in your studies with comprehensive educational resources",
+  },
+  children: {
+    name: "Children & Young Adults",
+    description: "Nurture young minds with age-appropriate adventures",
+  },
+  science: {
+    name: "Science & Technology",
+    description: "Explore the wonders of science and cutting-edge technology",
+  },
+  arts: {
+    name: "Arts & Photography",
+    description: "Celebrate creativity through visual arts and design",
+  },
+  travel: {
+    name: "Travel & Adventure",
+    description:
+      "Explore the world through travel guides and adventure stories",
+  },
+  history: {
+    name: "History & Politics",
+    description: "Understand our past to shape the future",
+  },
+  music: {
+    name: "Music & Entertainment",
+    description: "Dive into the world of music and entertainment",
+  },
+  cooking: {
+    name: "Cooking & Food",
+    description: "Discover culinary delights and cooking techniques",
+  },
+  sports: {
+    name: "Sports & Fitness",
+    description: "Stay active with sports and fitness guides",
+  },
+  movies: {
+    name: "Film & Media",
+    description: "Explore cinema history and media studies",
+  },
+  thriller: {
+    name: "Thriller & Mystery",
+    description: "Edge-of-your-seat suspense and gripping mysteries",
+  },
+  "science fiction": {
+    name: "Science Fiction",
+    description: "Journey to distant worlds and future possibilities",
+  },
+  memoir: {
+    name: "Memoir & Biography",
+    description: "Real stories from extraordinary lives",
+  },
+};
 
 const generateBooks = (category: string) => {
-  const authors = ["James Patterson", "Stephen King", "J.K. Rowling", "Dan Brown", "Michelle Obama", "Malcolm Gladwell", "Brené Brown", "Cal Newport"]
+  const authors = [
+    "James Patterson",
+    "Stephen King",
+    "J.K. Rowling",
+    "Dan Brown",
+    "Michelle Obama",
+    "Malcolm Gladwell",
+    "Brené Brown",
+    "Cal Newport",
+  ];
   const titles = [
-    "The Hidden Path", "Midnight Echoes", "Beyond Tomorrow", "The Last Chapter",
-    "Silent Whispers", "Infinite Horizons", "The Art of Wonder", "Timeless Journey",
-    "Sacred Grounds", "The Final Hour", "Starlight Dreams", "Ocean of Secrets"
-  ]
-  
+    "The Hidden Path",
+    "Midnight Echoes",
+    "Beyond Tomorrow",
+    "The Last Chapter",
+    "Silent Whispers",
+    "Infinite Horizons",
+    "The Art of Wonder",
+    "Timeless Journey",
+    "Sacred Grounds",
+    "The Final Hour",
+    "Starlight Dreams",
+    "Ocean of Secrets",
+  ];
+
   return Array.from({ length: 12 }, (_, i) => ({
     id: `${category}-${i + 1}`,
     title: titles[i % titles.length],
@@ -50,58 +135,81 @@ const generateBooks = (category: string) => {
     originalPrice: Number((19.99 + Math.random() * 30).toFixed(2)),
     rating: Number((4 + Math.random()).toFixed(1)),
     image: `https://images.unsplash.com/photo-${
-      ["1544947950-fa07a98d237f", "1512820790803-83ca734da794", "1543002588-bfa74002ed7e", "1592496431122-2349e0fbc666", "1495446815901-a7297e633e8d"][i % 5]
+      [
+        "1544947950-fa07a98d237f",
+        "1512820790803-83ca734da794",
+        "1543002588-bfa74002ed7e",
+        "1592496431122-2349e0fbc666",
+        "1495446815901-a7297e633e8d",
+      ][i % 5]
     }?w=400&h=600&fit=crop`,
     isBestseller: i < 3,
     isNew: i >= 9,
     category,
-  }))
-}
+  }));
+};
 
-const subcategories = ["All", "Bestsellers", "New Releases", "Award Winners", "Editor Picks", "Under $10", "Classic"]
+const subcategories = [
+  "All",
+  "Bestsellers",
+  "New Releases",
+  "Award Winners",
+  "Editor Picks",
+  "Under $10",
+  "Classic",
+];
 
-export default function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
-  const resolvedParams = use(params)
-  const slug = resolvedParams.slug
-  const category = categoryData[slug] || { name: slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " "), description: "Explore our collection" }
-  const books = generateBooks(slug)
+export default function CategoryPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const resolvedParams = use(params);
+  const slug = resolvedParams.slug;
+  const category = categoryData[slug] || {
+    name: slug.charAt(0).toUpperCase() + slug.slice(1).replace(/-/g, " "),
+    description: "Explore our collection",
+  };
+  const books = generateBooks(slug);
 
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
-  const [sortBy, setSortBy] = useState("popularity")
-  const [priceRange, setPriceRange] = useState([0, 50])
-  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>(["All"])
-  const [showFilters, setShowFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [sortBy, setSortBy] = useState("popularity");
+  const [priceRange, setPriceRange] = useState([0, 50]);
+  const [selectedSubcategories, setSelectedSubcategories] = useState<string[]>([
+    "All",
+  ]);
+  const [showFilters, setShowFilters] = useState(false);
 
   const toggleSubcategory = (sub: string) => {
     if (sub === "All") {
-      setSelectedSubcategories(["All"])
+      setSelectedSubcategories(["All"]);
     } else {
-      const newSubs = selectedSubcategories.filter((s) => s !== "All")
+      const newSubs = selectedSubcategories.filter((s) => s !== "All");
       if (newSubs.includes(sub)) {
-        const filtered = newSubs.filter((s) => s !== sub)
-        setSelectedSubcategories(filtered.length === 0 ? ["All"] : filtered)
+        const filtered = newSubs.filter((s) => s !== sub);
+        setSelectedSubcategories(filtered.length === 0 ? ["All"] : filtered);
       } else {
-        setSelectedSubcategories([...newSubs, sub])
+        setSelectedSubcategories([...newSubs, sub]);
       }
     }
-  }
+  };
 
   const filteredBooks = books.filter((book) => {
-    return book.price >= priceRange[0] && book.price <= priceRange[1]
-  })
+    return book.price >= priceRange[0] && book.price <= priceRange[1];
+  });
 
   const sortedBooks = [...filteredBooks].sort((a, b) => {
     switch (sortBy) {
       case "price-low":
-        return a.price - b.price
+        return a.price - b.price;
       case "price-high":
-        return b.price - a.price
+        return b.price - a.price;
       case "rating":
-        return b.rating - a.rating
+        return b.rating - a.rating;
       default:
-        return 0
+        return 0;
     }
-  })
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -116,13 +224,20 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
         <div className="container mx-auto px-4 relative">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4" />
-            <Link href="/categories" className="hover:text-gold transition-colors">Categories</Link>
+            <Link
+              href="/categories"
+              className="hover:text-gold transition-colors"
+            >
+              Categories
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">{category.name}</span>
           </nav>
-          
+
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-xl bg-gold/20 flex items-center justify-center">
               <BookOpen className="w-7 h-7 text-gold" />
@@ -131,7 +246,10 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
               {category.name}
             </h1>
           </div>
-          <p className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+          <p
+            className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up"
+            style={{ animationDelay: "100ms" }}
+          >
             {category.description}
           </p>
         </div>
@@ -163,7 +281,10 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                           onCheckedChange={() => toggleSubcategory(sub)}
                           className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
                         />
-                        <Label htmlFor={sub} className="text-sm cursor-pointer hover:text-gold transition-colors">
+                        <Label
+                          htmlFor={sub}
+                          className="text-sm cursor-pointer hover:text-gold transition-colors"
+                        >
                           {sub}
                         </Label>
                       </div>
@@ -191,17 +312,22 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 <div>
                   <h4 className="font-medium mb-3">Rating</h4>
                   <div className="space-y-2">
-                    {["4 & above", "3 & above", "2 & above", "All ratings"].map((rating) => (
-                      <div key={rating} className="flex items-center gap-2">
-                        <Checkbox
-                          id={rating}
-                          className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
-                        />
-                        <Label htmlFor={rating} className="text-sm cursor-pointer hover:text-gold transition-colors">
-                          {rating}
-                        </Label>
-                      </div>
-                    ))}
+                    {["4 & above", "3 & above", "2 & above", "All ratings"].map(
+                      (rating) => (
+                        <div key={rating} className="flex items-center gap-2">
+                          <Checkbox
+                            id={rating}
+                            className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
+                          />
+                          <Label
+                            htmlFor={rating}
+                            className="text-sm cursor-pointer hover:text-gold transition-colors"
+                          >
+                            {rating}
+                          </Label>
+                        </div>
+                      ),
+                    )}
                   </div>
                 </div>
 
@@ -210,8 +336,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                   variant="outline"
                   className="w-full border-gold/30 hover:bg-gold/10 hover:text-gold"
                   onClick={() => {
-                    setSelectedSubcategories(["All"])
-                    setPriceRange([0, 50])
+                    setSelectedSubcategories(["All"]);
+                    setPriceRange([0, 50]);
                   }}
                 >
                   Clear All Filters
@@ -233,9 +359,13 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                     <SlidersHorizontal className="w-4 h-4 mr-2" />
                     Filters
                   </Button>
-                  
+
                   <p className="text-sm text-muted-foreground">
-                    Showing <span className="font-semibold text-foreground">{sortedBooks.length}</span> books
+                    Showing{" "}
+                    <span className="font-semibold text-foreground">
+                      {sortedBooks.length}
+                    </span>{" "}
+                    books
                   </p>
                 </div>
 
@@ -248,8 +378,12 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                     <SelectContent>
                       <SelectItem value="popularity">Popularity</SelectItem>
                       <SelectItem value="rating">Highest Rated</SelectItem>
-                      <SelectItem value="price-low">Price: Low to High</SelectItem>
-                      <SelectItem value="price-high">Price: High to Low</SelectItem>
+                      <SelectItem value="price-low">
+                        Price: Low to High
+                      </SelectItem>
+                      <SelectItem value="price-high">
+                        Price: High to Low
+                      </SelectItem>
                       <SelectItem value="newest">Newest First</SelectItem>
                     </SelectContent>
                   </Select>
@@ -260,7 +394,9 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                       onClick={() => setViewMode("grid")}
                       className={cn(
                         "p-2 transition-colors",
-                        viewMode === "grid" ? "bg-gold text-primary-foreground" : "hover:bg-muted"
+                        viewMode === "grid"
+                          ? "bg-gold text-primary-foreground"
+                          : "hover:bg-muted",
                       )}
                     >
                       <Grid3X3 className="w-5 h-5" />
@@ -269,7 +405,9 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                       onClick={() => setViewMode("list")}
                       className={cn(
                         "p-2 transition-colors",
-                        viewMode === "list" ? "bg-gold text-primary-foreground" : "hover:bg-muted"
+                        viewMode === "list"
+                          ? "bg-gold text-primary-foreground"
+                          : "hover:bg-muted",
                       )}
                     >
                       <LayoutList className="w-5 h-5" />
@@ -284,7 +422,7 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                   "grid gap-6",
                   viewMode === "grid"
                     ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-                    : "grid-cols-1"
+                    : "grid-cols-1",
                 )}
               >
                 {sortedBooks.map((book, index) => (
@@ -304,13 +442,16 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                     className={cn(
                       page === 1
                         ? "bg-gold hover:bg-gold-dark text-primary-foreground"
-                        : "border-gold/30 hover:bg-gold/10"
+                        : "border-gold/30 hover:bg-gold/10",
                     )}
                   >
                     {page}
                   </Button>
                 ))}
-                <Button variant="outline" className="border-gold/30 hover:bg-gold/10">
+                <Button
+                  variant="outline"
+                  className="border-gold/30 hover:bg-gold/10"
+                >
                   Next
                 </Button>
               </div>
@@ -322,14 +463,21 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
       {/* Mobile Filters Drawer */}
       {showFilters && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/50" onClick={() => setShowFilters(false)} />
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setShowFilters(false)}
+          />
           <div className="absolute right-0 top-0 bottom-0 w-80 bg-background p-6 overflow-y-auto animate-slide-in-right">
             <div className="flex items-center justify-between mb-6">
               <h3 className="font-semibold text-lg flex items-center gap-2">
                 <SlidersHorizontal className="w-5 h-5 text-gold" />
                 Filters
               </h3>
-              <Button variant="ghost" size="icon" onClick={() => setShowFilters(false)}>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowFilters(false)}
+              >
                 <X className="w-5 h-5" />
               </Button>
             </div>
@@ -346,7 +494,10 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                       onCheckedChange={() => toggleSubcategory(sub)}
                       className="border-gold/50 data-[state=checked]:bg-gold data-[state=checked]:border-gold"
                     />
-                    <Label htmlFor={`mobile-${sub}`} className="text-sm cursor-pointer">
+                    <Label
+                      htmlFor={`mobile-${sub}`}
+                      className="text-sm cursor-pointer"
+                    >
                       {sub}
                     </Label>
                   </div>
@@ -382,8 +533,8 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
                 variant="outline"
                 className="w-full border-gold/30"
                 onClick={() => {
-                  setSelectedSubcategories(["All"])
-                  setPriceRange([0, 50])
+                  setSelectedSubcategories(["All"]);
+                  setPriceRange([0, 50]);
                 }}
               >
                 Clear All
@@ -395,5 +546,5 @@ export default function CategoryPage({ params }: { params: Promise<{ slug: strin
 
       <Footer />
     </div>
-  )
+  );
 }

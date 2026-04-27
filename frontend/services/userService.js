@@ -36,7 +36,7 @@ export const userService = {
 
   // Get all users (admin)
   getAllUsers: async (params = {}) => {
-    const response = await api.get("/user/get-all-users", { params });
+    const response = await api.get("/user/", { params });
     return response.data;
   },
 

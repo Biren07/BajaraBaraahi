@@ -75,12 +75,17 @@ interface CartItem {
 // ];
 
 export default function CartPage() {
-  const { cartItems, totalPrice, loading, updateQuantity, removeItem, clearCart } = useCart();
+  const {
+    cartItems,
+    totalPrice,
+    loading,
+    updateQuantity,
+    removeItem,
+    clearCart,
+  } = useCart();
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
   const [couponDiscount, setCouponDiscount] = useState(0);
-
-
 
   const applyCoupon = () => {
     if (couponCode.toUpperCase() === "SUMMER20") {
@@ -98,7 +103,9 @@ export default function CartPage() {
   const subtotal = totalPrice;
   const savings = cartItems.reduce(
     (sum, item) =>
-      sum + ((item.original_price || item.effectivePrice) - item.effectivePrice) * item.quantity,
+      sum +
+      ((item.original_price || item.effectivePrice) - item.effectivePrice) *
+        item.quantity,
     0,
   );
   const couponSavings = (subtotal * couponDiscount) / 100;
@@ -113,7 +120,9 @@ export default function CartPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-lg mx-auto text-center py-16">
               <Loader2 className="w-12 h-12 animate-spin mx-auto mb-6 text-gold" />
-              <h1 className="text-2xl font-serif font-bold mb-4">Loading Cart...</h1>
+              <h1 className="text-2xl font-serif font-bold mb-4">
+                Loading Cart...
+              </h1>
             </div>
           </div>
         </div>
@@ -222,10 +231,10 @@ export default function CartPage() {
                               <p className="text-sm text-muted-foreground">
                                 by {item.author}
                               </p>
-                                <button
-                                  onClick={() => removeItem(item._id)}
-                                  className="mt-2 text-sm text-red-500 hover:text-red-600 flex items-center gap-1 md:hidden"
-                                >
+                              <button
+                                onClick={() => removeItem(item._id)}
+                                className="mt-2 text-sm text-red-500 hover:text-red-600 flex items-center gap-1 md:hidden"
+                              >
                                 <Trash2 className="w-3 h-3" />
                                 Remove
                               </button>
@@ -241,11 +250,12 @@ export default function CartPage() {
                               <span className="font-semibold text-gold">
                                 Rs. {item.effectivePrice.toFixed(2)}
                               </span>
-                              {item.original_price && item.original_price > item.effectivePrice && (
-                                <span className="text-sm text-muted-foreground line-through ml-2">
-                                  Rs. {item.original_price.toFixed(2)}
-                                </span>
-                              )}
+                              {item.original_price &&
+                                item.original_price > item.effectivePrice && (
+                                  <span className="text-sm text-muted-foreground line-through ml-2">
+                                    Rs. {item.original_price.toFixed(2)}
+                                  </span>
+                                )}
                             </div>
                           </div>
 
@@ -255,22 +265,26 @@ export default function CartPage() {
                               Qty:
                             </span>
                             <div className="flex items-center border border-border rounded-lg overflow-hidden">
-                               <button
-                                 onClick={() => updateQuantity(item._id, item.quantity - 1)}
-                                 disabled={item.quantity <= 1}
-                                 className="p-2 hover:bg-muted transition-colors disabled:opacity-50"
-                               >
-                                 <Minus className="w-4 h-4" />
-                               </button>
-                                <span className="w-10 text-center font-medium">
-                                  {item.quantity}
-                                </span>
-                               <button
-                                 onClick={() => updateQuantity(item._id, item.quantity + 1)}
-                                 className="p-2 hover:bg-muted transition-colors"
-                               >
-                                 <Plus className="w-4 h-4" />
-                               </button>
+                              <button
+                                onClick={() =>
+                                  updateQuantity(item._id, item.quantity - 1)
+                                }
+                                disabled={item.quantity <= 1}
+                                className="p-2 hover:bg-muted transition-colors disabled:opacity-50"
+                              >
+                                <Minus className="w-4 h-4" />
+                              </button>
+                              <span className="w-10 text-center font-medium">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() =>
+                                  updateQuantity(item._id, item.quantity + 1)
+                                }
+                                className="p-2 hover:bg-muted transition-colors"
+                              >
+                                <Plus className="w-4 h-4" />
+                              </button>
                             </div>
                           </div>
 
@@ -282,10 +296,10 @@ export default function CartPage() {
                             <span className="font-bold text-lg">
                               Rs. {item.subtotal.toFixed(2)}
                             </span>
-                             <button
-                               onClick={() => removeItem(item._id)}
-                               className="hidden md:block p-2 text-muted-foreground hover:text-red-500 transition-colors"
-                             >
+                            <button
+                              onClick={() => removeItem(item._id)}
+                              className="hidden md:block p-2 text-muted-foreground hover:text-red-500 transition-colors"
+                            >
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -420,9 +434,9 @@ export default function CartPage() {
 
                   <div className="flex justify-between items-center mb-6">
                     <span className="font-semibold text-lg">Total</span>
-<span className="text-2xl font-bold text-gold">
-                        Rs. {total.toFixed(2)}
-                      </span>
+                    <span className="text-2xl font-bold text-gold">
+                      Rs. {total.toFixed(2)}
+                    </span>
                   </div>
 
                   <div className="pt-4">

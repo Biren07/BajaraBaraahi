@@ -5,12 +5,7 @@ import { Eye, Plus, Receipt, RotateCcw, Loader2 } from "lucide-react";
 import AdminShell from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -72,7 +67,6 @@ export default function AdminOrderPage() {
   return (
     <AdminShell>
       <div className="space-y-6">
-
         {/* HEADER */}
         <div className="flex items-start gap-4">
           <div className="w-11 h-11 rounded-xl bg-[#800000]/10 flex items-center justify-center shadow-sm">
@@ -91,7 +85,6 @@ export default function AdminOrderPage() {
 
         {/* GRID */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr,340px] gap-6">
-
           {/* TABLE CARD */}
           <Card className="shadow-sm border rounded-2xl">
             <CardHeader className="pb-2">
@@ -106,7 +99,6 @@ export default function AdminOrderPage() {
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
-
                   <TableHeader>
                     <TableRow className="bg-gray-50">
                       <TableHead>Order ID</TableHead>
@@ -128,7 +120,10 @@ export default function AdminOrderPage() {
                       </TableRow>
                     ) : orders.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                        <TableCell
+                          colSpan={6}
+                          className="text-center py-8 text-gray-500"
+                        >
                           No orders found
                         </TableCell>
                       </TableRow>
@@ -138,7 +133,6 @@ export default function AdminOrderPage() {
                           key={order._id || order.id}
                           className="hover:bg-gray-50 transition"
                         >
-
                           <TableCell className="font-mono text-xs text-gray-500">
                             {order._id || order.id}
                           </TableCell>
@@ -148,7 +142,9 @@ export default function AdminOrderPage() {
                           </TableCell>
 
                           <TableCell className="text-gray-500">
-                            {order.createdAt ? new Date(order.createdAt).toLocaleDateString() : order.date}
+                            {order.createdAt
+                              ? new Date(order.createdAt).toLocaleDateString()
+                              : order.date}
                           </TableCell>
 
                           <TableCell>
@@ -171,12 +167,10 @@ export default function AdminOrderPage() {
                               View
                             </Button>
                           </TableCell>
-
                         </TableRow>
                       ))
                     )}
                   </TableBody>
-
                 </Table>
               </div>
             </CardContent>
@@ -219,7 +213,6 @@ export default function AdminOrderPage() {
 
             </CardContent>
           </Card> */}
-
         </div>
       </div>
     </AdminShell>

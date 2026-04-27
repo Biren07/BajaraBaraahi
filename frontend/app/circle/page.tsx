@@ -8,11 +8,11 @@
 // import { Badge } from "@/components/ui/badge"
 // import { Input } from "@/components/ui/input"
 // import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-// import { 
-//   Users, 
-//   BookOpen, 
-//   Crown, 
-//   Star, 
+// import {
+//   Users,
+//   BookOpen,
+//   Crown,
+//   Star,
 //   Calendar,
 //   MessageCircle,
 //   Gift,
@@ -152,8 +152,8 @@
 //   const [joinedClubs, setJoinedClubs] = useState<number[]>([1])
 
 //   const toggleJoinClub = (clubId: number) => {
-//     setJoinedClubs(prev => 
-//       prev.includes(clubId) 
+//     setJoinedClubs(prev =>
+//       prev.includes(clubId)
 //         ? prev.filter(id => id !== clubId)
 //         : [...prev, clubId]
 //     )
@@ -162,7 +162,7 @@
 //   return (
 //     <div className="min-h-screen bg-background">
 //       <Header />
-      
+
 //       <main className="pt-32 pb-16">
 //         {/* Hero Section */}
 //         <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary to-primary/90 py-16 mb-12">
@@ -171,7 +171,7 @@
 //             <div className="absolute bottom-20 right-20 w-48 h-48 border border-gold rounded-full animate-pulse delay-300" />
 //             <div className="absolute top-1/2 left-1/3 w-24 h-24 border border-gold rounded-full animate-pulse delay-500" />
 //           </div>
-          
+
 //           <div className="container mx-auto px-4 relative">
 //             <div className="max-w-3xl mx-auto text-center">
 //               <Badge className="bg-gold text-primary-foreground mb-4">
@@ -260,8 +260,8 @@
 //                     <CardContent className="p-6">
 //                       <div className="flex items-start gap-4">
 //                         <div className="relative">
-//                           <img 
-//                             src={club.image} 
+//                           <img
+//                             src={club.image}
 //                             alt={club.name}
 //                             className="w-16 h-16 rounded-full object-cover border-2 border-gold"
 //                           />
@@ -275,11 +275,11 @@
 //                               <h3 className="font-semibold text-lg group-hover:text-gold transition-colors">{club.name}</h3>
 //                               <p className="text-sm text-muted-foreground">{club.members.toLocaleString()} members</p>
 //                             </div>
-//                             <Button 
+//                             <Button
 //                               size="sm"
 //                               variant={joinedClubs.includes(club.id) ? "default" : "outline"}
-//                               className={joinedClubs.includes(club.id) 
-//                                 ? "bg-gold text-primary-foreground hover:bg-gold-dark" 
+//                               className={joinedClubs.includes(club.id)
+//                                 ? "bg-gold text-primary-foreground hover:bg-gold-dark"
 //                                 : "border-gold/30 hover:bg-gold/10 hover:text-gold"
 //                               }
 //                               onClick={() => toggleJoinClub(club.id)}
@@ -293,7 +293,7 @@
 //                             </Button>
 //                           </div>
 //                           <p className="text-sm text-muted-foreground mt-2">{club.description}</p>
-                          
+
 //                           <div className="flex flex-wrap gap-1 mt-3">
 //                             {club.tags.map((tag) => (
 //                               <Badge key={tag} variant="outline" className="text-xs border-gold/30">
@@ -303,7 +303,7 @@
 //                           </div>
 //                         </div>
 //                       </div>
-                      
+
 //                       <div className="mt-4 pt-4 border-t border-border">
 //                         <div className="flex items-center justify-between">
 //                           <div>
@@ -337,8 +337,8 @@
 //                   <Card key={idx} className="border-gold/20 overflow-hidden hover:shadow-lg transition-shadow">
 //                     <CardHeader className="bg-gradient-to-r from-gold/10 to-gold/5 pb-4">
 //                       <Badge className={
-//                         event.type === "Virtual" 
-//                           ? "bg-blue-500/10 text-blue-600 border-blue-500/20 w-fit" 
+//                         event.type === "Virtual"
+//                           ? "bg-blue-500/10 text-blue-600 border-blue-500/20 w-fit"
 //                           : event.type === "Challenge"
 //                           ? "bg-gold/10 text-gold border-gold/20 w-fit"
 //                           : "bg-green-500/10 text-green-600 border-green-500/20 w-fit"
@@ -405,7 +405,7 @@
 //                           </div>
 //                         </div>
 //                       </div>
-                      
+
 //                       {/* 1st Place */}
 //                       <div className="text-center">
 //                         <div className="relative mb-2">
@@ -422,7 +422,7 @@
 //                           </div>
 //                         </div>
 //                       </div>
-                      
+
 //                       {/* 3rd Place */}
 //                       <div className="text-center">
 //                         <div className="relative mb-2">
@@ -511,8 +511,8 @@
 //             <TabsContent value="membership">
 //               <div className="grid md:grid-cols-3 gap-6">
 //                 {membershipTiers.map((tier) => (
-//                   <Card 
-//                     key={tier.name} 
+//                   <Card
+//                     key={tier.name}
 //                     className={`border-gold/20 relative overflow-hidden ${tier.popular ? "ring-2 ring-gold shadow-xl" : ""}`}
 //                   >
 //                     {tier.popular && (
@@ -539,9 +539,9 @@
 //                           </li>
 //                         ))}
 //                       </ul>
-//                       <Button 
-//                         className={`w-full ${tier.popular 
-//                           ? "bg-gold text-primary-foreground hover:bg-gold-dark" 
+//                       <Button
+//                         className={`w-full ${tier.popular
+//                           ? "bg-gold text-primary-foreground hover:bg-gold-dark"
 //                           : "border-gold/30 hover:bg-gold/10 hover:text-gold"
 //                         }`}
 //                         variant={tier.popular ? "default" : "outline"}
@@ -589,14 +589,15 @@
 //   )
 // }
 
-
-import DeploymentPage from '@/components/deployment'
-import React from 'react'
+import DeploymentPage from "@/components/deployment";
+import React from "react";
 
 const CirclePage = () => {
   return (
-    <div><DeploymentPage/></div>
-  )
-}
+    <div>
+      <DeploymentPage />
+    </div>
+  );
+};
 
-export default CirclePage
+export default CirclePage;

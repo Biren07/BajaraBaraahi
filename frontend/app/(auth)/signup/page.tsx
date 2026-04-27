@@ -1,22 +1,22 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ArrowRight, Eye, EyeOff } from "lucide-react"
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { ArrowRight, Eye, EyeOff } from "lucide-react";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Checkbox } from "@/components/ui/checkbox"
-import { useAuth } from "@/context/auth-context"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useAuth } from "@/context/auth-context";
 
 export default function SignupPage() {
-  const router = useRouter()
-  const { register } = useAuth()
-  const [step, setStep] = useState(1)
+  const router = useRouter();
+  const { register } = useAuth();
+  const [step, setStep] = useState(1);
 
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: "",
@@ -26,71 +26,75 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
     agreeTerms: false,
-  })
+  });
 
-  const [errors, setErrors] = useState<{ [key: string]: string }>({})
-  const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const validateStep1 = () => {
-    const newErrors: { [key: string]: string } = {}
-    if (!formData.firstName.trim()) newErrors.firstName = "First name is required"
-    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required"
-    if (!formData.email.trim()) newErrors.email = "Email is required"
-    if (!formData.phone.trim()) newErrors.phone = "Phone is required"
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.firstName.trim())
+      newErrors.firstName = "First name is required";
+    if (!formData.lastName.trim()) newErrors.lastName = "Last name is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const validateStep2 = () => {
-    const newErrors: { [key: string]: string } = {}
-    if (!formData.password) newErrors.password = "Password is required"
-    if (formData.password.length < 6) newErrors.password = "Password must be at least 6 characters"
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match"
-    if (!formData.agreeTerms) newErrors.agreeTerms = "You must agree to terms"
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.password) newErrors.password = "Password is required";
+    if (formData.password.length < 6)
+      newErrors.password = "Password must be at least 6 characters";
+    if (formData.password !== formData.confirmPassword)
+      newErrors.confirmPassword = "Passwords do not match";
+    if (!formData.agreeTerms) newErrors.agreeTerms = "You must agree to terms";
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleNext = () => {
-    if (validateStep1()) setStep(2)
-  }
+    if (validateStep1()) setStep(2);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!validateStep2()) return
+    e.preventDefault();
+    if (!validateStep2()) return;
 
-    setIsLoading(true)
-    setErrors({})
+    setIsLoading(true);
+    setErrors({});
 
     try {
-      console.log('Attempting registration with:', {
+      console.log("Attempting registration with:", {
         firstName: formData.firstName,
         lastName: formData.lastName,
         email: formData.email,
         phone: formData.phone,
-        password: formData.password.replace(/./g, '*')
+        password: formData.password.replace(/./g, "*"),
       });
       await register(
         formData.firstName,
         formData.lastName,
         formData.email,
         formData.phone,
-        formData.password
-      )
-      console.log('Registration successful, redirecting to home');
-      router.push("/")
+        formData.password,
+      );
+      console.log("Registration successful, redirecting to home");
+      router.push("/");
     } catch (err: any) {
-      console.log('Registration error:', err);
-      console.log('Registration error response:', err.response?.data);
-      setErrors({ general: err.response?.data?.message || 'Registration failed' })
+      console.log("Registration error:", err);
+      console.log("Registration error response:", err.response?.data);
+      setErrors({
+        general: err.response?.data?.message || "Registration failed",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex bg-background">
-
       {/* ================= LEFT SIDE (ANIMATED) ================= */}
       <div
         className="hidden lg:flex lg:w-1/2 relative bg-cover bg-center"
@@ -102,7 +106,6 @@ export default function SignupPage() {
         <div className="absolute inset-0 bg-black/60" />
 
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
-
           {/* LOGO */}
           <Link
             href="/"
@@ -142,9 +145,7 @@ export default function SignupPage() {
 
       {/* ================= RIGHT SIDE ================= */}
       <div className="w-full bg-red-200 lg:w-1/2 flex items-center justify-center p-6">
-
         <div className="w-full max-w-md bg-gray-200 backdrop-blur-2xl border border-border shadow-2xl rounded-3xl p-8">
-
           {/* LOGO */}
           <div className="text-center mb-6">
             <Link href="/" className="flex flex-col items-center">
@@ -172,8 +173,8 @@ export default function SignupPage() {
           {step === 1 && (
             <form
               onSubmit={(e) => {
-                e.preventDefault()
-                handleNext()
+                e.preventDefault();
+                handleNext();
               }}
               className="space-y-4"
             >
@@ -186,7 +187,9 @@ export default function SignupPage() {
                   }
                 />
                 {errors.firstName && (
-                  <p className="text-xs text-red-500 mt-1">{errors.firstName}</p>
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.firstName}
+                  </p>
                 )}
               </div>
 
@@ -240,7 +243,6 @@ export default function SignupPage() {
           {/* ================= STEP 2 ================= */}
           {step === 2 && (
             <form onSubmit={handleSubmit} className="space-y-4">
-
               {errors.general && (
                 <p className="text-xs text-red-500">{errors.general}</p>
               )}
@@ -286,9 +288,7 @@ export default function SignupPage() {
                 />
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-3 text-muted-foreground"
                 >
                   {showConfirmPassword ? (
@@ -298,7 +298,9 @@ export default function SignupPage() {
                   )}
                 </button>
                 {errors.confirmPassword && (
-                  <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.confirmPassword}
+                  </p>
                 )}
               </div>
 
@@ -314,7 +316,9 @@ export default function SignupPage() {
                   I agree to Terms & Privacy Policy
                 </span>
                 {errors.agreeTerms && (
-                  <p className="text-xs text-red-500 mt-1">{errors.agreeTerms}</p>
+                  <p className="text-xs text-red-500 mt-1">
+                    {errors.agreeTerms}
+                  </p>
                 )}
               </div>
 
@@ -351,6 +355,5 @@ export default function SignupPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }
-

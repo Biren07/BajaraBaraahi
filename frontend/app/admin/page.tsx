@@ -1,11 +1,5 @@
 import Link from "next/link";
-import {
-  BookOpen,
-  CircleDot,
-  Package,
-  Receipt,
-  Users,
-} from "lucide-react";
+import { BookOpen, CircleDot, Package, Receipt, Users } from "lucide-react";
 
 import AdminShell from "@/components/admin/admin-shell";
 import { Card, CardContent } from "@/components/ui/card";
@@ -53,7 +47,6 @@ export default function AdminOverviewPage() {
   return (
     <AdminShell>
       <div className="space-y-8">
-
         {/* Header */}
         <div className="space-y-2">
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900">
@@ -61,7 +54,8 @@ export default function AdminOverviewPage() {
           </h1>
 
           <p className="text-sm sm:text-base text-gray-500 max-w-2xl">
-            Monitor operations, manage data, and control your system from a single place.
+            Monitor operations, manage data, and control your system from a
+            single place.
           </p>
         </div>
 
@@ -74,9 +68,7 @@ export default function AdminOverviewPage() {
               <Link key={s.href} href={s.href} className="group">
                 <Card className="h-full border border-gray-200 hover:border-[#800000] transition-all duration-200 hover:shadow-lg rounded-2xl">
                   <CardContent className="p-5 sm:p-6">
-
                     <div className="flex items-start justify-between">
-
                       {/* Icon */}
                       <div className="w-11 h-11 rounded-xl bg-[#800000]/10 text-[#800000] flex items-center justify-center group-hover:bg-[#800000] group-hover:text-white transition">
                         <Icon className="w-5 h-5" />
@@ -98,7 +90,6 @@ export default function AdminOverviewPage() {
                         {s.description}
                       </div>
                     </div>
-
                   </CardContent>
                 </Card>
               </Link>
@@ -109,7 +100,6 @@ export default function AdminOverviewPage() {
         {/* Quick Navigation */}
         <Card className="rounded-2xl border-gray-200">
           <CardContent className="p-5 sm:p-6 space-y-4">
-
             <div>
               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
                 Quick Actions
@@ -131,13 +121,11 @@ export default function AdminOverviewPage() {
                 </Link>
               ))}
             </div>
-
           </CardContent>
         </Card>
 
         {/* Bottom Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-
           {/* Activity */}
           <Card className="rounded-2xl border-gray-200">
             <CardContent className="p-5 sm:p-6">
@@ -192,9 +180,7 @@ export default function AdminOverviewPage() {
               </div>
             </CardContent>
           </Card>
-
         </div>
-
       </div>
     </AdminShell>
   );

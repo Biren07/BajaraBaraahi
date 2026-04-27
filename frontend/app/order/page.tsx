@@ -62,7 +62,12 @@ export default function OrderPage() {
       toast.error("Please upload payment receipt");
       return;
     }
-    if (!formData.district || !formData.city || !formData.street || !formData.alternativePhone) {
+    if (
+      !formData.district ||
+      !formData.city ||
+      !formData.street ||
+      !formData.alternativePhone
+    ) {
       toast.error("Please fill all address fields");
       return;
     }
@@ -86,7 +91,7 @@ export default function OrderPage() {
       const message = `New Order\nOrder ID: ${response.orderId || response._id}\nPayment: ${payment}`;
       window.open(
         `https://wa.me/977XXXXXXXXX?text=${encodeURIComponent(message)}`,
-        "_blank"
+        "_blank",
       );
     } catch (error: any) {
       console.error("Failed to place order:", error);
@@ -127,22 +132,30 @@ export default function OrderPage() {
             <Input
               placeholder="District"
               value={formData.district}
-              onChange={(e) => setFormData({ ...formData, district: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, district: e.target.value })
+              }
             />
             <Input
               placeholder="City"
               value={formData.city}
-              onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, city: e.target.value })
+              }
             />
             <Input
               placeholder="Street Address"
               value={formData.street}
-              onChange={(e) => setFormData({ ...formData, street: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, street: e.target.value })
+              }
             />
             <Input
               placeholder="Phone Number"
               value={formData.alternativePhone}
-              onChange={(e) => setFormData({ ...formData, alternativePhone: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, alternativePhone: e.target.value })
+              }
             />
 
             <Separator />
@@ -159,9 +172,7 @@ export default function OrderPage() {
                   key={method}
                   onClick={() => handlePaymentSelect(method)}
                   className={`cursor-pointer border rounded-xl p-3 text-center ${
-                    payment === method
-                      ? "border-green-500 bg-green-50"
-                      : ""
+                    payment === method ? "border-green-500 bg-green-50" : ""
                   }`}
                 >
                   <Image
@@ -199,9 +210,7 @@ export default function OrderPage() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) =>
-                setReceipt(e.target.files?.[0] || null)
-              }
+              onChange={(e) => setReceipt(e.target.files?.[0] || null)}
               className="mt-4"
             />
 

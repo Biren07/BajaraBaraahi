@@ -51,7 +51,6 @@ export default function AdminProfilePage() {
   return (
     <AdminShell>
       <div className="max-w-4xl mx-auto space-y-6">
-
         {/* HEADER */}
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">
@@ -64,13 +63,9 @@ export default function AdminProfilePage() {
 
         {/* PROFILE CARD */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition space-y-5">
-
-          <h2 className="text-lg font-semibold text-gray-900">
-            Admin Details
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Admin Details</h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
             <div>
               <label className="text-sm text-gray-600">Full Name</label>
               <input
@@ -92,7 +87,6 @@ export default function AdminProfilePage() {
                 }
               />
             </div>
-
           </div>
 
           <button
@@ -105,13 +99,11 @@ export default function AdminProfilePage() {
 
         {/* PASSWORD CARD */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition space-y-5">
-
           <h2 className="text-lg font-semibold text-gray-900">
             Change Password
           </h2>
 
           <div className="space-y-3">
-
             <input
               type="password"
               placeholder="Current Password"
@@ -141,7 +133,6 @@ export default function AdminProfilePage() {
                 setPassword({ ...password, confirm: e.target.value })
               }
             />
-
           </div>
 
           <button
@@ -154,7 +145,6 @@ export default function AdminProfilePage() {
 
         {/* LOGOUT SECTION */}
         <div className="bg-white border border-gray-200 rounded-2xl p-6 shadow-sm flex justify-between items-center">
-
           <div>
             <h3 className="font-semibold text-gray-900">Logout</h3>
             <p className="text-sm text-gray-500">
@@ -169,9 +159,7 @@ export default function AdminProfilePage() {
           >
             {loading ? "Logging out..." : "Logout"}
           </button>
-
         </div>
-
       </div>
     </AdminShell>
   );

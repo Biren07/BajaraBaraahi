@@ -1,37 +1,52 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import Link from "next/link"
-import Image from "next/image"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { BookCard } from "@/components/book-card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ChevronRight, Clock, Percent, Gift, Tag, Zap, ArrowRight, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import { offerService } from "@/services/offerService"
-import toast from "react-hot-toast"
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { BookCard } from "@/components/book-card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  ChevronRight,
+  Clock,
+  Percent,
+  Gift,
+  Tag,
+  Zap,
+  ArrowRight,
+  Loader2,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { offerService } from "@/services/offerService";
+import toast from "react-hot-toast";
 
 function CountdownTimer({ targetDate }: { targetDate: Date }) {
-  const [timeLeft, setTimeLeft] = useState({ hours: 0, minutes: 0, seconds: 0 })
+  const [timeLeft, setTimeLeft] = useState({
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
-      const now = new Date().getTime()
-      const distance = targetDate.getTime() - now
+      const now = new Date().getTime();
+      const distance = targetDate.getTime() - now;
 
       if (distance > 0) {
         setTimeLeft({
-          hours: Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+          hours: Math.floor(
+            (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+          ),
           minutes: Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)),
           seconds: Math.floor((distance % (1000 * 60)) / 1000),
-        })
+        });
       }
-    }, 1000)
+    }, 1000);
 
-    return () => clearInterval(timer)
-  }, [targetDate])
+    return () => clearInterval(timer);
+  }, [targetDate]);
 
   return (
     <div className="flex items-center gap-2">
@@ -42,44 +57,46 @@ function CountdownTimer({ targetDate }: { targetDate: Date }) {
       ].map((item, index) => (
         <div key={index} className="flex items-center gap-2">
           <div className="bg-primary text-primary-foreground px-3 py-2 rounded-lg min-w-[50px] text-center">
-            <span className="text-xl font-bold">{String(item.value).padStart(2, "0")}</span>
+            <span className="text-xl font-bold">
+              {String(item.value).padStart(2, "0")}
+            </span>
             <p className="text-[10px] opacity-70">{item.label}</p>
           </div>
           {index < 2 && <span className="text-2xl font-bold text-gold">:</span>}
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 export default function OffersPage() {
-  const flashSaleEnd = new Date()
-  flashSaleEnd.setHours(flashSaleEnd.getHours() + 12)
+  const flashSaleEnd = new Date();
+  flashSaleEnd.setHours(flashSaleEnd.getHours() + 12);
 
-  const [offers, setOffers] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
+  const [offers, setOffers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchOffers()
-  }, [])
+    fetchOffers();
+  }, []);
 
   const fetchOffers = async () => {
     try {
-      setLoading(true)
-      const response = await offerService.getAllOffers()
-      setOffers(response.offers || response || [])
+      setLoading(true);
+      const response = await offerService.getAllOffers();
+      setOffers(response.offers || response || []);
     } catch (error) {
-      console.error("Failed to fetch offers:", error)
-      toast.error("Failed to load offers")
+      console.error("Failed to fetch offers:", error);
+      toast.error("Failed to load offers");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   // Filter offers by type
-  const flashDeals = offers.filter(offer => offer.type === 'flash')
-  const weeklyDeals = offers.filter(offer => offer.type === 'weekly')
-  const bundleDeals = offers.filter(offer => offer.type === 'bundle')
+  const flashDeals = offers.filter((offer) => offer.type === "flash");
+  const weeklyDeals = offers.filter((offer) => offer.type === "weekly");
+  const bundleDeals = offers.filter((offer) => offer.type === "bundle");
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,11 +111,13 @@ export default function OffersPage() {
         <div className="container mx-auto px-4 relative">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">Offers & Deals</span>
           </nav>
-          
+
           <div className="flex items-center gap-3 mb-4">
             <div className="w-12 h-12 rounded-full bg-gold/20 flex items-center justify-center animate-pulse">
               <Percent className="w-6 h-6 text-gold" />
@@ -107,8 +126,12 @@ export default function OffersPage() {
               Hot <span className="text-gold">Deals</span>
             </h1>
           </div>
-          <p className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up" style={{ animationDelay: "100ms" }}>
-            Save big on your favorite books! Limited-time offers, flash sales, and exclusive bundles at unbeatable prices.
+          <p
+            className="text-lg text-primary-foreground/80 max-w-2xl animate-fade-in-up"
+            style={{ animationDelay: "100ms" }}
+          >
+            Save big on your favorite books! Limited-time offers, flash sales,
+            and exclusive bundles at unbeatable prices.
           </p>
         </div>
       </section>
@@ -122,8 +145,12 @@ export default function OffersPage() {
                 <Zap className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl md:text-3xl font-serif font-bold">Flash Sale</h2>
-                <p className="text-muted-foreground">Up to 70% off - Limited time only!</p>
+                <h2 className="text-2xl md:text-3xl font-serif font-bold">
+                  Flash Sale
+                </h2>
+                <p className="text-muted-foreground">
+                  Up to 70% off - Limited time only!
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-4">
@@ -145,7 +172,9 @@ export default function OffersPage() {
               ))
             ) : flashDeals.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <p className="text-muted-foreground">No flash deals available</p>
+                <p className="text-muted-foreground">
+                  No flash deals available
+                </p>
               </div>
             ) : (
               flashDeals.map((offer, index) => (
@@ -175,12 +204,27 @@ export default function OffersPage() {
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-center mb-8">
             Exclusive <span className="text-gold">Coupon Codes</span>
           </h2>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { code: "SUMMER20", discount: "20% OFF", description: "On all fiction books", expiry: "Valid till Aug 31" },
-              { code: "FIRSTBUY", discount: "15% OFF", description: "For new customers", expiry: "One-time use" },
-              { code: "BUNDLE25", discount: "25% OFF", description: "On bundle purchases", expiry: "Valid till Sep 15" },
+              {
+                code: "SUMMER20",
+                discount: "20% OFF",
+                description: "On all fiction books",
+                expiry: "Valid till Aug 31",
+              },
+              {
+                code: "FIRSTBUY",
+                discount: "15% OFF",
+                description: "For new customers",
+                expiry: "One-time use",
+              },
+              {
+                code: "BUNDLE25",
+                discount: "25% OFF",
+                description: "On bundle purchases",
+                expiry: "Valid till Sep 15",
+              },
             ].map((coupon, index) => (
               <div
                 key={coupon.code}
@@ -194,7 +238,9 @@ export default function OffersPage() {
                   </Badge>
                 </div>
                 <div className="pt-2">
-                  <p className="text-muted-foreground text-sm mb-2">{coupon.description}</p>
+                  <p className="text-muted-foreground text-sm mb-2">
+                    {coupon.description}
+                  </p>
                   <div className="flex items-center justify-between">
                     <code className="text-xl font-mono font-bold text-gold bg-gold/10 px-4 py-2 rounded-lg">
                       {coupon.code}
@@ -208,7 +254,9 @@ export default function OffersPage() {
                       Copy
                     </Button>
                   </div>
-                  <p className="text-xs text-muted-foreground mt-3">{coupon.expiry}</p>
+                  <p className="text-xs text-muted-foreground mt-3">
+                    {coupon.expiry}
+                  </p>
                 </div>
               </div>
             ))}
@@ -221,10 +269,17 @@ export default function OffersPage() {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h2 className="text-2xl md:text-3xl font-serif font-bold">Weekly Deals</h2>
-              <p className="text-muted-foreground">50-70% off on selected titles</p>
+              <h2 className="text-2xl md:text-3xl font-serif font-bold">
+                Weekly Deals
+              </h2>
+              <p className="text-muted-foreground">
+                50-70% off on selected titles
+              </p>
             </div>
-            <Link href="/bestsellers" className="hidden md:flex items-center gap-2 text-gold hover:underline">
+            <Link
+              href="/bestsellers"
+              className="hidden md:flex items-center gap-2 text-gold hover:underline"
+            >
               View All <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -241,7 +296,9 @@ export default function OffersPage() {
               ))
             ) : weeklyDeals.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <p className="text-muted-foreground">No weekly deals available</p>
+                <p className="text-muted-foreground">
+                  No weekly deals available
+                </p>
               </div>
             ) : (
               weeklyDeals.map((offer, index) => (
@@ -273,7 +330,9 @@ export default function OffersPage() {
               <Gift className="w-8 h-8 text-gold inline-block mr-2 -mt-1" />
               Bundle & Save
             </h2>
-            <p className="text-muted-foreground">Get more for less with our curated book bundles</p>
+            <p className="text-muted-foreground">
+              Get more for less with our curated book bundles
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -288,53 +347,65 @@ export default function OffersPage() {
               ))
             ) : bundleDeals.length === 0 ? (
               <div className="col-span-full text-center py-8">
-                <p className="text-muted-foreground">No bundle deals available</p>
+                <p className="text-muted-foreground">
+                  No bundle deals available
+                </p>
               </div>
             ) : (
               bundleDeals.map((bundle, index) => (
-              <div
-                key={bundle.id}
-                className="group relative bg-card rounded-2xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Image */}
-                <div className="relative h-48 overflow-hidden">
-                  <Image
-                    src={bundle.image}
-                    alt={bundle.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4">
-                    <Badge className="bg-gold text-primary-foreground">
-                      {bundle.books} Books Included
-                    </Badge>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div className="p-6">
-                  <h3 className="text-xl font-serif font-bold mb-2 group-hover:text-gold transition-colors">
-                    {bundle.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm mb-4">{bundle.description}</p>
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-gold">Rs. {bundle.price}</span>
-                      <span className="text-sm text-muted-foreground line-through">Rs. {bundle.originalPrice}</span>
+                <div
+                  key={bundle.id}
+                  className="group relative bg-card rounded-2xl overflow-hidden border border-border hover:border-gold/50 transition-all duration-500 hover:shadow-xl hover:shadow-gold/10 animate-fade-in-up"
+                  style={{ animationDelay: `${index * 100}ms` }}
+                >
+                  {/* Image */}
+                  <div className="relative h-48 overflow-hidden">
+                    <Image
+                      src={bundle.image}
+                      alt={bundle.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <Badge className="bg-gold text-primary-foreground">
+                        {bundle.books} Books Included
+                      </Badge>
                     </div>
-                    <Badge variant="outline" className="border-green-500 text-green-600">
-                      Save Rs. {(bundle.originalPrice - bundle.price).toFixed(0)}
-                    </Badge>
                   </div>
 
-                  <Button className="w-full mt-4 bg-gold hover:bg-gold-dark text-primary-foreground">
-                    Get Bundle
-                  </Button>
+                  {/* Content */}
+                  <div className="p-6">
+                    <h3 className="text-xl font-serif font-bold mb-2 group-hover:text-gold transition-colors">
+                      {bundle.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm mb-4">
+                      {bundle.description}
+                    </p>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-2xl font-bold text-gold">
+                          Rs. {bundle.price}
+                        </span>
+                        <span className="text-sm text-muted-foreground line-through">
+                          Rs. {bundle.originalPrice}
+                        </span>
+                      </div>
+                      <Badge
+                        variant="outline"
+                        className="border-green-500 text-green-600"
+                      >
+                        Save Rs.{" "}
+                        {(bundle.originalPrice - bundle.price).toFixed(0)}
+                      </Badge>
+                    </div>
+
+                    <Button className="w-full mt-4 bg-gold hover:bg-gold-dark text-primary-foreground">
+                      Get Bundle
+                    </Button>
+                  </div>
                 </div>
-              </div>
               ))
             )}
           </div>
@@ -348,9 +419,13 @@ export default function OffersPage() {
             Free Shipping on Orders Over $50
           </h2>
           <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
-            Plus, get an extra 10% off when you sign up for our newsletter. Stay updated on the latest deals!
+            Plus, get an extra 10% off when you sign up for our newsletter. Stay
+            updated on the latest deals!
           </p>
-          <Button size="lg" className="bg-gold hover:bg-gold-dark text-primary-foreground">
+          <Button
+            size="lg"
+            className="bg-gold hover:bg-gold-dark text-primary-foreground"
+          >
             Shop Now & Save
           </Button>
         </div>
@@ -358,5 +433,5 @@ export default function OffersPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

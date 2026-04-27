@@ -116,7 +116,9 @@ export default function BookPage() {
           <div className="container mx-auto px-4">
             <div className="max-w-lg mx-auto text-center py-16">
               <Loader2 className="w-12 h-12 animate-spin mx-auto mb-6 text-gold" />
-              <h1 className="text-2xl font-serif font-bold mb-4">Loading Book...</h1>
+              <h1 className="text-2xl font-serif font-bold mb-4">
+                Loading Book...
+              </h1>
             </div>
           </div>
         </div>
@@ -135,7 +137,10 @@ export default function BookPage() {
               <h1 className="text-2xl font-serif font-bold mb-4">
                 {error || "Book not found"}
               </h1>
-              <Button onClick={fetchBookDetails} className="bg-gold hover:bg-gold-dark text-primary-foreground">
+              <Button
+                onClick={fetchBookDetails}
+                className="bg-gold hover:bg-gold-dark text-primary-foreground"
+              >
                 Try Again
               </Button>
             </div>
@@ -146,9 +151,10 @@ export default function BookPage() {
     );
   }
 
-  const discountedPrice = book.original_price && book.discount
-    ? book.original_price * (1 - book.discount / 100)
-    : book.price;
+  const discountedPrice =
+    book.original_price && book.discount
+      ? book.original_price * (1 - book.discount / 100)
+      : book.price;
 
   const hasDiscount = book.original_price && book.discount && book.discount > 0;
   const savings = hasDiscount ? book.original_price - discountedPrice : 0;
@@ -160,7 +166,6 @@ export default function BookPage() {
       {/* MAIN */}
       <section className="pt-32 pb-16">
         <div className="container mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-
           {/* IMAGE */}
           <div className="flex justify-center">
             <div className="relative w-[320px] h-[440px] rounded-2xl overflow-hidden shadow-lg border">
@@ -175,15 +180,10 @@ export default function BookPage() {
 
           {/* DETAILS */}
           <div className="space-y-6">
-
             {/* TITLE */}
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold">
-                {book.title}
-              </h1>
-              <p className="text-muted-foreground mt-1">
-                by {book.author}
-              </p>
+              <h1 className="text-3xl md:text-4xl font-bold">{book.title}</h1>
+              <p className="text-muted-foreground mt-1">by {book.author}</p>
             </div>
 
             {/* RATING */}
@@ -214,14 +214,17 @@ export default function BookPage() {
 
             {/* STOCK INFO */}
             <div className="text-sm">
-              <span className={`font-medium ${book.stock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                {book.stock > 0 ? `In Stock (${book.stock} available)` : 'Out of Stock'}
+              <span
+                className={`font-medium ${book.stock > 0 ? "text-green-600" : "text-red-600"}`}
+              >
+                {book.stock > 0
+                  ? `In Stock (${book.stock} available)`
+                  : "Out of Stock"}
               </span>
             </div>
 
             {/* ACTION BUTTONS */}
             <div className="flex gap-4 pt-2">
-
               {/* ADD TO CART */}
               <Button
                 onClick={handleAddToCart}
@@ -233,7 +236,7 @@ export default function BookPage() {
                 ) : (
                   <ShoppingCart className="w-5 h-5 mr-2" />
                 )}
-                {addingToCart ? 'Adding...' : 'Add to Cart'}
+                {addingToCart ? "Adding..." : "Add to Cart"}
               </Button>
 
               {/* WISHLIST */}
@@ -246,19 +249,13 @@ export default function BookPage() {
                     : "hover:border-[#7a0f1e] hover:text-[#7a0f1e]"
                 }`}
               >
-                <Heart
-                  className={`w-5 h-5 ${
-                    liked ? "fill-red-500" : ""
-                  }`}
-                />
+                <Heart className={`w-5 h-5 ${liked ? "fill-red-500" : ""}`} />
               </Button>
             </div>
 
             {/* DESCRIPTION */}
             <div className="pt-4 border-t">
-              <h3 className="text-xl font-semibold mb-2">
-                Description
-              </h3>
+              <h3 className="text-xl font-semibold mb-2">Description</h3>
               <p className="text-muted-foreground leading-relaxed">
                 {book.description}
               </p>
@@ -266,24 +263,30 @@ export default function BookPage() {
 
             {/* BOOK DETAILS */}
             <div className="pt-4 border-t">
-              <h3 className="text-xl font-semibold mb-3">
-                Book Details
-              </h3>
+              <h3 className="text-xl font-semibold mb-3">Book Details</h3>
               <div className="grid grid-cols-2 gap-4 text-sm">
                 <div>
-                  <span className="font-medium text-muted-foreground">Genre:</span>
+                  <span className="font-medium text-muted-foreground">
+                    Genre:
+                  </span>
                   <span className="ml-2 capitalize">{book.genre}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-muted-foreground">Category:</span>
+                  <span className="font-medium text-muted-foreground">
+                    Category:
+                  </span>
                   <span className="ml-2 capitalize">{book.category}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-muted-foreground">ISBN:</span>
+                  <span className="font-medium text-muted-foreground">
+                    ISBN:
+                  </span>
                   <span className="ml-2">{book.isbn}</span>
                 </div>
                 <div>
-                  <span className="font-medium text-muted-foreground">Weight:</span>
+                  <span className="font-medium text-muted-foreground">
+                    Weight:
+                  </span>
                   <span className="ml-2">{book.weight}g</span>
                 </div>
               </div>
@@ -295,7 +298,6 @@ export default function BookPage() {
               <span>🔒 Secure Payment</span>
               <span>↩ Easy Returns</span>
             </div>
-
           </div>
         </div>
       </section>

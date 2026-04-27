@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { cartService } from "@/services/cartService";
 import toast from "react-hot-toast";
 
@@ -41,7 +47,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const count = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const totalPrice = cartItems.reduce((sum, item) => sum + item.subtotal, 0);
 
-  // ✅ ALWAYS fetch on mount
   useEffect(() => {
     fetchCart();
   }, []);
@@ -75,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const updateQuantity = async (bookId: string, newQuantity: number) => {
     if (newQuantity < 1) return;
 
-    const itemIndex = cartItems.findIndex(item => item._id === bookId);
+    const itemIndex = cartItems.findIndex((item) => item._id === bookId);
     if (itemIndex === -1) return;
 
     const oldQuantity = cartItems[itemIndex].quantity;
@@ -83,18 +88,26 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const newSubtotal = cartItems[itemIndex].effectivePrice * newQuantity;
 
     // Optimistically update
-    setCartItems(prev => prev.map((item, index) =>
-      index === itemIndex ? { ...item, quantity: newQuantity, subtotal: newSubtotal } : item
-    ));
+    setCartItems((prev) =>
+      prev.map((item, index) =>
+        index === itemIndex
+          ? { ...item, quantity: newQuantity, subtotal: newSubtotal }
+          : item,
+      ),
+    );
 
     try {
       await cartService.updateCartQuantity(bookId, newQuantity);
       toast.success("Quantity updated");
     } catch (error: any) {
       // Revert
-      setCartItems(prev => prev.map((item, index) =>
-        index === itemIndex ? { ...item, quantity: oldQuantity, subtotal: oldSubtotal } : item
-      ));
+      setCartItems((prev) =>
+        prev.map((item, index) =>
+          index === itemIndex
+            ? { ...item, quantity: oldQuantity, subtotal: oldSubtotal }
+            : item,
+        ),
+      );
 
       console.error("Failed to update quantity:", error);
       toast.error(error.response?.data?.message || "Failed to update quantity");
@@ -102,20 +115,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeItem = async (bookId: string) => {
-    const itemIndex = cartItems.findIndex(item => item._id === bookId);
+    const itemIndex = cartItems.findIndex((item) => item._id === bookId);
     if (itemIndex === -1) return;
 
     const removedItem = cartItems[itemIndex];
 
     // Optimistically remove
-    setCartItems(prev => prev.filter(item => item._id !== bookId));
+    setCartItems((prev) => prev.filter((item) => item._id !== bookId));
 
     try {
       await cartService.removeFromCart(bookId);
       toast.success("Item removed from cart");
     } catch (error: any) {
       // Add back
-      setCartItems(prev => {
+      setCartItems((prev) => {
         const newItems = [...prev];
         newItems.splice(itemIndex, 0, removedItem);
         return newItems;
@@ -145,7 +158,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, count, loading, totalPrice, refetchCart, updateQuantity, removeItem, clearCart }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        count,
+        loading,
+        totalPrice,
+        refetchCart,
+        updateQuantity,
+        removeItem,
+        clearCart,
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

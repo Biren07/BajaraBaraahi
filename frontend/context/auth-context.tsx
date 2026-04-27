@@ -16,7 +16,7 @@ interface AuthContextType {
     lastname: string,
     email: string,
     phone: string,
-    password: string
+    password: string,
   ) => Promise<any>;
   logout: () => Promise<void>;
   googleAuth: (data: any) => Promise<any>;
@@ -39,37 +39,36 @@ const normalizeUser = (user: any): User | null => {
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
-  // ✅ LOAD USER ON REFRESH
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const loadUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
 
-        if (!token) {
-          setUser(null);
-          return;
-        }
-
-        const res = await authService.getLoggedUser();
-
-        const userData = res?.user || res;
-
-        setUser(normalizeUser(userData));
-      } catch (error: any) {
-        console.error("Auth load error:", error);
-
-        if (error?.response?.status === 401) {
-          localStorage.removeItem("token");
-        }
-
+      if (!token) {
         setUser(null);
+        return;
       }
-    };
 
-    loadUser();
-  }, []);
+      const res = await authService.getLoggedUser();
 
-  // ✅ LOGIN
+      if (!res) {
+        setUser(null);
+        return;
+      }
+
+      const userData = res?.user || res;
+
+      setUser(normalizeUser(userData));
+    } catch (error) {
+      console.error("Auth load error:", error);
+      localStorage.removeItem("token");
+      setUser(null);
+    }
+  };
+
+  loadUser();
+}, []);
+ 
   const login = async (email: string, password: string) => {
     const res = await authService.login(email, password);
 
@@ -80,20 +79,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return res;
   };
 
-  // ✅ REGISTER
+ 
   const register = async (
     firstname: string,
     lastname: string,
     email: string,
     phone: string,
-    password: string
+    password: string,
   ) => {
     const res = await authService.register(
       firstname,
       lastname,
       email,
       phone,
-      password
+      password,
     );
 
     localStorage.setItem("token", res.token);
@@ -103,7 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return res;
   };
 
-  // ✅ LOGOUT
   const logout = async () => {
     try {
       await authService.logout();
@@ -113,7 +111,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  // ✅ GOOGLE AUTH
   const googleAuth = async (data: any) => {
     const res = await authService.googleAuth(data);
 

@@ -1,24 +1,24 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import Link from "next/link"
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react";
+import Link from "next/link";
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/components/ui/accordion"
-import { 
-  ChevronRight, 
-  HelpCircle, 
-  MessageCircle, 
-  Phone, 
-  Mail, 
+} from "@/components/ui/accordion";
+import {
+  ChevronRight,
+  HelpCircle,
+  MessageCircle,
+  Phone,
+  Mail,
   MapPin,
   Clock,
   Package,
@@ -26,8 +26,8 @@ import {
   RefreshCw,
   Truck,
   BookOpen,
-  Search
-} from "lucide-react"
+  Search,
+} from "lucide-react";
 
 const faqs = [
   {
@@ -36,21 +36,21 @@ const faqs = [
     questions: [
       {
         q: "How long does shipping take?",
-        a: "Standard shipping takes 5-7 business days. Express shipping is available for 2-3 business days delivery. International shipping typically takes 10-15 business days depending on the destination."
+        a: "Standard shipping takes 5-7 business days. Express shipping is available for 2-3 business days delivery. International shipping typically takes 10-15 business days depending on the destination.",
       },
       {
         q: "Do you offer free shipping?",
-        a: "Yes! We offer free standard shipping on all orders over $50. For orders under $50, a flat rate of $4.99 applies."
+        a: "Yes! We offer free standard shipping on all orders over $50. For orders under $50, a flat rate of $4.99 applies.",
       },
       {
         q: "Can I track my order?",
-        a: "Absolutely! Once your order ships, you'll receive a confirmation email with a tracking number. You can also track your order anytime by visiting our Track Order page."
+        a: "Absolutely! Once your order ships, you'll receive a confirmation email with a tracking number. You can also track your order anytime by visiting our Track Order page.",
       },
       {
         q: "Do you ship internationally?",
-        a: "Yes, we ship to over 100 countries worldwide. International shipping rates and delivery times vary by destination."
-      }
-    ]
+        a: "Yes, we ship to over 100 countries worldwide. International shipping rates and delivery times vary by destination.",
+      },
+    ],
   },
   {
     category: "Payments",
@@ -58,17 +58,17 @@ const faqs = [
     questions: [
       {
         q: "What payment methods do you accept?",
-        a: "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay, and Google Pay."
+        a: "We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay, and Google Pay.",
       },
       {
         q: "Is my payment information secure?",
-        a: "Yes, all transactions are encrypted using SSL technology. We never store your complete credit card information on our servers."
+        a: "Yes, all transactions are encrypted using SSL technology. We never store your complete credit card information on our servers.",
       },
       {
         q: "Can I use multiple discount codes?",
-        a: "Only one discount code can be applied per order. However, some promotional offers may be combined with our ongoing sales."
-      }
-    ]
+        a: "Only one discount code can be applied per order. However, some promotional offers may be combined with our ongoing sales.",
+      },
+    ],
   },
   {
     category: "Returns & Refunds",
@@ -76,17 +76,17 @@ const faqs = [
     questions: [
       {
         q: "What is your return policy?",
-        a: "We offer a 30-day return policy for all unused items in their original condition. Books must be returned in the same condition as received."
+        a: "We offer a 30-day return policy for all unused items in their original condition. Books must be returned in the same condition as received.",
       },
       {
         q: "How do I initiate a return?",
-        a: "Contact our customer service team through the contact form or email. We'll provide you with a prepaid return label and instructions."
+        a: "Contact our customer service team through the contact form or email. We'll provide you with a prepaid return label and instructions.",
       },
       {
         q: "When will I receive my refund?",
-        a: "Refunds are processed within 5-7 business days after we receive the returned item. The credit may take an additional 3-5 days to appear on your statement."
-      }
-    ]
+        a: "Refunds are processed within 5-7 business days after we receive the returned item. The credit may take an additional 3-5 days to appear on your statement.",
+      },
+    ],
   },
   {
     category: "Products & Availability",
@@ -94,19 +94,19 @@ const faqs = [
     questions: [
       {
         q: "Do you sell ebooks?",
-        a: "Currently, we specialize in physical books. We're working on expanding to digital formats in the future."
+        a: "Currently, we specialize in physical books. We're working on expanding to digital formats in the future.",
       },
       {
         q: "Can I pre-order upcoming releases?",
-        a: "Yes! Check our New Arrivals section for pre-order availability. You won't be charged until the book ships."
+        a: "Yes! Check our New Arrivals section for pre-order availability. You won't be charged until the book ships.",
       },
       {
         q: "What if a book I want is out of stock?",
-        a: "You can sign up for stock notifications on any product page. We'll email you as soon as it's back in stock."
-      }
-    ]
-  }
-]
+        a: "You can sign up for stock notifications on any product page. We'll email you as soon as it's back in stock.",
+      },
+    ],
+  },
+];
 
 const contactMethods = [
   {
@@ -133,30 +133,33 @@ const contactMethods = [
     detail: "123 Book Street, NY 10001",
     description: "Open Mon-Sat, 10AM-8PM",
   },
-]
+];
 
 export default function HelpPage() {
-  const [searchQuery, setSearchQuery] = useState("")
+  const [searchQuery, setSearchQuery] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     subject: "",
     message: "",
-  })
+  });
 
-  const filteredFaqs = faqs.map(category => ({
-    ...category,
-    questions: category.questions.filter(
-      q => q.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
-           q.a.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  })).filter(category => category.questions.length > 0)
+  const filteredFaqs = faqs
+    .map((category) => ({
+      ...category,
+      questions: category.questions.filter(
+        (q) =>
+          q.q.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          q.a.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    }))
+    .filter((category) => category.questions.length > 0);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    alert("Thank you for your message! We'll get back to you soon.")
-    setFormData({ name: "", email: "", subject: "", message: "" })
-  }
+    e.preventDefault();
+    alert("Thank you for your message! We'll get back to you soon.");
+    setFormData({ name: "", email: "", subject: "", message: "" });
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -170,11 +173,13 @@ export default function HelpPage() {
         </div>
         <div className="container mx-auto px-4 relative">
           <nav className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6">
-            <Link href="/" className="hover:text-gold transition-colors">Home</Link>
+            <Link href="/" className="hover:text-gold transition-colors">
+              Home
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">Help & Support</span>
           </nav>
-          
+
           <div className="flex items-center gap-3 mb-4">
             <HelpCircle className="w-8 h-8 text-gold" />
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-primary-foreground">
@@ -182,7 +187,8 @@ export default function HelpPage() {
             </h1>
           </div>
           <p className="text-lg text-primary-foreground/80 max-w-2xl">
-            Find answers to your questions or get in touch with our friendly support team.
+            Find answers to your questions or get in touch with our friendly
+            support team.
           </p>
 
           {/* Search */}
@@ -234,18 +240,36 @@ export default function HelpPage() {
 
           <div className="max-w-3xl mx-auto space-y-8">
             {(searchQuery ? filteredFaqs : faqs).map((category, catIndex) => {
-              const Icon = category.icon
+              const Icon = category.icon;
               return (
-                <div key={catIndex} id={category.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')} className="animate-fade-in-up" style={{ animationDelay: `${catIndex * 100}ms` }}>
+                <div
+                  key={catIndex}
+                  id={category.category
+                    .toLowerCase()
+                    .replace(/ & /g, "-")
+                    .replace(/ /g, "-")}
+                  className="animate-fade-in-up"
+                  style={{ animationDelay: `${catIndex * 100}ms` }}
+                >
                   <div className="flex items-center gap-3 mb-4">
                     <div className="w-10 h-10 rounded-lg bg-gold/10 flex items-center justify-center">
                       <Icon className="w-5 h-5 text-gold" />
                     </div>
-                    <h3 className="text-xl font-semibold">{category.category}</h3>
+                    <h3 className="text-xl font-semibold">
+                      {category.category}
+                    </h3>
                   </div>
-                  <Accordion type="single" collapsible className="bg-card rounded-xl border border-border overflow-hidden">
+                  <Accordion
+                    type="single"
+                    collapsible
+                    className="bg-card rounded-xl border border-border overflow-hidden"
+                  >
                     {category.questions.map((faq, index) => (
-                      <AccordionItem key={index} value={`${catIndex}-${index}`} className="border-border">
+                      <AccordionItem
+                        key={index}
+                        value={`${catIndex}-${index}`}
+                        className="border-border"
+                      >
                         <AccordionTrigger className="px-6 hover:no-underline hover:bg-muted/50 text-left">
                           {faq.q}
                         </AccordionTrigger>
@@ -256,7 +280,7 @@ export default function HelpPage() {
                     ))}
                   </Accordion>
                 </div>
-              )
+              );
             })}
           </div>
         </div>
@@ -269,7 +293,8 @@ export default function HelpPage() {
             Still Need <span className="text-gold">Help?</span>
           </h2>
           <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">
-            Our customer support team is here to assist you. Choose your preferred way to reach us.
+            Our customer support team is here to assist you. Choose your
+            preferred way to reach us.
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -284,7 +309,9 @@ export default function HelpPage() {
                 </div>
                 <h4 className="font-semibold mb-1">{method.title}</h4>
                 <p className="text-gold font-medium mb-1">{method.detail}</p>
-                <p className="text-sm text-muted-foreground">{method.description}</p>
+                <p className="text-sm text-muted-foreground">
+                  {method.description}
+                </p>
               </div>
             ))}
           </div>
@@ -299,21 +326,29 @@ export default function HelpPage() {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Name</label>
+                    <label className="text-sm font-medium mb-2 block">
+                      Name
+                    </label>
                     <Input
                       value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
                       placeholder="Your name"
                       required
                       className="border-gold/30 focus:border-gold"
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium mb-2 block">Email</label>
+                    <label className="text-sm font-medium mb-2 block">
+                      Email
+                    </label>
                     <Input
                       type="email"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       placeholder="your@email.com"
                       required
                       className="border-gold/30 focus:border-gold"
@@ -321,27 +356,39 @@ export default function HelpPage() {
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Subject</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Subject
+                  </label>
                   <Input
                     value={formData.subject}
-                    onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, subject: e.target.value })
+                    }
                     placeholder="How can we help?"
                     required
                     className="border-gold/30 focus:border-gold"
                   />
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Message</label>
+                  <label className="text-sm font-medium mb-2 block">
+                    Message
+                  </label>
                   <Textarea
                     value={formData.message}
-                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    onChange={(e) =>
+                      setFormData({ ...formData, message: e.target.value })
+                    }
                     placeholder="Tell us more about your inquiry..."
                     rows={5}
                     required
                     className="border-gold/30 focus:border-gold"
                   />
                 </div>
-                <Button type="submit" size="lg" className="w-full bg-gold hover:bg-gold-dark text-primary-foreground">
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full bg-gold hover:bg-gold-dark text-primary-foreground"
+                >
                   Send Message
                 </Button>
               </form>
@@ -366,7 +413,9 @@ export default function HelpPage() {
                 </div>
                 <div>
                   <p className="font-medium">Saturday</p>
-                  <p className="text-muted-foreground">10:00 AM - 4:00 PM EST</p>
+                  <p className="text-muted-foreground">
+                    10:00 AM - 4:00 PM EST
+                  </p>
                 </div>
                 <div>
                   <p className="font-medium">Sunday</p>
@@ -384,5 +433,5 @@ export default function HelpPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

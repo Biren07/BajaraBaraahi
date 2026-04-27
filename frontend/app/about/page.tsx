@@ -1,36 +1,33 @@
-"use client"
+"use client";
 
-import Link from "next/link"
-import Image from "next/image"
-import { motion } from "framer-motion"
+import Link from "next/link";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
-import { Header } from "@/components/header"
-import { Footer } from "@/components/footer"
-import { Button } from "@/components/ui/button"
+import { Header } from "@/components/header";
+import { Footer } from "@/components/footer";
+import { Button } from "@/components/ui/button";
 
 import {
   ChevronRight,
-  BookOpen,
-  Globe,
-  Award,
   Heart,
   Truck,
   ShieldCheck,
   Headphones,
-  ArrowRight
-} from "lucide-react"
+  ArrowRight,
+} from "lucide-react";
 
 /* ---------------- ANIMATIONS ---------------- */
 
 const fadeUp = {
   hidden: { opacity: 0, y: 40 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
-}
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+};
 
 const stagger = {
   hidden: {},
-  show: { transition: { staggerChildren: 0.12 } }
-}
+  show: { transition: { staggerChildren: 0.12 } },
+};
 
 /* ---------------- DATA ---------------- */
 
@@ -39,65 +36,63 @@ const stats = [
   { value: "15K+", label: "Books Available" },
   { value: "100+", label: "Countries Served" },
   { value: "10+", label: "Years Experience" },
-]
+];
 
 const values = [
   {
     icon: Heart,
     title: "Passion for Books",
-    description: "We connect readers with meaningful books worldwide."
+    description: "We connect readers with meaningful books worldwide.",
   },
   {
     icon: ShieldCheck,
     title: "Quality Guaranteed",
-    description: "Every book is carefully curated for best experience."
+    description: "Every book is carefully curated for best experience.",
   },
   {
     icon: Truck,
     title: "Fast Delivery",
-    description: "Reliable shipping with trusted logistics partners."
+    description: "Reliable shipping with trusted logistics partners.",
   },
   {
     icon: Headphones,
     title: "Customer First",
-    description: "Dedicated support for every reader."
+    description: "Dedicated support for every reader.",
   },
-]
+];
 
 const team = [
   {
     name: "Sarah Johnson",
     role: "Founder & CEO",
-    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400"
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400",
   },
   {
     name: "Michael Chen",
     role: "Head of Curation",
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400"
+    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400",
   },
   {
     name: "Emily Davis",
     role: "Customer Experience",
-    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400"
+    image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400",
   },
   {
     name: "David Park",
     role: "Operations Director",
-    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400"
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400",
   },
-]
+];
 
 /* ---------------- PAGE ---------------- */
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background">
-
       <Header />
 
       {/* HERO */}
       <section className="relative pt-32 pb-16 bg-primary overflow-hidden">
-
         {/* Glow Background */}
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-10 left-10 w-72 h-72 bg-gold/20 blur-3xl rounded-full" />
@@ -105,7 +100,6 @@ export default function AboutPage() {
         </div>
 
         <div className="container mx-auto px-4 relative">
-
           <motion.nav
             initial="hidden"
             animate="show"
@@ -113,7 +107,9 @@ export default function AboutPage() {
             className="flex items-center gap-2 text-sm text-primary-foreground/70 mb-6"
           >
             <motion.div variants={fadeUp}>
-              <Link href="/" className="hover:text-gold">Home</Link>
+              <Link href="/" className="hover:text-gold">
+                Home
+              </Link>
             </motion.div>
             <ChevronRight className="w-4 h-4" />
             <span className="text-gold">About</span>
@@ -149,7 +145,6 @@ export default function AboutPage() {
         className="py-16"
       >
         <div className="container mx-auto px-4 grid lg:grid-cols-2 gap-12 items-center">
-
           <motion.div variants={fadeUp}>
             <span className="text-gold text-sm font-medium">Our Story</span>
 
@@ -182,14 +177,12 @@ export default function AboutPage() {
               className="object-cover"
             />
           </motion.div>
-
         </div>
       </motion.section>
 
       {/* STATS */}
       <section className="py-16 bg-primary text-white">
         <div className="container mx-auto px-4 grid md:grid-cols-4 gap-8 text-center">
-
           {stats.map((s, i) => (
             <motion.div
               key={i}
@@ -202,7 +195,6 @@ export default function AboutPage() {
               <p className="text-white/70">{s.label}</p>
             </motion.div>
           ))}
-
         </div>
       </section>
 
@@ -215,7 +207,6 @@ export default function AboutPage() {
         className="py-16"
       >
         <div className="container mx-auto px-4 grid md:grid-cols-4 gap-6">
-
           {values.map((v, i) => (
             <motion.div
               key={i}
@@ -228,14 +219,12 @@ export default function AboutPage() {
               <p className="text-sm text-muted-foreground">{v.description}</p>
             </motion.div>
           ))}
-
         </div>
       </motion.section>
 
       {/* TEAM */}
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
           {team.map((t, i) => (
             <motion.div
               key={i}
@@ -259,7 +248,6 @@ export default function AboutPage() {
               <p className="text-gold text-sm">{t.role}</p>
             </motion.div>
           ))}
-
         </div>
       </section>
 
@@ -285,5 +273,5 @@ export default function AboutPage() {
 
       <Footer />
     </div>
-  )
+  );
 }

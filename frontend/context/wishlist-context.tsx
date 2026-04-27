@@ -1,6 +1,12 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
 import { bookService } from "@/services/bookService";
 
 interface WishlistContextType {
@@ -14,7 +20,9 @@ interface WishlistContextType {
   refetchWishlist: () => Promise<void>;
 }
 
-const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
+const WishlistContext = createContext<WishlistContextType | undefined>(
+  undefined,
+);
 
 export function WishlistProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<any[]>([]);
@@ -23,23 +31,27 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
 
   const count = wishlist.length;
 
-  // ✅ Detect login properly (reactive)
+ 
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLoggedIn(!!token);
   }, []);
 
-  // ✅ Refetch when login state changes
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchWishlist();
-    } else if (isLoggedIn === false) {
-      setWishlist([]);
-      setLoading(false);
-    }
-  }, [isLoggedIn]);
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const role = localStorage.getItem("role");
 
-  // ✅ Fetch wishlist from API
+  const loggedIn = !!token;
+  setIsLoggedIn(loggedIn);
+
+  if (loggedIn && role === "user") {
+    fetchWishlist();
+  } else {
+    setWishlist([]);
+    setLoading(false);
+  }
+}, [isLoggedIn]);
+
   const fetchWishlist = async () => {
     try {
       setLoading(true);
@@ -68,7 +80,6 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     setWishlist((prev) => prev.slice(0, -1));
   };
 
-  // ✅ Add item
   const addToWishlist = async (bookId: string) => {
     if (!isLoggedIn) {
       throw new Error("Please login first");
@@ -77,10 +88,10 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       await bookService.toggleWishlist(bookId);
 
-      // 🔥 instant UI update (optional but better UX)
+     
       setWishlist((prev) => [...prev, { _id: bookId }]);
 
-      // 🔁 sync with backend
+    
       await fetchWishlist();
     } catch (error) {
       console.error("Failed to add:", error);
@@ -95,7 +106,7 @@ export function WishlistProvider({ children }: { children: ReactNode }) {
     try {
       await bookService.toggleWishlist(bookId);
 
-      // 🔥 instant UI update
+
       setWishlist((prev) => prev.filter((item) => item._id !== bookId));
     } catch (error) {
       console.error("Failed to remove:", error);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Eye, ShieldCheck, Loader2, Trash2 } from "lucide-react";
+import { Eye, ShieldCheck, Loader2 } from "lucide-react";
 import AdminShell from "@/components/admin/admin-shell";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -48,47 +48,62 @@ function roleBadge(role: string) {
 export default function AdminUserPage() {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState<string | null>(null);
 
   useEffect(() => {
     fetchUsers();
   }, []);
 
   const fetchUsers = async () => {
-    try {
-      setLoading(true);
-      const response = await userService.getAllUsers();
-      console.log("Users response:", response);
-      setUsers(response.users || response || []);
-    } catch (error) {
-      console.error("Failed to fetch users:", error);
-      toast.error("Failed to load users");
-    } finally {
-      setLoading(false);
+  try {
+    setLoading(true);
+
+    const response = await userService.getAllUsers();
+    console.log("Users response:", response);
+
+    let usersArray = [];
+
+    if (Array.isArray(response)) {
+      usersArray = response;
+    } else if (response && Array.isArray(response.allUsers)) {
+      usersArray = response.allUsers; // <-- add this
+    } else if (response && Array.isArray(response.users)) {
+      usersArray = response.users;
+    } else if (response?.data && Array.isArray(response.data.allUsers)) {
+      usersArray = response.data.allUsers;
+    } else if (response?.data && Array.isArray(response.data.users)) {
+      usersArray = response.data.users;
     }
-  };
 
-  const deleteUser = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this user?")) return;
-
-    try {
-      setDeleting(id);
-      await userService.deleteUser(id);
-      setUsers((prev) => prev.filter((u) => (u._id || u.id) !== id));
-      toast.success("User deleted successfully");
-    } catch (error: any) {
-      console.error("Failed to delete user:", error);
-      toast.error(error.response?.data?.message || "Failed to delete user");
-    } finally {
-      setDeleting(null);
-    }
-  };
-
+    setUsers(usersArray);
+  } catch (error) {
+    console.error("Failed to fetch users:", error);
+    toast.error("Failed to load users");
+    setUsers([]);
+  } finally {
+    setLoading(false);
+  }
+};
   if (loading) {
     return (
       <AdminShell>
         <div className="flex items-center justify-center h-96">
           <Loader2 className="w-8 h-8 animate-spin text-[#800000]" />
+        </div>
+      </AdminShell>
+    );
+  }
+
+  if (!Array.isArray(users)) {
+    console.log("users is not array:", users);
+    return (
+      <AdminShell>
+        <div className="flex items-center justify-center h-96">
+          <div className="text-center">
+            <p className="text-red-500 mb-4">Error loading users data</p>
+            <Button onClick={fetchUsers} variant="outline">
+              Try Again
+            </Button>
+          </div>
         </div>
       </AdminShell>
     );
@@ -155,8 +170,8 @@ export default function AdminUserPage() {
                       </TableCell>
 
                       <TableCell className="font-medium text-gray-900">
-                        {u.firstname && u.lastname 
-                          ? `${u.firstname} ${u.lastname}` 
+                        {u.firstname && u.lastname
+                          ? `${u.firstname} ${u.lastname}`
                           : u.name || u.fullName || "-"}
                       </TableCell>
 
@@ -177,24 +192,13 @@ export default function AdminUserPage() {
                       </TableCell>
 
                       <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="hover:border-[#800000] hover:text-[#800000]"
-                          >
-                            <Eye className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => deleteUser(u._id || u.id)}
-                            disabled={deleting === (u._id || u.id)}
-                            className="text-red-500 hover:text-red-600 hover:border-red-500"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="hover:border-[#800000] hover:text-[#800000]"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                       </TableCell>
 
                     </TableRow>

@@ -288,9 +288,12 @@ export default function AdminProductPage() {
                     </TableCell>
 
                     <TableCell className="text-right font-semibold">
-                      Rs. {p.original_price 
-                        ? p.discount > 0 
-                          ? (p.original_price * (1 - p.discount / 100)).toFixed(2)
+                      Rs.{" "}
+                      {p.original_price
+                        ? p.discount > 0
+                          ? (p.original_price * (1 - p.discount / 100)).toFixed(
+                              2,
+                            )
                           : p.original_price
                         : 0}
                     </TableCell>
@@ -351,195 +354,199 @@ export default function AdminProductPage() {
               </button>
 
               <div className="space-y-5">
+                {/* TITLE */}
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {editId ? "Update Product" : "Add Product"}
+                </h2>
 
-  {/* TITLE */}
-  <h2 className="text-xl font-semibold text-gray-900">
-    {editId ? "Update Product" : "Add Product"}
-  </h2>
+                {/* TITLE */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Product Title *
+                  </label>
+                  <Input
+                    placeholder="Enter product title"
+                    value={form.title}
+                    onChange={(e) =>
+                      setForm({ ...form, title: e.target.value })
+                    }
+                  />
+                </div>
 
-  {/* TITLE */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">Product Title *</label>
-    <Input
-      placeholder="Enter product title"
-      value={form.title}
-      onChange={(e) => setForm({ ...form, title: e.target.value })}
-    />
-  </div>
+                {/* AUTHOR */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Author *
+                  </label>
+                  <Input
+                    placeholder="Enter author name"
+                    value={form.author}
+                    onChange={(e) =>
+                      setForm({ ...form, author: e.target.value })
+                    }
+                  />
+                </div>
 
-  {/* AUTHOR */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">Author *</label>
-    <Input
-      placeholder="Enter author name"
-      value={form.author}
-      onChange={(e) => setForm({ ...form, author: e.target.value })}
-    />
-  </div>
+                {/* ISBN */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    ISBN *
+                  </label>
+                  <Input
+                    placeholder="Enter ISBN"
+                    value={form.isbn}
+                    onChange={(e) => setForm({ ...form, isbn: e.target.value })}
+                  />
+                </div>
 
-  {/* ISBN */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">ISBN *</label>
-    <Input
-      placeholder="Enter ISBN"
-      value={form.isbn}
-      onChange={(e) => setForm({ ...form, isbn: e.target.value })}
-    />
-  </div>
+                {/* IMAGE UPLOAD */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-700">
+                    Cover Image
+                  </label>
 
-  {/* IMAGE UPLOAD */}
-  <div className="space-y-2">
-    <label className="text-sm font-medium text-gray-700">
-      Cover Image
-    </label>
+                  <div className="flex items-center gap-4">
+                    <label className="flex items-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
+                      <Upload className="w-4 h-4 text-gray-500" />
+                      <span className="text-sm text-gray-500">
+                        {coverImage ? coverImage.name : "Upload image"}
+                      </span>
 
-    <div className="flex items-center gap-4">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
 
-      <label className="flex items-center gap-2 px-4 py-2 border border-dashed border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50 transition">
-        <Upload className="w-4 h-4 text-gray-500" />
-        <span className="text-sm text-gray-500">
-          {coverImage ? coverImage.name : "Upload image"}
-        </span>
+                    {coverPreview && (
+                      <img
+                        src={coverPreview}
+                        alt="preview"
+                        className="h-16 w-12 object-cover rounded-md border"
+                      />
+                    )}
+                  </div>
+                </div>
 
-        <input
-          type="file"
-          accept="image/*"
-          className="hidden"
-          onChange={handleImageChange}
-        />
-      </label>
+                {/* PRICE + DISCOUNT */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Price *
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0.00"
+                      value={form.original_price}
+                      onChange={(e) =>
+                        setForm({ ...form, original_price: e.target.value })
+                      }
+                    />
+                  </div>
 
-      {coverPreview && (
-        <img
-          src={coverPreview}
-          alt="preview"
-          className="h-16 w-12 object-cover rounded-md border"
-        />
-      )}
-    </div>
-  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Discount %
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={form.discount}
+                      onChange={(e) =>
+                        setForm({ ...form, discount: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
 
-  {/* PRICE + DISCOUNT */}
-  <div className="grid grid-cols-2 gap-4">
+                {/* GENRE + CATEGORY */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Genre *
+                    </label>
+                    <select
+                      value={form.genre}
+                      onChange={(e) =>
+                        setForm({ ...form, genre: e.target.value })
+                      }
+                      className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+                    >
+                      {GENRES.map((g) => (
+                        <option key={g} value={g}>
+                          {g.charAt(0).toUpperCase() + g.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Price *
-      </label>
-      <Input
-        type="number"
-        placeholder="0.00"
-        value={form.original_price}
-        onChange={(e) =>
-          setForm({ ...form, original_price: e.target.value })
-        }
-      />
-    </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Category *
+                    </label>
+                    <select
+                      value={form.category}
+                      onChange={(e) =>
+                        setForm({ ...form, category: e.target.value })
+                      }
+                      className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+                    >
+                      {CATEGORIES.map((c) => (
+                        <option key={c} value={c}>
+                          {c.charAt(0).toUpperCase() + c.slice(1)}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
 
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Discount %
-      </label>
-      <Input
-        type="number"
-        placeholder="0"
-        value={form.discount}
-        onChange={(e) =>
-          setForm({ ...form, discount: e.target.value })
-        }
-      />
-    </div>
-  </div>
+                {/* STOCK + WEIGHT */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Stock *
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="0"
+                      value={form.stock}
+                      onChange={(e) =>
+                        setForm({ ...form, stock: e.target.value })
+                      }
+                    />
+                  </div>
 
-  {/* GENRE + CATEGORY */}
-  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">
+                      Weight (g)
+                    </label>
+                    <Input
+                      type="number"
+                      placeholder="300"
+                      value={form.weight}
+                      onChange={(e) =>
+                        setForm({ ...form, weight: e.target.value })
+                      }
+                    />
+                  </div>
+                </div>
 
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Genre *
-      </label>
-      <select
-        value={form.genre}
-        onChange={(e) =>
-          setForm({ ...form, genre: e.target.value })
-        }
-        className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
-      >
-        {GENRES.map((g) => (
-          <option key={g} value={g}>
-            {g.charAt(0).toUpperCase() + g.slice(1)}
-          </option>
-        ))}
-      </select>
-    </div>
-
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Category *
-      </label>
-      <select
-        value={form.category}
-        onChange={(e) =>
-          setForm({ ...form, category: e.target.value })
-        }
-        className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
-      >
-        {CATEGORIES.map((c) => (
-          <option key={c} value={c}>
-            {c.charAt(0).toUpperCase() + c.slice(1)}
-          </option>
-        ))}
-      </select>
-    </div>
-  </div>
-
-  {/* STOCK + WEIGHT */}
-  <div className="grid grid-cols-2 gap-4">
-
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Stock *
-      </label>
-      <Input
-        type="number"
-        placeholder="0"
-        value={form.stock}
-        onChange={(e) =>
-          setForm({ ...form, stock: e.target.value })
-        }
-      />
-    </div>
-
-    <div className="space-y-1">
-      <label className="text-sm font-medium text-gray-700">
-        Weight (g)
-      </label>
-      <Input
-        type="number"
-        placeholder="300"
-        value={form.weight}
-        onChange={(e) =>
-          setForm({ ...form, weight: e.target.value })
-        }
-      />
-    </div>
-  </div>
-
-  {/* DESCRIPTION */}
-  <div className="space-y-1">
-    <label className="text-sm font-medium text-gray-700">
-      Description *
-    </label>
-    <Input
-      placeholder="Write product description..."
-      value={form.description}
-      onChange={(e) =>
-        setForm({ ...form, description: e.target.value })
-      }
-    />
-  </div>
-
-</div>
+                {/* DESCRIPTION */}
+                <div className="space-y-1">
+                  <label className="text-sm font-medium text-gray-700">
+                    Description *
+                  </label>
+                  <Input
+                    placeholder="Write product description..."
+                    value={form.description}
+                    onChange={(e) =>
+                      setForm({ ...form, description: e.target.value })
+                    }
+                  />
+                </div>
+              </div>
 
               <Button
                 className="w-full bg-[#800000] hover:bg-[#5f0000]"
