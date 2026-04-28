@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { useAuth } from "@/context/auth-context";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -19,24 +20,66 @@ import {
   MapPin,
   Phone,
   Mail,
-  Download,
-  Printer,
   ChevronRight,
   CheckCircle2,
-  Clock,
   CreditCard,
   Camera,
+  Truck,
+  Tag,
+  Clock,
+  CheckCheck,
+  XCircle,
+  Send,
 } from "lucide-react";
 
-// Removed MOCK_ORDERS, using real data from orderService
+// ─── Status helpers ───────────────────────────────────────────────────────────
+
+const STATUS_CONFIG: Record<
+  string,
+  { label: string; color: string; icon: React.ReactNode }
+> = {
+  pending: {
+    label: "Pending",
+    color: "bg-amber-50 text-amber-600 border-amber-200",
+    icon: <Clock size={12} />,
+  },
+  confirmed: {
+    label: "Confirmed",
+    color: "bg-blue-50 text-blue-600 border-blue-200",
+    icon: <CheckCircle2 size={12} />,
+  },
+  dispatched: {
+    label: "Dispatched",
+    color: "bg-purple-50 text-purple-600 border-purple-200",
+    icon: <Send size={12} />,
+  },
+  delivered: {
+    label: "Delivered",
+    color: "bg-green-50 text-green-600 border-green-200",
+    icon: <CheckCheck size={12} />,
+  },
+  cancelled: {
+    label: "Cancelled",
+    color: "bg-red-50 text-red-600 border-red-200",
+    icon: <XCircle size={12} />,
+  },
+};
+
+const PAYMENT_STATUS: Record<string, { label: string; color: string }> = {
+  unpaid: { label: "Unpaid", color: "text-amber-600" },
+  paid: { label: "Paid", color: "text-green-600" },
+  rejected: { label: "Rejected", color: "text-red-600" },
+};
+
+// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function ProfilePage() {
   const { user: authUser, setUser: setAuthUser } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<any[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState<any>(null);
 
   const [user, setUser] = useState({
     firstName: "",
@@ -46,12 +89,11 @@ export default function ProfilePage() {
     address: "",
     profileImage: "",
   });
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState("");
+  const objectUrlRef = useRef<string | null>(null);
 
-  // Ref to track object URL for cleanup
-  const objectUrlRef = useRef(null);
-
+  // ── Sync from auth context ──
   useEffect(() => {
     if (authUser) {
       setUser({
@@ -66,69 +108,51 @@ export default function ProfilePage() {
     }
   }, [authUser]);
 
-  // Cleanup object URL on unmount
-  useEffect(() => {
-    return () => {
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-      }
-    };
-  }, []);
+  useEffect(
+    () => () => {
+      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    },
+    [],
+  );
 
-  // Fetch orders on mount
+  // ── Fetch orders — API returns { success, total, data: Order[] } ──
   useEffect(() => {
+    if (!authUser) return;
     const fetchOrders = async () => {
       try {
         setOrdersLoading(true);
         const response = await orderService.getMyOrders();
-        console.log("Orders response:", response); // Debug log
-        let ordersData = [];
-        if (Array.isArray(response)) {
-          ordersData = response;
-        } else if (response && Array.isArray(response.orders)) {
-          ordersData = response.orders;
-        } else {
-          ordersData = [];
-        }
+        // getMyOrders returns { success, total, data: [] }
+        const ordersData: any[] = Array.isArray(response?.data)
+          ? response.data
+          : Array.isArray(response)
+            ? response
+            : [];
         setOrders(ordersData);
-        if (ordersData.length > 0) {
-          setSelectedOrder(ordersData[0]);
-        }
+        if (ordersData.length > 0) setSelectedOrder(ordersData[0]);
       } catch (error) {
-        console.error("Failed to fetch orders:", error);
         toast.error("Failed to load orders");
-        setOrders([]); // Ensure orders is array
+        setOrders([]);
       } finally {
         setOrdersLoading(false);
       }
     };
-
-    if (authUser) {
-      fetchOrders();
-    }
+    fetchOrders();
   }, [authUser]);
 
-  // FIXED: Improved change handler to ensure state updates
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setUser((prev) => ({ ...prev, [name]: value }));
   };
 
-  // NEW: Handle Image Preview
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      // Revoke previous object URL
-      if (objectUrlRef.current) {
-        URL.revokeObjectURL(objectUrlRef.current);
-      }
-
-      const newObjectUrl = URL.createObjectURL(file);
-      objectUrlRef.current = newObjectUrl;
-
-      setImageFile(file);
-      setPreviewUrl(newObjectUrl); // Show the user the image immediately
-    }
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    const url = URL.createObjectURL(file);
+    objectUrlRef.current = url;
+    setImageFile(file);
+    setPreviewUrl(url);
   };
 
   const handleSave = async () => {
@@ -143,23 +167,19 @@ export default function ProfilePage() {
       if (imageFile) formData.append("profileImage", imageFile);
 
       await userService.updateProfile(formData);
-
-      // Refresh user data from server to get updated image URL
       const res = await authService.getLoggedUser();
       const updatedUser = res?.user ?? res;
       setAuthUser(updatedUser);
 
-      // Update preview to server URL and revoke object URL
       if (objectUrlRef.current) {
         URL.revokeObjectURL(objectUrlRef.current);
         objectUrlRef.current = null;
       }
       setPreviewUrl(updatedUser?.profileImage?.url || "");
-
       toast.success("Profile updated successfully!");
       setIsEditing(false);
-      setImageFile(null); // Clear the file after save
-    } catch (error) {
+      setImageFile(null);
+    } catch (error: any) {
       toast.error(error?.response?.data?.message || "Failed to update profile");
     } finally {
       setSaving(false);
@@ -172,7 +192,7 @@ export default function ProfilePage() {
 
       <main className="flex-grow pt-32 pb-16 bg-[#F8FAFC] px-4 md:px-12 font-sans">
         <div className="max-w-6xl mx-auto space-y-8">
-          {/* USER HERO SECTION */}
+          {/* Hero */}
           <div className="flex flex-col md:flex-row gap-6 items-center md:items-end pb-4">
             <div className="relative group">
               <div className="w-28 h-28 rounded-3xl bg-white flex items-center justify-center border border-slate-200 shadow-xl overflow-hidden transform -rotate-3 group-hover:rotate-0 transition-all duration-500">
@@ -190,7 +210,6 @@ export default function ProfilePage() {
               </div>
               <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-4 border-[#F8FAFC]" />
             </div>
-
             <div className="text-center md:text-left space-y-1">
               <Badge className="bg-[#7a0f1e]/10 text-[#7a0f1e] hover:bg-[#7a0f1e]/20 border-none mb-2 px-3 py-1">
                 Verified Member
@@ -215,10 +234,15 @@ export default function ProfilePage() {
                 className="rounded-xl px-8 py-3 data-[state=active]:bg-white data-[state=active]:shadow-sm data-[state=active]:text-[#7a0f1e] font-bold transition-all"
               >
                 Orders & Receipts
+                {orders.length > 0 && (
+                  <span className="ml-2 bg-[#7a0f1e] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                    {orders.length}
+                  </span>
+                )}
               </TabsTrigger>
             </TabsList>
 
-            {/* TAB: PROFILE */}
+            {/* ── TAB: PROFILE ── */}
             <TabsContent value="profile" className="focus-visible:outline-none">
               <Card className="border-none shadow-2xl shadow-slate-200/50 rounded-[40px] overflow-hidden bg-white">
                 <CardHeader className="px-10 pt-10 pb-4">
@@ -242,33 +266,24 @@ export default function ProfilePage() {
                 </CardHeader>
                 <CardContent className="p-10 pt-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8">
-                    {/* INPUTS: FirstName & LastName */}
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
-                        First Name
-                      </label>
-                      <Input
-                        name="firstName"
-                        value={user.firstName}
-                        onChange={handleChange}
-                        disabled={!isEditing}
-                        className={`rounded-2xl border-slate-100 h-14 text-md font-medium transition-all ${isEditing ? "bg-white ring-4 ring-[#7a0f1e]/5 border-[#7a0f1e]/20" : "bg-slate-50/50 cursor-not-allowed"}`}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
-                        Last Name
-                      </label>
-                      <Input
-                        name="lastName"
-                        value={user.lastName}
-                        onChange={handleChange}
-                        disabled={!isEditing}
-                        className={`rounded-2xl border-slate-100 h-14 text-md font-medium transition-all ${isEditing ? "bg-white ring-4 ring-[#7a0f1e]/5 border-[#7a0f1e]/20" : "bg-slate-50/50 cursor-not-allowed"}`}
-                      />
-                    </div>
+                    {[
+                      { name: "firstName", label: "First Name" },
+                      { name: "lastName", label: "Last Name" },
+                    ].map(({ name, label }) => (
+                      <div key={name} className="space-y-2">
+                        <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
+                          {label}
+                        </label>
+                        <Input
+                          name={name}
+                          value={(user as any)[name]}
+                          onChange={handleChange}
+                          disabled={!isEditing}
+                          className={`rounded-2xl border-slate-100 h-14 text-md font-medium transition-all ${isEditing ? "bg-white ring-4 ring-[#7a0f1e]/5 border-[#7a0f1e]/20" : "bg-slate-50/50 cursor-not-allowed"}`}
+                        />
+                      </div>
+                    ))}
 
-                    {/* INPUTS: Email & Phone */}
                     <div className="space-y-2">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                         Email Address
@@ -306,7 +321,6 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    {/* ADDRESS */}
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                         Shipping Address
@@ -326,7 +340,6 @@ export default function ProfilePage() {
                       </div>
                     </div>
 
-                    {/* PROFILE IMAGE UPLOAD */}
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
                         Profile Photo
@@ -347,7 +360,7 @@ export default function ProfilePage() {
                             )}
                           </div>
                           <div className="flex-1">
-                            <Input
+                            <input
                               type="file"
                               accept="image/*"
                               onChange={handleImageChange}
@@ -357,8 +370,7 @@ export default function ProfilePage() {
                             />
                             <label
                               htmlFor="profile-upload"
-                              className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-sm
-                                ${isEditing ? "bg-white text-[#7a0f1e] cursor-pointer hover:bg-slate-50 ring-1 ring-slate-200" : "bg-slate-100 text-slate-400 cursor-not-allowed"}`}
+                              className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all shadow-sm ${isEditing ? "bg-white text-[#7a0f1e] cursor-pointer hover:bg-slate-50 ring-1 ring-slate-200" : "bg-slate-100 text-slate-400 cursor-not-allowed"}`}
                             >
                               <Camera size={18} /> Choose New Photo
                             </label>
@@ -386,143 +398,242 @@ export default function ProfilePage() {
               </Card>
             </TabsContent>
 
-            {/* TAB: ORDERS */}
+            {/* ── TAB: ORDERS ── */}
             <TabsContent value="orders" className="focus-visible:outline-none">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Order list */}
                 <div className="lg:col-span-2 space-y-4">
                   {ordersLoading ? (
-                    <div className="text-center py-8">
-                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7a0f1e] mx-auto mb-4"></div>
-                      <p className="text-gray-500">Loading orders...</p>
+                    <div className="text-center py-16">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#7a0f1e] mx-auto mb-4" />
+                      <p className="text-slate-400 font-medium">
+                        Loading orders…
+                      </p>
                     </div>
                   ) : orders.length === 0 ? (
-                    <div className="text-center py-8">
-                      <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                      <p className="text-gray-500 text-lg font-medium">
-                        No orders found
+                    <div className="text-center py-16">
+                      <Package className="w-16 h-16 text-slate-200 mx-auto mb-4" />
+                      <p className="text-slate-500 text-lg font-bold">
+                        No orders yet
                       </p>
-                      <p className="text-gray-400 text-sm">
+                      <p className="text-slate-400 text-sm mt-1">
                         Your order history will appear here
                       </p>
                     </div>
                   ) : (
-                    orders.map((order) => (
-                      <div
-                        key={order._id || order.id}
-                        onClick={() => setSelectedOrder(order)}
-                        className={`p-6 rounded-[24px] border transition-all cursor-pointer flex items-center justify-between
-                          ${
-                            selectedOrder &&
-                            (selectedOrder._id || selectedOrder.id) ===
-                              (order._id || order.id)
-                              ? "bg-white border-[#7a0f1e] shadow-lg"
-                              : "bg-white/60 border-slate-100 hover:border-slate-300"
-                          }`}
-                      >
-                        <div className="flex gap-5 items-center">
-                          <div
-                            className={`w-14 h-14 rounded-2xl flex items-center justify-center
-                              ${
-                                selectedOrder &&
-                                (selectedOrder._id || selectedOrder.id) ===
-                                  (order._id || order.id)
-                                  ? "bg-[#7a0f1e] text-white"
-                                  : "bg-slate-100 text-slate-400"
-                              }`}
-                          >
-                            <Package size={24} />
-                          </div>
-                          <div>
-                            <p className="font-bold text-lg text-slate-900">
-                              Order #{order._id || order.id}
-                            </p>
-                            <p className="text-sm text-slate-400">
-                              {order.createdAt
-                                ? new Date(order.createdAt).toLocaleDateString()
-                                : order.date}
-                            </p>
+                    orders.map((order) => {
+                      const isSelected = selectedOrder?._id === order._id;
+                      const statusCfg =
+                        STATUS_CONFIG[order.status] || STATUS_CONFIG.pending;
+                      // API field: grandTotal (not total)
+                      const amount = order.grandTotal ?? order.totalPrice ?? 0;
+
+                      return (
+                        <div
+                          key={order._id}
+                          onClick={() => setSelectedOrder(order)}
+                          className={`p-5 rounded-[24px] border-2 transition-all cursor-pointer
+                            ${
+                              isSelected
+                                ? "bg-white border-[#7a0f1e] shadow-lg shadow-[#7a0f1e]/10"
+                                : "bg-white/70 border-slate-100 hover:border-slate-200 hover:bg-white"
+                            }`}
+                        >
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${isSelected ? "bg-[#7a0f1e] text-white" : "bg-slate-100 text-slate-400"}`}
+                              >
+                                <Package size={20} />
+                              </div>
+                              <div>
+                                <p className="font-bold text-slate-900 text-sm">
+                                  #{order._id.slice(-8).toUpperCase()}
+                                </p>
+                                <p className="text-xs text-slate-400 mt-0.5">
+                                  {new Date(order.createdAt).toLocaleDateString(
+                                    "en-NP",
+                                    {
+                                      day: "numeric",
+                                      month: "short",
+                                      year: "numeric",
+                                    },
+                                  )}
+                                </p>
+                                {/* Books summary */}
+                                <p className="text-xs text-slate-500 mt-0.5 line-clamp-1">
+                                  {order.books
+                                    ?.map((b: any) => b.title)
+                                    .join(", ")}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="flex flex-col items-end gap-1.5 shrink-0">
+                              <span
+                                className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full border ${statusCfg.color}`}
+                              >
+                                {statusCfg.icon} {statusCfg.label}
+                              </span>
+                              <p className="font-black text-slate-900 text-base">
+                                Rs. {amount.toFixed(2)}
+                              </p>
+                              {/* Payment status */}
+                              <span
+                                className={`text-[11px] font-semibold ${PAYMENT_STATUS[order.payment?.status]?.color || "text-slate-400"}`}
+                              >
+                                {PAYMENT_STATUS[order.payment?.status]?.label ||
+                                  "—"}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-6">
-                          <div className="text-right hidden sm:block">
-                            <Badge
-                              className={
-                                order.status === "Delivered" ||
-                                order.status === "delivered"
-                                  ? "bg-green-50 text-green-600"
-                                  : order.status === "Processing" ||
-                                      order.status === "processing"
-                                    ? "bg-amber-50 text-amber-600"
-                                    : "bg-blue-50 text-blue-600"
-                              }
-                            >
-                              {order.status}
-                            </Badge>
-                            <p className="text-lg font-black text-slate-900 mt-1">
-                              Rs. {(order.total || 0).toFixed(2)}
-                            </p>
-                          </div>
-                          <ChevronRight size={20} className="text-slate-300" />
-                        </div>
-                      </div>
-                    ))
+                      );
+                    })
                   )}
                 </div>
 
-                {/* Receipt panel */}
+                {/* ── Receipt panel ── */}
                 {selectedOrder && (
                   <div className="lg:col-span-1">
                     <div className="sticky top-32">
                       <div className="bg-white rounded-[32px] shadow-2xl border border-slate-100 overflow-hidden">
-                        <div className="bg-[#7a0f1e] p-8 text-white text-center">
-                          <CheckCircle2 size={40} className="mx-auto mb-3" />
-                          <h3 className="text-xl font-black uppercase tracking-widest">
+                        {/* Header */}
+                        <div className="bg-[#7a0f1e] p-6 text-white text-center">
+                          <CheckCircle2 size={36} className="mx-auto mb-2" />
+                          <h3 className="text-lg font-black uppercase tracking-widest">
                             Receipt
                           </h3>
-                          <p className="text-white/60 text-xs">
-                            ID: {selectedOrder._id || selectedOrder.id}X99
+                          <p className="text-white/60 text-[11px] mt-1 font-mono">
+                            #{selectedOrder._id.slice(-8).toUpperCase()}
+                          </p>
+                          <p className="text-white/50 text-[10px] mt-0.5">
+                            {new Date(
+                              selectedOrder.createdAt,
+                            ).toLocaleDateString("en-NP", {
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
                           </p>
                         </div>
-                        <div className="p-8 space-y-6">
-                          {selectedOrder.items &&
-                          selectedOrder.items.length > 0 ? (
-                            selectedOrder.items.map((item, i) => (
-                              <div key={i} className="flex justify-between">
-                                <div>
-                                  <p className="text-sm font-bold">
-                                    {item.name}
-                                  </p>
-                                  <p className="text-[11px] text-slate-400">
-                                    QTY: {item.qty}
-                                  </p>
-                                </div>
-                                <p className="font-bold text-sm">
-                                  Rs. {item.price.toFixed(2)}
-                                </p>
-                              </div>
-                            ))
-                          ) : (
-                            <div className="text-center text-gray-500">
-                              <p>No item details available</p>
-                            </div>
-                          )}
-                          <div className="pt-6 border-t border-dashed border-slate-200 flex justify-between">
-                            <span className="font-bold">Total Paid</span>
-                            <span className="text-[#7a0f1e] font-black">
-                              Rs. {(selectedOrder.total || 0).toFixed(2)}
+
+                        <div className="p-6 space-y-5">
+                          {/* Delivery address */}
+                          <div className="flex items-start gap-2 text-xs text-slate-500">
+                            <MapPin
+                              size={13}
+                              className="shrink-0 mt-0.5 text-slate-400"
+                            />
+                            <span>
+                              {[
+                                selectedOrder.deliveryAddress?.tole,
+                                selectedOrder.deliveryAddress?.city,
+                                selectedOrder.deliveryAddress?.district,
+                              ]
+                                .filter(Boolean)
+                                .join(", ")}
                             </span>
                           </div>
-                          <div className="grid grid-cols-2 gap-3">
-                            <Button
-                              variant="outline"
-                              className="rounded-2xl h-12"
+
+                          {/* Payment method */}
+                          <div className="flex items-center gap-2 text-xs text-slate-500">
+                            <CreditCard size={13} className="text-slate-400" />
+                            <span className="capitalize">
+                              {selectedOrder.payment?.method}
+                            </span>
+                            <span
+                              className={`ml-auto font-semibold ${PAYMENT_STATUS[selectedOrder.payment?.status]?.color}`}
                             >
-                              <Printer size={16} />
-                            </Button>
-                            <Button className="bg-slate-900 rounded-2xl h-12">
-                              <Download size={16} />
-                            </Button>
+                              {
+                                PAYMENT_STATUS[selectedOrder.payment?.status]
+                                  ?.label
+                              }
+                            </span>
+                          </div>
+
+                          <Separator />
+
+                          {/* Books — API field is "books" not "items" */}
+                          <div className="space-y-3">
+                            {selectedOrder.books?.map(
+                              (book: any, i: number) => (
+                                <div
+                                  key={i}
+                                  className="flex justify-between items-start gap-2"
+                                >
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-bold text-slate-800 line-clamp-1">
+                                      {book.title}
+                                    </p>
+                                    <p className="text-[11px] text-slate-400">
+                                      by {book.author} · qty {book.quantity}
+                                    </p>
+                                  </div>
+                                  <p className="text-sm font-bold text-slate-800 shrink-0">
+                                    Rs. {book.subtotal?.toFixed(2)}
+                                  </p>
+                                </div>
+                              ),
+                            )}
+                          </div>
+
+                          <Separator className="border-dashed" />
+
+                          {/* Price breakdown */}
+                          <div className="space-y-1.5 text-xs text-slate-500">
+                            <div className="flex justify-between">
+                              <span>Subtotal</span>
+                              <span>
+                                Rs. {selectedOrder.totalPrice?.toFixed(2)}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="flex items-center gap-1">
+                                <Truck size={11} /> Delivery (
+                                {selectedOrder.delivery?.zone})
+                              </span>
+                              <span>
+                                Rs. {selectedOrder.delivery?.charge?.toFixed(2)}
+                              </span>
+                            </div>
+                            {selectedOrder.promo?.code && (
+                              <div className="flex justify-between text-green-600">
+                                <span className="flex items-center gap-1">
+                                  <Tag size={11} /> Promo (
+                                  {selectedOrder.promo.code} · -
+                                  {selectedOrder.promo.discount}%)
+                                </span>
+                                <span>
+                                  − Rs.{" "}
+                                  {selectedOrder.promo.savings?.toFixed(2)}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+
+                          <Separator />
+
+                          {/* Grand total */}
+                          <div className="flex justify-between items-center">
+                            <span className="font-black text-slate-800">
+                              Total Paid
+                            </span>
+                            <span className="text-[#7a0f1e] font-black text-lg">
+                              Rs.{" "}
+                              {(
+                                selectedOrder.grandTotal ??
+                                selectedOrder.totalPrice ??
+                                0
+                              ).toFixed(2)}
+                            </span>
+                          </div>
+
+                          {/* Status badge */}
+                          <div
+                            className={`flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-semibold border ${STATUS_CONFIG[selectedOrder.status]?.color || ""}`}
+                          >
+                            {STATUS_CONFIG[selectedOrder.status]?.icon}
+                            Order {STATUS_CONFIG[selectedOrder.status]?.label}
                           </div>
                         </div>
                       </div>

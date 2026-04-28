@@ -85,7 +85,7 @@ export function Header() {
       <div className="container mx-auto px-4 py-4 bg-white">
         <div className="flex items-center justify-between gap-4">
           {/* Logo */}
-          <Logo/>
+          <Logo />
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center gap-8">
             {/* Home */}
@@ -204,11 +204,11 @@ export function Header() {
             >
               <Link href="/wishlist">
                 <Heart className="w-5 h-5" />
-                 {wishlistCount > 0 && (
-                   <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
-                     {wishlistCount}
-                   </span>
-                 )}
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red text-primary-foreground text-xs rounded-full flex items-center justify-center font-semibold">
+                    {wishlistCount}
+                  </span>
+                )}
               </Link>
             </Button>
             <Button
@@ -237,7 +237,7 @@ export function Header() {
                   >
                     {user?.profileImage?.url ? (
                       <img
-                        src={user.profileImage.url}
+                        src={user?.profileImage?.url}
                         alt="Profile"
                         className="w-5 h-5 rounded-full object-cover"
                       />
@@ -248,7 +248,10 @@ export function Header() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent className="w-48 bg-card border-red/20">
                   <DropdownMenuItem className="hover:bg-red/10 cursor-pointer">
-                    <Link href="/profile" className="w-full flex items-center gap-2">
+                    <Link
+                      href="/profile"
+                      className="w-full flex items-center gap-2"
+                    >
                       <User className="w-4 h-4" />
                       Visit Profile
                     </Link>
@@ -320,7 +323,10 @@ export function Header() {
           <div className="flex items-center gap-4 pt-2">
             {user ? (
               <>
-                <Button className="w-full bg-red text-primary-foreground hover:bg-red-dark" asChild>
+                <Button
+                  className="w-full bg-red text-primary-foreground hover:bg-red-dark"
+                  asChild
+                >
                   <Link href="/profile">
                     {user.profileImage?.url ? (
                       <img
@@ -355,7 +361,10 @@ export function Header() {
                     Sign In
                   </Link>
                 </Button>
-                <Button className="w-full bg-red text-primary-foreground hover:bg-red-dark" asChild>
+                <Button
+                  className="w-full bg-red text-primary-foreground hover:bg-red-dark"
+                  asChild
+                >
                   <Link href="/wishlist">
                     <Heart className="w-4 h-4 mr-2" />
                     Wishlist
