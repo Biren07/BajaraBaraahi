@@ -13,6 +13,8 @@ import {
   Users,
   BookText,
   Circle,
+  Tag,
+  Ticket,
   Menu,
   X,
 } from "lucide-react";
@@ -22,6 +24,8 @@ const navItems = [
   { href: "/admin/order", label: "Orders", icon: ShoppingCart },
   { href: "/admin/product", label: "Products", icon: Package },
   { href: "/admin/user", label: "Users", icon: Users },
+  { href: "/admin/offers", label: "Offers", icon: Tag },
+  { href: "/admin/coupon", label: "Coupons", icon: Ticket },
   { href: "/admin/ledger", label: "Ledger", icon: BookText },
   { href: "/admin/circle", label: "Circle", icon: Circle },
 ];

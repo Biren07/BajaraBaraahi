@@ -20,6 +20,11 @@ export const offerService = {
     const response = await api.patch(`/offer/update/${id}`, offerData);
     return response.data;
   },
+
+  deleteOffer: async (id) => {
+    const response = await api.delete(`/offer/delete/${id}`);
+    return response.data;
+  },
 };
 
 export default offerService;
