@@ -69,18 +69,26 @@ export function Header() {
           : "bg-transparent",
       )}
     >
-      {/* Top Bar */}
-      <div className="hidden md:block bg-primary text-primary-foreground py-2">
-        <div className="container mx-auto px-4 flex items-center justify-between text-sm">
-          <p className="animate-pulse">Free shipping on orders over $50</p>
-          <div className="flex items-center gap-6">
-            <Link href="/help" className="hover:text-red transition-colors">
-              Help & Support
-            </Link>
-          </div>
-        </div>
-      </div>
+     {/* Top Bar */}
+<div className="hidden md:block bg-primary text-primary-foreground py-2 border-b border-white/5">
+  <div className="container mx-auto px-4 flex items-center justify-center relative">
+    
+    {/* Animated Text Container */}
+    <div className="flex items-center justify-center min-w-[300px]"> 
+      <span className="typing-animation-loop text-md font-bold tracking-wider">
+        Welcome to the BajraBarahi Book Suppliers
+      </span>
+    </div>
 
+    {/* Help & Support (Right side) */}
+    <div className="absolute right-4">
+      <Link href="/help" className="text-[11px] uppercase font-bold opacity-70 hover:opacity-100 transition-opacity">
+        Help & Support
+      </Link>
+    </div>
+    
+  </div>
+</div>
       {/* Main Header */}
       <div className="container mx-auto px-4 py-4 bg-white">
         <div className="flex items-center justify-between gap-4">
