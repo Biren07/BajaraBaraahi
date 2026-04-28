@@ -8,23 +8,14 @@ export const userService = {
   },
 
   // Update user profile
-  updateProfile: async (userData) => {
-    const formData = new FormData();
-
-    // Add text fields safely
-    Object.entries(userData).forEach(([key, value]) => {
-      if (value !== undefined && value !== null) {
-        formData.append(key, value);
-      }
+  // Accepts a plain FormData object built by the caller — do NOT rebuild it here
+  updateProfile: async (formData) => {
+    const response = await api.patch("/user/update-profile", formData, {
+      headers: {
+        // Let axios set Content-Type with boundary automatically
+        "Content-Type": "multipart/form-data",
+      },
     });
-
-    // IMPORTANT: do NOT manually set Content-Type
-    // axios will handle boundary automatically
-    const response = await api.patch(
-      "/user/update-profile",
-      formData
-    );
-
     return response.data;
   },
 
