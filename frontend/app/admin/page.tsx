@@ -1,29 +1,35 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { BookOpen, CircleDot, Package, Receipt, Users } from "lucide-react";
 
 import AdminShell from "@/components/admin/admin-shell";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { orderService } from "@/services/orderService";
+import { bookService } from "@/services/bookService";
+import { userService } from "@/services/userService";
 
 const stats = [
   {
     href: "/admin/order",
     title: "Orders",
-    value: "12",
+    value: "0",
     description: "Manage customer orders",
     icon: Receipt,
   },
   {
     href: "/admin/product",
     title: "Products",
-    value: "38",
+    value: "0",
     description: "Books, pricing & stock",
     icon: Package,
   },
   {
     href: "/admin/user",
     title: "Users",
-    value: "142",
+    value: "0",
     description: "Roles, profiles & access",
     icon: Users,
   },
@@ -44,6 +50,45 @@ const stats = [
 ];
 
 export default function AdminOverviewPage() {
+  const [statsData, setStatsData] = useState(stats);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const [ordersRes, booksRes, usersRes] = await Promise.all([
+        orderService.getAllOrders(),
+        bookService.getBooks(),
+        userService.getAllUsers(),
+      ]);
+
+      const orders =
+        ordersRes?.data?.data || ordersRes?.data || ordersRes?.orders || [];
+
+      const books =
+        booksRes?.data?.data || booksRes?.data || booksRes?.books || [];
+      const users = usersRes?.allUsers || [];
+
+      setStatsData((prev) =>
+        prev.map((stat) => {
+          if (stat.title === "Orders")
+            return { ...stat, value: String(orders.length) };
+
+          if (stat.title === "Products")
+            return { ...stat, value: String(books.length) };
+          if (stat.title === "Users") {
+            return { ...stat, value: String(users.length) };
+          }
+
+          return stat;
+        }),
+      );
+    } catch (error) {
+      console.error("Failed to fetch stats", error);
+    }
+  };
   return (
     <AdminShell>
       <div className="space-y-8">
@@ -61,7 +106,7 @@ export default function AdminOverviewPage() {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5">
-          {stats.map((s) => {
+          {statsData.map((s) => {
             const Icon = s.icon;
 
             return (
@@ -110,7 +155,7 @@ export default function AdminOverviewPage() {
             </div>
 
             <div className="flex flex-wrap gap-2 sm:gap-3">
-              {stats.map((s) => (
+              {statsData.map((s) => (
                 <Link key={s.href} href={s.href}>
                   <Button
                     variant="outline"
