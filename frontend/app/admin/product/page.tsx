@@ -443,7 +443,10 @@ export default function AdminProductPage() {
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-5xl bg-[#FDFCFB] sm:rounded-[40px] shadow-2xl overflow-hidden h-full sm:h-auto max-h-screen sm:max-h-[95vh] flex flex-col">
+            <div
+              className="relative z-[101] w-full max-w-5xl bg-[#FDFCFB] sm:rounded-[40px] shadow-2xl overflow-visible h-full sm:h-auto max-h-screen sm:max-h-[95vh] flex flex-col"
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Sticky Header */}
               <div className="px-6 md:px-10 py-5 md:py-6 border-b border-gray-100 flex items-center justify-between bg-white shrink-0">
                 <h2 className="text-xl md:text-2xl font-black text-gray-900 tracking-tight">
@@ -569,17 +572,21 @@ export default function AdminProductPage() {
                           value={form.genre}
                           onValueChange={(v) => setForm({ ...form, genre: v })}
                         >
-                          <SelectTrigger className="rounded-2xl h-12 capitalize">
-                            <SelectValue />
+                          <SelectTrigger className="rounded-2xl h-12 capitalize w-full">
+                            <SelectValue placeholder="Select genre" />
                           </SelectTrigger>
-                          <SelectContent className="rounded-xl">
+
+                          <SelectContent
+                            className=" max-h-60 z-[9999]"
+                            position="popper"
+                          >
                             {GENRES.map((g) => (
                               <SelectItem
                                 key={g}
                                 value={g}
                                 className="capitalize"
                               >
-                                {g}
+                                {g.replace("-", " ")}
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -596,10 +603,14 @@ export default function AdminProductPage() {
                             setForm({ ...form, category: v })
                           }
                         >
-                          <SelectTrigger className="rounded-2xl h-12 capitalize">
-                            <SelectValue />
+                          <SelectTrigger className="rounded-2xl h-12 capitalize w-full">
+                            <SelectValue placeholder="Select category" />
                           </SelectTrigger>
-                          <SelectContent className="rounded-xl">
+
+                          <SelectContent
+                            className=" max-h-60 z-[9999]"
+                            position="popper"
+                          >
                             {CATEGORIES.map((c) => (
                               <SelectItem
                                 key={c}

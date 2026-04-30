@@ -329,7 +329,7 @@ export default function AdminOffersPage() {
                       <SelectTrigger className="rounded-xl md:rounded-2xl h-12 border-gray-100 bg-gray-50/50">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent className="rounded-xl">
+                      <SelectContent className="">
                         <SelectItem value="stock-clearance">Stock Clearance</SelectItem>
                         <SelectItem value="festive">Festive</SelectItem>
                         <SelectItem value="custom">Custom</SelectItem>
