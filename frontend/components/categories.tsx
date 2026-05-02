@@ -1,191 +1,146 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
-  BookOpen,
-  Lightbulb,
-  Rocket,
-  Heart,
-  GraduationCap,
-  Baby,
-  Briefcase,
-  Feather,
+  BookOpen, Lightbulb, Rocket, Heart, GraduationCap, Baby, Briefcase, Feather, ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import bookService from "@/services/bookService";
+import { toast } from "sonner"; 
 
-const categories = [
-  {
-    name: "Fiction",
-    icon: BookOpen,
-    count: 12500,
-    color: "from-red-900/30 to-black",
-    description: "Explore imaginative worlds",
-  },
-  {
-    name: "Non-Fiction",
-    icon: Lightbulb,
-    count: 8900,
-    color: "from-red-800/30 to-black",
-    description: "Learn from real stories",
-  },
-  {
-    name: "Science & Tech",
-    icon: Rocket,
-    count: 4500,
-    color: "from-red-900/20 to-black",
-    description: "Discover innovations",
-  },
-  {
-    name: "Romance",
-    icon: Heart,
-    count: 6200,
-    color: "from-red-700/30 to-black",
-    description: "Stories of love",
-  },
-  {
-    name: "Academic",
-    icon: GraduationCap,
-    count: 3800,
-    color: "from-red-900/25 to-black",
-    description: "Educational resources",
-  },
-  {
-    name: "Children",
-    icon: Baby,
-    count: 5100,
-    color: "from-red-800/20 to-black",
-    description: "Books for young minds",
-  },
-  {
-    name: "Business",
-    icon: Briefcase,
-    count: 4200,
-    color: "from-red-900/30 to-black",
-    description: "Grow your career",
-  },
-  {
-    name: "Literature",
-    icon: Feather,
-    count: 7800,
-    color: "from-red-800/25 to-black",
-    description: "Classic masterpieces",
-  },
+const MASTER_CATEGORIES = [
+  { name: "Fiction", icon: BookOpen, color: "from-red-900/30 to-black", description: "Explore imaginative worlds" },
+  { name: "Romance", icon: Heart, color: "from-red-700/30 to-black", description: "Stories of love" },
+  { name: "Action", icon: Rocket, color: "from-red-900/20 to-black", description: "Fast-paced adventures" },
+  { name: "Thriller", icon: Lightbulb, color: "from-red-800/30 to-black", description: "Suspense and mystery" },
+  { name: "Horror", icon: BookOpen, color: "from-red-950/40 to-black", description: "Dark and chilling tales" },
+  { name: "Fantasy", icon: Feather, color: "from-purple-900/30 to-black", description: "Magic and mythical worlds" },
+  { name: "Biography", icon: Briefcase, color: "from-blue-900/30 to-black", description: "Real life inspiring stories" },
+  { name: "Other", icon: Baby, color: "from-gray-800/30 to-black", description: "Discover more books" },
 ];
 
 export function Categories() {
+  const [categories, setCategories] = useState(
+    MASTER_CATEGORIES.map(cat => ({ ...cat, count: 0, isComingSoon: true }))
+  );
+  const [loading, setLoading] = useState(true);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const response = await bookService.getBooks();
+        const books = response.books || [];
+
+        // Backend bata aayeko books ko count nikalne
+        const availabilityMap: Record<string, number> = {};
+        books.forEach((book: any) => {
+          const genre = (book.genre || "Other").toLowerCase().trim();
+          availabilityMap[genre] = (availabilityMap[genre] || 0) + 1;
+        });
+
+        // Master list lai availabilityMap sanga compare garne
+        const finalData = MASTER_CATEGORIES.map((cat) => {
+          const lowerName = cat.name.toLowerCase().trim();
+          const count = availabilityMap[lowerName] || 0;
+          return {
+            ...cat,
+            count,
+            isComingSoon: count === 0,
+          };
+        });
+
+        setCategories(finalData);
+      } catch (error) {
+        console.error("Fetch Error:", error);
+        // Error aayo bhane pani default list dekhinchha (Coming Soon state ma)
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   return (
     <section className="relative py-16 md:py-24 bg-black text-white overflow-hidden">
-
-      {/* ===== MAROON GLOW BACKGROUND ===== */}
+      {/* BACKGROUND GLOW */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-red-900/20 blur-3xl rounded-full" />
-        <div className="absolute bottom-20 right-10 w-72 h-72 bg-red-800/10 blur-3xl rounded-full" />
+        <div className="absolute top-20 left-10 w-72 h-72 bg-red-900/10 blur-[120px] rounded-full" />
       </div>
 
       <div className="container mx-auto px-4 relative z-10">
-
-        {/* ===== HEADER ===== */}
         <div className="text-center mb-12">
-          <span className="text-red-400 font-medium text-sm uppercase tracking-wider">
-            Browse by Genre
-          </span>
-
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-serif font-bold mt-2">
-            <span className="text-white">Explore</span>{" "}
-            <span className="text-red-500">Categories</span>
+          <span className="text-red-500 font-bold text-xs uppercase tracking-[0.2em]">Browse Catalog</span>
+          <h2 className="text-4xl md:text-5xl font-serif font-bold mt-3 text-white">
+            Explore <span className="text-red-600">Genres</span>
           </h2>
-
-          <p className="text-gray-400 mt-3 max-w-lg mx-auto">
-            Discover books across all genres in our curated collection.
-          </p>
         </div>
 
-        {/* ===== GRID ===== */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-
           {categories.map((category, index) => {
             const Icon = category.icon;
+            const isSoon = category.isComingSoon;
 
             return (
-              <Link
-                key={category.name}
-                href={`/category/${category.name.toLowerCase().replace(/ & /g, "-")}`}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className={cn(
-                  "group relative rounded-2xl p-6 border border-white/10",
-                  "bg-[#141414] hover:bg-[#1a1a1a]",
-                  "transition-all duration-500 overflow-hidden hover:scale-[1.03]"
-                )}
-              >
-
-                {/* Hover Maroon Gradient */}
-                <div
+              <div key={category.name} className="relative">
+                <Link
+                  href={isSoon ? "#" : `/category/${category.name.toLowerCase()}`}
+                  onClick={(e) => {
+                    if (isSoon) {
+                      e.preventDefault();
+                      toast.info(`${category.name} collection is arriving soon!`);
+                    }
+                  }}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   className={cn(
-                    "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-                    category.color
+                    "group block relative rounded-2xl p-6 border transition-all duration-500 overflow-hidden",
+                    isSoon 
+                      ? "border-white/5 bg-white/[0.02] cursor-not-allowed opacity-70" 
+                      : "border-white/10 bg-[#0A0A0A] hover:bg-[#111111] hover:scale-[1.02] border-red-900/20"
                   )}
-                />
+                >
+                  {/* Hover Gradient Overlay */}
+                  {!isSoon && (
+                    <div className={cn(
+                      "absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-100 transition-opacity duration-500",
+                      category.color
+                    )} />
+                  )}
 
-                <div className="relative z-10">
+                  <div className="relative z-10">
+                    <div className={cn(
+                      "w-12 h-12 rounded-xl flex items-center justify-center mb-5 transition-all duration-500",
+                      isSoon ? "bg-white/5 text-gray-500" : "bg-red-950/30 text-red-500 group-hover:bg-red-600 group-hover:text-white"
+                    )}>
+                      <Icon className="w-6 h-6" />
+                    </div>
 
-                  {/* ICON */}
-                  <div
-                    className={cn(
-                      "w-14 h-14 rounded-full flex items-center justify-center mb-4 transition-all duration-500",
-                      hoveredIndex === index
-                        ? "bg-red-900 scale-110"
-                        : "bg-red-900/20"
-                    )}
-                  >
-                    <Icon
-                      className={cn(
-                        "w-7 h-7 transition-colors duration-500",
-                        hoveredIndex === index
-                          ? "text-white"
-                          : "text-red-400"
+                    <h3 className="font-bold text-xl mb-1">{category.name}</h3>
+                    <p className="text-sm text-gray-500 group-hover:text-gray-300 transition-colors">
+                      {isSoon ? "Coming to our shelves soon" : category.description}
+                    </p>
+
+                    <div className="mt-6 flex items-center justify-between">
+                      <span className={cn(
+                        "text-xs font-semibold px-2.5 py-1 rounded-md",
+                        isSoon ? "bg-white/5 text-gray-500" : "bg-red-500/10 text-red-500"
+                      )}>
+                        {isSoon ? "Coming Soon" : `${category.count} Books`}
+                      </span>
+                      
+                      {!isSoon && (
+                        <ChevronRight className="w-4 h-4 text-red-500 translate-x-[-10px] opacity-0 group-hover:translate-x-0 group-hover:opacity-100 transition-all" />
                       )}
-                    />
+                    </div>
                   </div>
-
-                  {/* TEXT */}
-                  <h3 className="font-semibold text-lg text-white group-hover:text-red-400 transition-colors">
-                    {category.name}
-                  </h3>
-
-                  <p className="text-sm text-gray-400 mt-1">
-                    {category.description}
-                  </p>
-
-                  <p className="text-xs text-red-400 mt-2 font-medium">
-                    {category.count.toLocaleString()} Books
-                  </p>
-                </div>
-
-                {/* ARROW */}
-                <div className="absolute bottom-4 right-4 w-8 h-8 rounded-full bg-red-900/0 group-hover:bg-red-900 flex items-center justify-center transition-all duration-500 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 5l7 7-7 7"
-                    />
-                  </svg>
-                </div>
-
-              </Link>
+                </Link>
+              </div>
             );
           })}
-
         </div>
       </div>
     </section>

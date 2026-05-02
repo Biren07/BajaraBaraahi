@@ -59,32 +59,30 @@ export default function BestsellersPage() {
     fetchBestsellers();
   }, []);
 
-  const fetchBestsellers = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await bookService.getBooks({
-        category: "best-selling",
-      });
+ const fetchBestsellers = async () => {
+  try {
+    setLoading(true);
+    setError(null);
 
-      setBooks(response?.books || []);
-    } catch (err: any) {
-      console.error("❌ Failed to fetch bestsellers:", err);
-      console.error("🔍 Error details:", {
-        message: err.message,
-        status: err.response?.status,
-        statusText: err.response?.statusText,
-        data: err.response?.data,
-      });
+    const response = await bookService.getBooks();
 
-      setError(
-        `Failed to load bestsellers: ${err.message || err.response?.data?.message || "Network error - check if backend is running"}`,
-      );
-      setBooks([]);
-    } finally {
-      setLoading(false);
-    }
-  };
+    setBooks(response.books || response.data || response || []);
+  } catch (err: any) {
+    console.error("Failed to fetch books:", err);
+
+    setError(
+      `Failed to load books: ${
+        err.message ||
+        err.response?.data?.message ||
+        "Network error"
+      }`
+    );
+
+    setBooks([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const filteredBooks = books.filter((book: any) => {
     // Calculate discounted price

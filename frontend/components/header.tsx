@@ -320,163 +320,107 @@ export function Header() {
       </div>
 
       {/* Mobile Menu */}
-      <div
-        className={cn(
-          "lg:hidden overflow-hidden transition-all duration-500 bg-background/95 backdrop-blur-md",
-          isMobileMenuOpen ? "max-h-screen border-t border-red/20" : "max-h-0",
-        )}
+     <div
+  className={cn(
+    "lg:hidden fixed inset-x-0 top-[header-height] bg-background/98 backdrop-blur-md transition-all duration-300 ease-in-out overflow-y-auto border-t border-red/10",
+    isMobileMenuOpen 
+      ? "opacity-100 translate-y-0 visible h-[calc(100vh-70px)]" 
+      : "opacity-0 -translate-y-4 invisible h-0"
+  )}
+>
+  <nav className="container mx-auto px-6 py-8 flex flex-col gap-2">
+    {/* AUTH BUTTONS Section */}
+    <div className="grid grid-cols-2 gap-3 pb-6 border-b border-red/5">
+      {user ? (
+        <>
+          <Button className="w-full bg-red text-white" asChild onClick={() => setIsMobileMenuOpen(false)}>
+            <Link href="/profile" className="flex items-center justify-center">
+              <User className="w-4 h-4 mr-2" /> Profile
+            </Link>
+          </Button>
+          <Button variant="outline" className="w-full border-red/20" onClick={() => { logout(); setIsMobileMenuOpen(false); }}>
+            <LogOut className="w-4 h-4 mr-2" /> Logout
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button variant="outline" className="w-full border-red/20" asChild onClick={() => setIsMobileMenuOpen(false)}>
+            <Link href="/login">Sign In</Link>
+          </Button>
+          <Button className="w-full bg-red text-white" asChild onClick={() => setIsMobileMenuOpen(false)}>
+            <Link href="/wishlist">Wishlist</Link>
+          </Button>
+        </>
+      )}
+    </div>
+
+    {/* Navigation Links */}
+    <div className="flex flex-col">
+      <Link
+        href="/"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-4 border-b border-red/5 text-lg font-medium active:text-red transition-colors"
       >
-        <nav className="container mx-auto px-4 py-4 flex flex-col gap-4">
-          {/* AUTH BUTTONS */}
-          <div className="flex items-center gap-4 pt-2">
-            {user ? (
-              <>
-                <Button
-                  className="w-full bg-red text-primary-foreground hover:bg-red-dark"
-                  asChild
-                >
-                  <Link href="/profile">
-                    {user.profileImage?.url ? (
-                      <img
-                        src={user.profileImage.url}
-                        alt="Profile"
-                        className="w-4 h-4 rounded-full object-cover mr-2"
-                      />
-                    ) : (
-                      <User className="w-4 h-4 mr-2" />
-                    )}
-                    Profile
-                  </Link>
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-1 border-red/30 hover:bg-red/10 hover:text-red"
-                  onClick={() => logout()}
-                >
-                  <LogOut className="w-4 h-4 mr-2" />
-                  Logout
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="outline"
-                  className="w-full border-red/30 hover:bg-red/10 hover:text-red"
-                  asChild
-                >
-                  <Link href="/login">
-                    <User className="w-4 h-4 mr-2" />
-                    Sign In
-                  </Link>
-                </Button>
-                <Button
-                  className="w-full bg-red text-primary-foreground hover:bg-red-dark"
-                  asChild
-                >
-                  <Link href="/wishlist">
-                    <Heart className="w-4 h-4 mr-2" />
-                    Wishlist
-                  </Link>
-                </Button>
-              </>
-            )}
-          </div>
-          {/* Home */}
-          <Link
-            href="/"
-            className="py-2 border-b border-border font-medium hover:text-red"
-          >
-            Home
-          </Link>
+        Home
+      </Link>
 
-          {/* Categories Dropdown */}
-          <div className="border-b border-border pb-2">
-            <button
-              onClick={() => setOpenCategories(!openCategories)}
-              className="flex items-center justify-between w-full py-2 font-medium hover:text-red"
+      {/* Categories Accordion */}
+      <div className="border-b border-red/5">
+        <button
+          onClick={() => setOpenCategories(!openCategories)}
+          className="flex items-center justify-between w-full py-4 text-lg font-medium"
+        >
+          Categories
+          <ChevronDown className={cn("w-5 h-5 transition-transform duration-300", openCategories && "rotate-180")} />
+        </button>
+        <div className={cn(
+          "grid grid-cols-2 gap-2 overflow-hidden transition-all duration-300",
+          openCategories ? "max-h-64 pb-4" : "max-h-0"
+        )}>
+          {categories.map((category) => (
+            <Link
+              key={category}
+              href={`/categories/${category.toLowerCase().replace(/ /g, "-")}`}
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="text-sm py-2 text-muted-foreground hover:text-red"
             >
-              Categories
-              <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  openCategories ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {openCategories && (
-              <div className="grid grid-cols-2 gap-2 pl-3 mt-2">
-                {categories.map((category) => (
-                  <Link
-                    key={category}
-                    href={`/categories/${category
-                      .toLowerCase()
-                      .replace(/ & /g, "-")
-                      .replace(/ /g, "-")}`}
-                    className="text-sm hover:text-red"
-                  >
-                    {category}
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Best Sellers */}
-          <Link
-            href="/bestsellers"
-            className="py-2 border-b border-border font-medium hover:text-red"
-          >
-            Best Sellers
-          </Link>
-
-          {/* New Arrivals */}
-          <Link
-            href="/new-arrivals"
-            className="py-2 border-b border-border font-medium hover:text-red"
-          >
-            New Arrivals
-          </Link>
-
-          {/* MORE Dropdown */}
-          <div className="border-b border-border pb-2">
-            <button
-              onClick={() => setOpenMore(!openMore)}
-              className="flex items-center justify-between w-full py-2 font-medium hover:text-red"
-            >
-              More
-              <ChevronDown
-                className={`w-4 h-4 transition-transform ${
-                  openMore ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            {openMore && (
-              <div className="flex flex-col gap-2 pl-3 mt-2">
-                <Link href="/offers" className="hover:text-red">
-                  Offers
-                </Link>
-
-                <Link
-                  href="/ledger"
-                  className="flex items-center gap-2 hover:text-red"
-                >
-                  <BookOpen className="w-4 h-4" />
-                  Ledger
-                </Link>
-
-                <Link
-                  href="/circle"
-                  className="flex items-center gap-2 hover:text-red"
-                >
-                  <Users className="w-4 h-4" />
-                  Circle
-                </Link>
-              </div>
-            )}
-          </div>
-        </nav>
+              {category}
+            </Link>
+          ))}
+        </div>
       </div>
-    </header>
+
+      <Link
+        href="/bestsellers"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className="py-4 border-b border-red/5 text-lg font-medium"
+      >
+        Best Sellers
+      </Link>
+
+      {/* More Accordion */}
+      <div className="border-b border-red/5">
+        <button
+          onClick={() => setOpenMore(!openMore)}
+          className="flex items-center justify-between w-full py-4 text-lg font-medium"
+        >
+          More
+          <ChevronDown className={cn("w-5 h-5 transition-transform duration-300", openMore && "rotate-180")} />
+        </button>
+        <div className={cn(
+          "flex flex-col gap-3 overflow-hidden transition-all duration-300",
+          openMore ? "max-h-40 pb-4" : "max-h-0"
+        )}>
+          <Link href="/offers" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 text-sm py-1">
+            Offers
+          </Link>
+          <Link href="/ledger" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-2 text-sm py-1">
+            <BookOpen className="w-4 h-4" /> Ledger
+          </Link>
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>    </header>
   );
 }

@@ -209,6 +209,19 @@ export default function AdminProductPage() {
       setSubmitting(false);
     }
   };
+  const deleteProduct = async (id: string) => {
+    try {
+      if (!confirm("Are you sure you want to delete this book?")) return;
+
+      await bookService.deleteBook(id);
+      toast.success("Book deleted successfully");
+
+      fetchProducts(); // refresh list
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete book");
+    }
+  };
 
   return (
     <AdminShell>
@@ -346,6 +359,7 @@ export default function AdminProductPage() {
                               size="icon"
                               variant="ghost"
                               className="rounded-xl hover:bg-red-50 text-red-600"
+                              onClick={() => deleteProduct(p._id)}
                             >
                               <Trash2 className="w-4 h-4" />
                             </Button>
@@ -357,6 +371,32 @@ export default function AdminProductPage() {
                 </TableBody>
               </Table>
             </CardContent>
+            {/* Pagination for Desktop */}
+            {totalPages > 1 && (
+              <div className="p-4 border-t border-gray-100 flex justify-center items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-sm font-medium">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() =>
+                    setCurrentPage((p) => Math.min(p + 1, totalPages))
+                  }
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </Card>
 
           {/* Mobile View: Cards */}
@@ -391,7 +431,10 @@ export default function AdminProductPage() {
                           >
                             <Edit className="w-4 h-4" />
                           </button>
-                          <button className="p-2 bg-red-50 text-red-600 rounded-lg">
+                          <button
+                            onClick={() => deleteProduct(p._id)}
+                            className="p-2 bg-red-50 text-red-600 rounded-lg"
+                          >
                             <Trash2 className="w-4 h-4" />
                           </button>
                         </div>
